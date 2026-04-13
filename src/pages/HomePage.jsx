@@ -1,5 +1,6 @@
 import useReveal from '../hooks/useReveal';
 import LoopVisual from '../components/LoopVisual';
+import LoopMobile from '../components/LoopMobile';
 
 const HomePage = ({ setPage }) => {
   useReveal();
@@ -23,9 +24,9 @@ const HomePage = ({ setPage }) => {
       </div>
     </section>
 
-    {/* Mobile-only loop visual — compact version below hero */}
+    {/* Mobile-only loop visual — vertical timeline */}
     <div className="hero-loop-mobile">
-      <LoopVisual/>
+      <LoopMobile/>
     </div>
 
     {/* CLIENT LOGOS */}
