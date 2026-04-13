@@ -19,9 +19,14 @@ const HomePage = ({ setPage }) => {
             <button className="bs" onClick={()=>setPage("platform")}>See the Platform</button>
           </div>
         </div>
-        <div style={{position:"relative"}}><LoopVisual/></div>
+        <div className="hero-loop-desktop" style={{position:"relative"}}><LoopVisual/></div>
       </div>
     </section>
+
+    {/* Mobile-only loop visual — compact version below hero */}
+    <div className="hero-loop-mobile">
+      <LoopVisual/>
+    </div>
 
     {/* CLIENT LOGOS */}
     <div className="logo-band">
