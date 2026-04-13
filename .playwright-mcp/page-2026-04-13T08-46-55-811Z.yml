@@ -1,0 +1,211 @@
+- generic [ref=e2]:
+  - navigation [ref=e3]:
+    - generic [ref=e4] [cursor=pointer]:
+      - img [ref=e5]
+      - generic [ref=e10]: InsiteHUB
+    - generic [ref=e11]:
+      - button "Platform" [ref=e12] [cursor=pointer]
+      - button "Services" [active] [ref=e13] [cursor=pointer]
+      - button "About" [ref=e14] [cursor=pointer]
+      - button "Contact" [ref=e15] [cursor=pointer]
+    - button "Book a Demo" [ref=e17] [cursor=pointer]
+  - main [ref=e18]:
+    - generic [ref=e227]:
+      - generic:
+        - img
+      - generic [ref=e228]:
+        - generic [ref=e229]: 🧭 Services
+        - heading "We meet you where you are." [level=1] [ref=e230]:
+          - text: We meet you
+          - text: where you are.
+        - paragraph [ref=e231]: Whether you need a strategy, a structured experiment, AI literacy across your team, or content for an upcoming launch — every engagement starts with understanding your environment first.
+        - generic [ref=e232]:
+          - button "Book a Discovery Call" [ref=e233] [cursor=pointer]
+          - button "See the AI Platform" [ref=e234] [cursor=pointer]
+    - generic [ref=e236]:
+      - generic [ref=e237]:
+        - generic [ref=e238]: Advisory
+        - heading "We diagnose before we prescribe." [level=2] [ref=e239]
+        - paragraph [ref=e240]: Most vendors lead with a demo. We lead with a diagnosis — mapping your compliance requirements, governance structure, and AI readiness before recommending anything. Every engagement is time-bounded with a concrete deliverable.
+      - generic [ref=e241]:
+        - generic [ref=e242]:
+          - generic [ref=e243]: Entry Point
+          - generic [ref=e244]: AI Strategy & Roadmap Workshop
+          - generic [ref=e245]: Executive alignment on AI priorities, use cases, and implementation roadmap. The lowest-risk starting point.
+        - generic [ref=e246]:
+          - generic [ref=e247]: Foundation
+          - generic [ref=e248]: AI Readiness & Maturity Assessment
+          - generic [ref=e249]: Custom AI maturity model, capability heatmap, technology gap analysis, and prioritized use case roadmap.
+        - generic [ref=e250]:
+          - generic [ref=e251]: Selection
+          - generic [ref=e252]: Learning Technology & GenAI Assessment
+          - generic [ref=e253]: Comprehensive vendor evaluation, compliance risk assessment, and integration feasibility study.
+        - generic [ref=e254]:
+          - generic [ref=e255]: Governance
+          - generic [ref=e256]: AI Governance & Compliance Framework
+          - generic [ref=e257]: End-to-end governance framework for AI-generated commercial content. Role-based guidelines and monitoring.
+        - generic [ref=e258]:
+          - generic [ref=e259]: Infrastructure
+          - generic [ref=e260]: Learning Infrastructure Assessment
+          - generic [ref=e261]: Data architecture review, AI infrastructure readiness analysis, and phased modernization roadmap.
+        - generic [ref=e262]:
+          - generic [ref=e263]: Organization
+          - generic [ref=e264]: AI-Optimized Org Design
+          - generic [ref=e265]: Organizational structure recommendations for AI-enabled commercial learning at scale.
+    - generic [ref=e267]:
+      - generic [ref=e268]:
+        - generic [ref=e269]: AI Literacy Program
+        - heading "Your team can't use AI tools they don't understand or trust." [level=2] [ref=e270]:
+          - text: Your team can't use AI tools
+          - text: they don't understand or trust.
+        - paragraph [ref=e271]: Before your organization deploys AI, it needs a foundation — the concepts, the vocabulary, the judgment to know when AI is helping and when it isn't. Role-targeted tracks for every part of your commercial structure.
+      - generic [ref=e272]:
+        - generic [ref=e273]:
+          - generic [ref=e274]: 🧠
+          - generic [ref=e275]: What AI Actually Does
+          - generic [ref=e276]: How LLMs work, where they fail, and why outputs require human judgment.
+          - generic [ref=e277]: All roles
+        - generic [ref=e278]:
+          - generic [ref=e279]: ⚖️
+          - generic [ref=e280]: AI in a Regulated Environment
+          - generic [ref=e281]: How AI interacts with MLR review, GxP validation, and compliance requirements.
+          - generic [ref=e282]: Medical · Regulatory
+        - generic [ref=e283]:
+          - generic [ref=e284]: ✍️
+          - generic [ref=e285]: AI for Content Creation
+          - generic [ref=e286]: Prompt design, output review, citation verification, and the human judgment layer.
+          - generic [ref=e287]: L&D · Marketing
+        - generic [ref=e288]:
+          - generic [ref=e289]: 🎭
+          - generic [ref=e290]: AI in Field Conversations
+          - generic [ref=e291]: AI-generated talking points, coached preparation, and HCP persona behaviors.
+          - generic [ref=e292]: Commercial · Sales
+        - generic [ref=e293]:
+          - generic [ref=e294]: 📊
+          - generic [ref=e295]: AI and Performance Data
+          - generic [ref=e296]: How to interpret AI-generated competency scores and readiness predictions.
+          - generic [ref=e297]: Managers · Leaders
+        - generic [ref=e298]:
+          - generic [ref=e299]: 🗺️
+          - generic [ref=e300]: Building an AI-Ready Mindset
+          - generic [ref=e301]: Experiment-first culture, evaluating vendor claims, and institutional vocabulary.
+          - generic [ref=e302]: Leadership · CLO
+    - generic [ref=e304]:
+      - generic [ref=e305]:
+        - generic [ref=e306]: Content Development
+        - heading "Built for field readiness. Not completion rates." [level=2] [ref=e307]:
+          - text: Built for field readiness.
+          - text: Not completion rates.
+        - paragraph [ref=e308]: MLR-compliant content developed with behavioral effectiveness as a design requirement — AI-powered when you're ready, human-led when you're not.
+      - generic [ref=e309]:
+        - generic [ref=e310]:
+          - generic [ref=e311]: 🤖
+          - generic [ref=e312]: AI-Powered Content (Forge)
+          - generic [ref=e313]: Forge agents generate MLR-compliant modules from PI, CSRs, and brand assets. Every claim cited. Development drops from months to hours.
+        - generic [ref=e314]:
+          - generic [ref=e315]: ✍️
+          - generic [ref=e316]: Traditional Instructional Design
+          - generic [ref=e317]: Full-service content by practitioners with deep biopharma commercial backgrounds. Human-led, compliance-first, field-validated.
+        - generic [ref=e318]:
+          - generic [ref=e319]: ⚖️
+          - generic [ref=e320]: MLR-Integrated Design
+          - generic [ref=e321]: Compliance as a design input, not a last gate. Fewer revision cycles. Faster time-to-field.
+        - generic [ref=e322]:
+          - generic [ref=e323]: 🔄
+          - generic [ref=e324]: AI-Assisted Human Review
+          - generic [ref=e325]: Forge drafts the structure, citations, and compliance scaffolding. InsiteHub practitioners review and validate.
+    - generic [ref=e327]:
+      - generic [ref=e328]:
+        - generic [ref=e329]: Proxa Labs
+        - heading "Your AI mandate deserves a properly designed experiment." [level=2] [ref=e330]:
+          - text: Your AI mandate deserves
+          - text: a properly designed experiment.
+        - paragraph [ref=e331]: Proxa Labs helps you define the right AI use case, design a structured experiment, measure success against criteria that matter — and build the business case that turns results into action.
+      - generic [ref=e332]:
+        - generic [ref=e333]:
+          - generic [ref=e334]: 🎯
+          - generic [ref=e335]: Phase 1
+          - generic [ref=e336]: Define the Right Use Case
+          - generic [ref=e337]: Map your landscape, identify where AI creates value, and produce a prioritized use case hypothesis.
+        - generic [ref=e338]:
+          - generic [ref=e339]: 🔬
+          - generic [ref=e340]: Phase 2
+          - generic [ref=e341]: Design the Experiment
+          - generic [ref=e342]: Structure a pilot against your real constraints — compliance, IT, governance — not a controlled demo.
+        - generic [ref=e343]:
+          - generic [ref=e344]: 📈
+          - generic [ref=e345]: Phase 3
+          - generic [ref=e346]: Measure Success
+          - generic [ref=e347]: Define metrics before the experiment runs. Commercial performance, not engagement theater.
+        - generic [ref=e348]:
+          - generic [ref=e349]: 📋
+          - generic [ref=e350]: Phase 4
+          - generic [ref=e351]: Build the Business Case
+          - generic [ref=e352]: Translate results into a leadership-ready ROI model and implementation roadmap.
+    - generic [ref=e355]:
+      - generic [ref=e356]:
+        - generic [ref=e357]: InsiteX LMS
+        - heading "Enterprise learning infrastructure. Built for biopharma." [level=3] [ref=e358]:
+          - text: Enterprise learning infrastructure.
+          - text: Built for biopharma.
+        - paragraph [ref=e359]: A cloud-based learning platform with the compliance architecture, credentialing workflows, and content controls that life sciences requires. It's the foundation the AI platform builds on — and the upgrade path is seamless.
+        - button "Request a Demo" [ref=e360] [cursor=pointer]
+      - generic [ref=e361]:
+        - generic [ref=e362]:
+          - generic [ref=e363]: 4+
+          - generic [ref=e364]: Years serving biopharma
+        - generic [ref=e365]:
+          - generic [ref=e366]: 30+
+          - generic [ref=e367]: Pharma & health system clients
+        - generic [ref=e368]:
+          - generic [ref=e369]: SCORM / AICC
+          - generic [ref=e370]: "& PMRC compliant"
+        - generic [ref=e371]:
+          - generic [ref=e372]: SOC 2
+          - generic [ref=e373]: Type II in progress
+    - generic [ref=e375]:
+      - heading "Not sure where to start? That's the right conversation to have." [level=2] [ref=e376]:
+        - text: Not sure where to start?
+        - emphasis [ref=e377]: That's the right conversation to have.
+      - paragraph [ref=e378]: 30 minutes. No demo, no pitch. Just your environment and what's been blocking you.
+      - generic [ref=e379]:
+        - button "Book a Discovery Call" [ref=e380] [cursor=pointer]
+        - button "See the Platform →" [ref=e381] [cursor=pointer]
+  - contentinfo [ref=e179]:
+    - generic [ref=e181]:
+      - generic [ref=e182]:
+        - generic [ref=e183]:
+          - generic [ref=e184] [cursor=pointer]:
+            - img [ref=e185]
+            - generic [ref=e190]: InsiteHUB
+          - paragraph [ref=e191]: The AI implementation partner built for biopharma commercial learning — methodology-first, compliance by design.
+          - generic [ref=e192]:
+            - link "LinkedIn" [ref=e193] [cursor=pointer]:
+              - /url: https://linkedin.com/company/insitehub
+              - img [ref=e194]
+            - link "Facebook" [ref=e196] [cursor=pointer]:
+              - /url: https://facebook.com/insitehub
+              - img [ref=e197]
+            - link "X" [ref=e199] [cursor=pointer]:
+              - /url: https://x.com/insitehub
+              - img [ref=e200]
+        - generic [ref=e202]:
+          - generic [ref=e203]: Navigation
+          - generic [ref=e204] [cursor=pointer]: Platform
+          - generic [ref=e205] [cursor=pointer]: Services
+          - generic [ref=e206] [cursor=pointer]: About
+          - generic [ref=e207] [cursor=pointer]: Contact
+          - generic [ref=e208] [cursor=pointer]: Book a Demo
+        - generic [ref=e209]:
+          - generic [ref=e210]: Stay in the loop
+          - paragraph [ref=e211]: Frameworks, research, and field notes from InsiteHub's practitioners. No vendor noise.
+          - generic [ref=e212]:
+            - textbox "your@company.com" [ref=e213]
+            - button "Subscribe" [ref=e214] [cursor=pointer]
+      - generic [ref=e215]:
+        - generic [ref=e216]: © 2026 InsiteHub, Inc. · Newark, DE · InsiteHub, Inc. is a Delaware S-Corp
+        - generic [ref=e217]:
+          - generic [ref=e218]: SOC 2 Type II
+          - generic [ref=e219]: NIH Partner
+          - generic [ref=e220]: Biopharma Native
+          - generic [ref=e221]: University of Delaware Partner
