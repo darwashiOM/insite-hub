@@ -6,6 +6,31 @@ const ContactPage = ({ setPage }) => {
   const [sent,setSent]=useState(false);
   const [track,setTrack]=useState("talk"); // talk | learn | explore
   const u=k=>e=>setForm(f=>({...f,[k]:e.target.value}));
+  const [sending,setSending]=useState(false);
+  const [error,setError]=useState('');
+
+  const handleSubmit = async () => {
+    if (!form.name || !form.email) return;
+    setSending(true);
+    setError('');
+    try {
+      const res = await fetch(import.meta.env.VITE_CONTACT_FUNCTION_URL || '/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...form, track }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setSent(true);
+      } else {
+        setError(data.error || 'Something went wrong. Please try again.');
+      }
+    } catch (e) {
+      setError('Something went wrong. Please try again.');
+    } finally {
+      setSending(false);
+    }
+  };
   return(
     <>
       <div className="ph"><div className="mw" style={{position:"relative"}}>
@@ -74,8 +99,13 @@ const ContactPage = ({ setPage }) => {
                   <label className="fl">Tell us about your situation</label>
                   <textarea className="fi" rows={4} placeholder="What are you trying to solve? Where have you been stuck?" value={form.message} onChange={u("message")} style={{resize:"vertical"}}/>
                 </>}
-                <button className="fsub" onClick={()=>{if(form.name&&form.email)setSent(true)}}>
-                  {track==="talk" ? "Send Message →" : track==="learn" ? "Send Me the Frameworks →" : "Send Me the Overview →"}
+                {error && (
+                  <div style={{background:"rgba(239,68,68,.07)",border:"1px solid rgba(239,68,68,.2)",borderRadius:10,padding:"12px 16px",marginBottom:16,fontSize:13,color:"#DC2626"}}>
+                    {error}
+                  </div>
+                )}
+                <button className="fsub" onClick={handleSubmit} disabled={sending} style={{opacity:sending?.6:1}}>
+                  {sending ? "Sending..." : track==="talk" ? "Send Message →" : track==="learn" ? "Send Me the Frameworks →" : "Send Me the Overview →"}
                 </button>
               </>
             )}
