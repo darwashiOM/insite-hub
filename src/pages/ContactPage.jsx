@@ -107,6 +107,28 @@ const ContactPage = ({ setPage }) => {
           </div>
         </div>
       </div></section>
+
+    {/* RESOURCES */}
+    <section className="sec sl">
+      <div className="mw" style={{textAlign:"center"}}>
+        <div className="ey" style={{textAlign:"center"}}>Want to explore on your own first?</div>
+        <h2 className="h2" style={{textAlign:"center",maxWidth:500,margin:"0 auto 32px"}}>Free frameworks you can use today.</h2>
+        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr 1fr",gap:14}}>
+          {[
+            {icon:"📋",c:"#F4801F",t:"AI Readiness Self-Assessment",d:"15-question framework for evaluating your organization's readiness to deploy AI."},
+            {icon:"🗺️",c:"#7C3AED",t:"AI Pilot Failure Taxonomy",d:"The four failure patterns behind 80-95% of pharma AI pilot failures."},
+            {icon:"📊",c:"#007AFF",t:"Business Case Template",d:"The ROI model structure for framing pilot results in leadership language."},
+            {icon:"⚖️",c:"#D97706",t:"Vendor Evaluation Scorecard",d:"24-point matrix for assessing AI platform vendors in biopharma."},
+          ].map(r=>(
+            <div key={r.t} style={{background:"var(--wh)",border:"1.5px solid var(--br)",borderRadius:16,padding:24,textAlign:"left",transition:"all .2s",cursor:"pointer"}} onMouseEnter={e=>e.currentTarget.style.boxShadow="0 8px 24px rgba(0,0,0,.06)"} onMouseLeave={e=>e.currentTarget.style.boxShadow="none"}>
+              <div style={{width:40,height:40,borderRadius:11,background:(r.c+"12"),display:"flex",alignItems:"center",justifyContent:"center",fontSize:18,marginBottom:12}}>{r.icon}</div>
+              <div style={{fontSize:14,fontWeight:700,color:"var(--dk)",fontFamily:"Manrope,sans-serif",marginBottom:6,lineHeight:1.3}}>{r.t}</div>
+              <div style={{fontSize:12,color:"var(--bd)",lineHeight:1.55}}>{r.d}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
     </>
   );
 };
