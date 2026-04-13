@@ -4,30 +4,16 @@ import Nav from './components/Nav';
 import Footer from './components/Footer';
 import HomePage from './pages/HomePage';
 import PlatformPage from './pages/PlatformPage';
-import InsiteXPage from './pages/InsiteXPage';
-import AdvisoryPage from './pages/AdvisoryPage';
-import ContentPage from './pages/ContentPage';
+import ServicesPage from './pages/ServicesPage';
 import AboutPage from './pages/AboutPage';
-import ProxaLabsPage from './pages/ProxaLabsPage';
-import LiteracyPage from './pages/LiteracyPage';
-import NewsPage from './pages/NewsPage';
-import ResourcesPage from './pages/ResourcesPage';
-import NewsletterPage from './pages/NewsletterPage';
 import ContactPage from './pages/ContactPage';
 
 const PAGE_TITLES = {
   home: "InsiteHub · AI-First Commercial Learning for Biopharma",
   platform: "AI Platform · Forge, Atlas, Echo & Certify · InsiteHub",
-  insitex: "InsiteX LMS · Enterprise Learning for Biopharma · InsiteHub",
-  advisory: "Advisory Services · AI Strategy for Biopharma L&D · InsiteHub",
-  content: "Content Development · MLR-Compliant Biopharma Content · InsiteHub",
+  services: "Services · Advisory, AI Literacy, Content & Experimentation · InsiteHub",
   about: "About InsiteHub · Innovation-Led Biopharma L&D Since 2010",
-  proxalab: "Proxa Labs · AI Experimentation Partner for Biopharma · InsiteHub",
   contact: "Contact InsiteHub · Start a Conversation",
-  literacy: "AI Literacy Program · Biopharma Commercial Teams · InsiteHub",
-  news: "Announcements · InsiteHub",
-  resources: "Resources & Frameworks · InsiteHub",
-  newsletter: "Newsletter · Stay Ahead of AI in Biopharma · InsiteHub",
 };
 
 export default function App() {
@@ -41,9 +27,9 @@ export default function App() {
     document.title = PAGE_TITLES[page] || PAGE_TITLES.home;
     const descs = {
       home:"InsiteHub is the AI implementation partner built for biopharma commercial learning. Advisory, platform, and experimentation — methodology-first, compliance by design.",
-      platform:"The only closed-loop AI platform in biopharma: Forge builds content, Atlas delivers learning, Echo assesses readiness, Certify confirms competency. No competitor has this.",
-      advisory:"InsiteHub Advisory maps your compliance requirements, governance structure, and AI readiness before recommending anything. Methodology before technology.",
-      proxalab:"Proxa Labs helps biopharma commercial L&D organizations design, develop, implement, measure, and navigate AI pilots. Evidence before investment.",
+      platform:"The only closed-loop AI platform in biopharma: Forge builds content, Atlas delivers learning, Echo assesses readiness, Certify confirms competency.",
+      services:"Advisory, AI literacy, content development, and structured experimentation — InsiteHub meets you where you are in your AI journey.",
+      about:"InsiteHub has been solving biopharma commercial learning challenges for 25 years. Innovation-led, compliance by design.",
       contact:"Start a conversation with InsiteHub. Ready to talk, want to learn first, or just exploring — we'll meet you where you are.",
     };
     let meta = document.querySelector('meta[name="description"]');
@@ -51,7 +37,7 @@ export default function App() {
     meta.content = descs[page] || descs.home;
   },[page]);
 
-  const pages={home:HomePage,platform:PlatformPage,insitex:InsiteXPage,advisory:AdvisoryPage,content:ContentPage,about:AboutPage,proxalab:ProxaLabsPage,literacy:LiteracyPage,news:NewsPage,resources:ResourcesPage,newsletter:NewsletterPage,contact:ContactPage};
+  const pages={home:HomePage,platform:PlatformPage,services:ServicesPage,about:AboutPage,contact:ContactPage};
   const Page=pages[page]||HomePage;
   return(
     <>
