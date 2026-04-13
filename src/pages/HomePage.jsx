@@ -22,12 +22,11 @@ const HomePage = ({ setPage }) => {
         </div>
         <div className="hero-loop-desktop" style={{position:"relative"}}><LoopVisual/></div>
       </div>
+      {/* Mobile-only loop visual — inside hero so backgrounds match */}
+      <div className="hero-loop-mobile">
+        <LoopMobile/>
+      </div>
     </section>
-
-    {/* Mobile-only loop visual — vertical timeline */}
-    <div className="hero-loop-mobile">
-      <LoopMobile/>
-    </div>
 
     {/* CLIENT LOGOS */}
     <div className="logo-band">

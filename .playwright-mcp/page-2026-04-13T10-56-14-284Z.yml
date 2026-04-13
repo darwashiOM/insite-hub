@@ -1,0 +1,173 @@
+- generic [ref=e2]:
+  - navigation [ref=e3]:
+    - generic [ref=e4] [cursor=pointer]:
+      - img [ref=e5]
+      - generic [ref=e10]: InsiteHUB
+    - generic [ref=e11]:
+      - button "Book a Demo" [ref=e12] [cursor=pointer]
+      - button "Menu" [ref=e13] [cursor=pointer]
+  - main [ref=e17]:
+    - generic [ref=e20]:
+      - generic [ref=e21]: AI-First · Purpose-Built for Biopharma
+      - heading "The strategy, literacy, and platform to turn your AI mandate into results." [level=1] [ref=e23]:
+        - text: The
+        - emphasis [ref=e24]:
+          - text: strategy, literacy,
+          - text: and platform
+        - text: to turn
+        - text: your AI mandate into results.
+      - paragraph [ref=e25]: The only closed-loop AI platform built for biopharma commercial learning — backed by advisory methodology and a 25-year track record.
+      - generic [ref=e26]:
+        - button "Book a Discovery Call" [ref=e27] [cursor=pointer]
+        - button "See the Platform" [ref=e28] [cursor=pointer]
+    - generic [ref=e30]:
+      - generic [ref=e31]: The Closed Loop
+      - generic [ref=e32]:
+        - generic [ref=e34] [cursor=pointer]:
+          - generic [ref=e35]: ⚡
+          - generic [ref=e36]:
+            - generic [ref=e37]:
+              - generic [ref=e38]: Forge
+              - generic [ref=e39]: Builds content
+            - generic [ref=e40]: AI agents generating MLR-compliant content from your PI, CSRs, and brand assets.
+        - generic [ref=e44] [cursor=pointer]:
+          - generic [ref=e45]: 🎓
+          - generic [ref=e47]:
+            - generic [ref=e48]: Atlas
+            - generic [ref=e49]: Delivers learning
+        - generic [ref=e53] [cursor=pointer]:
+          - generic [ref=e54]: 🎭
+          - generic [ref=e56]:
+            - generic [ref=e57]: Echo
+            - generic [ref=e58]: Assesses readiness
+        - generic [ref=e62] [cursor=pointer]:
+          - generic [ref=e63]: ✅
+          - generic [ref=e65]:
+            - generic [ref=e66]: Certify
+            - generic [ref=e67]: Confirms competency
+      - generic [ref=e68]: ↻ Loop restarts when gaps are detected
+    - generic [ref=e69]:
+      - generic [ref=e70]: Trusted across biopharma and health systems
+      - generic [ref=e71]:
+        - generic [ref=e72]: AbbVie
+        - generic [ref=e73]: Allergan
+        - generic [ref=e74]: Amgen
+        - generic [ref=e75]: AstraZeneca
+        - generic [ref=e76]: Bayer
+        - generic [ref=e77]: Biogen
+        - generic [ref=e78]: BMS
+        - generic [ref=e79]: Genentech
+        - generic [ref=e80]: GSK
+        - generic [ref=e81]: Janssen
+        - generic [ref=e82]: Merck
+        - generic [ref=e83]: Novartis
+        - generic [ref=e84]: Novo Nordisk
+        - generic [ref=e85]: Pfizer
+        - generic [ref=e86]: Roche
+        - generic [ref=e87]: Sanofi
+        - generic [ref=e88]: Takeda
+        - generic [ref=e89]: Teva
+        - generic [ref=e90]: Gilead
+        - generic [ref=e91]: Mass General
+        - generic [ref=e92]: Penn Medicine
+        - generic [ref=e93]: MD Anderson
+    - generic [ref=e95]:
+      - generic [ref=e96]:
+        - generic [ref=e97]: 80–95%
+        - generic [ref=e98]: of pharma AI pilots never scale or deliver measurable value
+      - generic [ref=e99]:
+        - generic [ref=e100]: 11 mo
+        - generic [ref=e101]: average ramp to full rep productivity in biopharma
+      - generic [ref=e102]:
+        - generic [ref=e103]: 84%
+        - generic [ref=e104]: of pharma reps missed quota last year
+      - generic [ref=e105]:
+        - generic [ref=e106]: 25 yrs
+        - generic [ref=e107]: biopharma commercial L&D expertise behind our methodology
+    - generic [ref=e109]:
+      - generic [ref=e110]:
+        - generic [ref=e111]: What We Do
+        - heading "Three ways we help biopharma commercial teams succeed with AI." [level=2] [ref=e112]:
+          - text: Three ways we help biopharma
+          - text: commercial teams succeed with AI.
+      - generic [ref=e113]:
+        - generic [ref=e114] [cursor=pointer]:
+          - generic [ref=e115]: 🤖
+          - generic [ref=e116]: AI Platform
+          - generic [ref=e117]: Four products — Forge, Atlas, Echo, Certify — in one closed loop. Content created automatically rebuilds when assessment gaps emerge. No human handoff.
+          - generic [ref=e118]: Learn more →
+        - generic [ref=e119] [cursor=pointer]:
+          - generic [ref=e120]: 🧭
+          - generic [ref=e121]: Advisory & Services
+          - generic [ref=e122]: AI readiness assessments, governance frameworks, AI literacy training, and content development. We diagnose before we prescribe — and deliver at every stage.
+          - generic [ref=e123]: Learn more →
+        - generic [ref=e124] [cursor=pointer]:
+          - generic [ref=e125]: 🔬
+          - generic [ref=e126]: Proxa Labs
+          - generic [ref=e127]: Structured AI experimentation for biopharma. We help you design the right pilot, measure what matters, and build a business case your CCO can act on.
+          - generic [ref=e128]: Learn more →
+    - generic [ref=e131]:
+      - generic [ref=e132]:
+        - generic [ref=e133]: "\""
+        - paragraph [ref=e134]: What Proxa Labs did differently was refuse to let us skip the hard part — defining what success actually looked like before we built anything. That single decision changed everything. We walked into our budget review with evidence, not a pitch deck.
+        - generic [ref=e135]:
+          - generic [ref=e136]: SC
+          - generic [ref=e137]:
+            - generic [ref=e138]: Sarah Chen
+            - generic [ref=e139]: VP, Commercial Learning & Development
+      - generic [ref=e140]:
+        - generic [ref=e141]:
+          - generic [ref=e142]: 23%
+          - generic [ref=e143]: call quality improvement
+        - generic [ref=e144]:
+          - generic [ref=e145]: "0"
+          - generic [ref=e146]: MLR compliance flags
+        - generic [ref=e147]:
+          - generic [ref=e148]: 3 wks
+          - generic [ref=e149]: pilot to CCO approval
+    - generic [ref=e151]:
+      - heading "The mandate is clear. The platform is ready." [level=2] [ref=e152]:
+        - text: The mandate is clear.
+        - emphasis [ref=e153]: The platform is ready.
+      - paragraph [ref=e154]: 30 minutes. No demo, no pitch. Just your environment and what your actual next step is.
+      - generic [ref=e155]:
+        - button "Book a Discovery Call" [ref=e156] [cursor=pointer]
+        - button "See the Platform →" [ref=e157] [cursor=pointer]
+  - contentinfo [ref=e158]:
+    - generic [ref=e160]:
+      - generic [ref=e161]:
+        - generic [ref=e162]:
+          - generic [ref=e163] [cursor=pointer]:
+            - img [ref=e164]
+            - generic [ref=e169]: InsiteHUB
+          - paragraph [ref=e170]: The AI implementation partner built for biopharma commercial learning — methodology-first, compliance by design.
+          - generic [ref=e171]:
+            - link "LinkedIn" [ref=e172] [cursor=pointer]:
+              - /url: https://linkedin.com/company/insitehub
+              - img [ref=e173]
+            - link "Facebook" [ref=e175] [cursor=pointer]:
+              - /url: https://facebook.com/insitehub
+              - img [ref=e176]
+            - link "X" [ref=e178] [cursor=pointer]:
+              - /url: https://x.com/insitehub
+              - img [ref=e179]
+        - generic [ref=e181]:
+          - generic [ref=e182]: Navigation
+          - generic [ref=e183] [cursor=pointer]: Platform
+          - generic [ref=e184] [cursor=pointer]: Services
+          - generic [ref=e185] [cursor=pointer]: About
+          - generic [ref=e186] [cursor=pointer]: Contact
+          - generic [ref=e187] [cursor=pointer]: Book a Demo
+        - generic [ref=e188]:
+          - generic [ref=e189]: Stay in the loop
+          - paragraph [ref=e190]: Frameworks, research, and field notes from InsiteHub's practitioners. No vendor noise.
+          - generic [ref=e191]:
+            - textbox "your@company.com" [ref=e192]
+            - button "Subscribe" [ref=e193] [cursor=pointer]
+      - generic [ref=e194]:
+        - generic [ref=e195]: © 2026 InsiteHub, Inc. · Newark, DE · InsiteHub, Inc. is a Delaware S-Corp
+        - generic [ref=e196]:
+          - generic [ref=e197]: SOC 2 Type II
+          - generic [ref=e198]: NIH Partner
+          - generic [ref=e199]: Biopharma Native
+          - generic [ref=e200]: University of Delaware Partner

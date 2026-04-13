@@ -329,16 +329,8 @@ h1,h2,h3,h4 { font-family:'Manrope',sans-serif; }
   .hero-inner { grid-template-columns:1fr; }
   .hero-loop-desktop { display:none; }
   .hero-loop-mobile {
-    display:block; padding:0 20px 20px; margin-top:-20px;
+    display:block; padding:0 0 20px; position:relative; z-index:1;
   }
-  .hero-loop-mobile .loop-card {
-    border:none; box-shadow:none; padding:16px; background:transparent;
-  }
-  .hero-loop-mobile .lc-label { font-size:9px; margin-bottom:16px; }
-  .hero-loop-mobile .lc-callout { padding:12px 14px; }
-  .hero-loop-mobile .lc-callout > div:first-child { font-size:12px; }
-  .hero-loop-mobile .lc-callout > div:last-child { font-size:11px; }
-  .hero-loop-mobile .lc-dots { margin-top:12px; }
   .mw { padding:0; }
   .sh { margin-bottom:32px; }
   .pg,.dg,.ag,.ix-fg,.ix-cap3,.cg,.pl-cards { grid-template-columns:1fr; }
@@ -359,7 +351,7 @@ h1,h2,h3,h4 { font-family:'Manrope',sans-serif; }
   .logo-band { padding:20px; }
   .lb-row { gap:16px; }
   .lb-co { font-size:10px; }
-  .hero { min-height:auto; padding:100px 20px 60px; }
+  .hero { min-height:auto; padding:100px 20px 40px; flex-direction:column; }
   .hero-h1 { font-size:clamp(32px,9vw,48px); }
   .hero-p { font-size:16px; }
   .hero-actions { flex-direction:column; gap:10px; }
