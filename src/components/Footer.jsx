@@ -7,6 +7,28 @@ const var_dk2 = "#1A1D25";
 const Footer = ({ setPage }) => {
   const [email,setEmail]=useState('');
   const [subbed,setSubbed]=useState(false);
+  const [sending,setSending]=useState(false);
+
+  const handleSubscribe = async () => {
+    if (!email) return;
+    setSending(true);
+    try {
+      const res = await fetch(import.meta.env.VITE_NEWSLETTER_FUNCTION_URL || '/api/newsletter', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setSubbed(true);
+      }
+    } catch (e) {
+      // Silently fail for newsletter — not critical
+    } finally {
+      setSending(false);
+    }
+  };
+
   return(
   <footer style={{background:var_dk2,borderTop:"1px solid rgba(255,255,255,.06)"}}>
     <div style={{padding:"48px 56px 32px"}}>
@@ -50,7 +72,7 @@ const Footer = ({ setPage }) => {
             ):(
               <div className="fn-wrap">
                 <input className="fn-in" placeholder="your@company.com" value={email} onChange={e=>setEmail(e.target.value)}/>
-                <button className="fn-btn" onClick={()=>{if(email)setSubbed(true)}}>Subscribe</button>
+                <button className="fn-btn" onClick={handleSubscribe} disabled={sending}>{sending ? "..." : "Subscribe"}</button>
               </div>
             )}
           </div>
