@@ -47,7 +47,7 @@ const HomePage = ({ setPage }) => {
           <div className="ey" style={{textAlign:"center"}}>What We Do</div>
           <h2 className="h2" style={{textAlign:"center",maxWidth:600,margin:"0 auto"}}>Three ways we help biopharma<br/>commercial teams succeed with AI.</h2>
         </div>
-        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:16}}>
+        <div className="grid-3">
           {[
             {icon:"🤖",c:"#F4801F",bg:"rgba(244,128,31,.09)",title:"AI Platform",desc:"Four products — Forge, Atlas, Echo, Certify — in one closed loop. Content created automatically rebuilds when assessment gaps emerge. No human handoff.",page:"platform"},
             {icon:"🧭",c:"#007AFF",bg:"rgba(0,122,255,.09)",title:"Advisory & Services",desc:"AI readiness assessments, governance frameworks, AI literacy training, and content development. We diagnose before we prescribe — and deliver at every stage.",page:"services"},
@@ -67,7 +67,7 @@ const HomePage = ({ setPage }) => {
     {/* TESTIMONIAL */}
     <section className="sec sl">
       <div className="mw">
-        <div style={{background:"linear-gradient(135deg,#FFFAF6,#FFF4E8)",border:"1.5px solid rgba(244,128,31,.2)",borderRadius:20,padding:"40px 48px",display:"grid",gridTemplateColumns:"1fr auto",gap:48,alignItems:"center"}}>
+        <div className="grid-auto-quote" style={{background:"linear-gradient(135deg,#FFFAF6,#FFF4E8)",border:"1.5px solid rgba(244,128,31,.2)",borderRadius:20,padding:"40px 48px"}}>
           <div>
             <div style={{fontSize:28,color:"var(--o)",fontWeight:800,lineHeight:1,marginBottom:20,opacity:.3}}>"</div>
             <p style={{fontSize:18,color:"var(--dk)",lineHeight:1.72,fontStyle:"italic",fontWeight:400,marginBottom:24}}>What Proxa Labs did differently was refuse to let us skip the hard part — defining what success actually looked like before we built anything. That single decision changed everything. We walked into our budget review with evidence, not a pitch deck.</p>

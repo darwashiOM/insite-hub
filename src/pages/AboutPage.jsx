@@ -25,7 +25,7 @@ const AboutPage = ({ setPage }) => (
       </div>
 
       {/* Innovation proof points */}
-      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr 1fr",gap:16,marginBottom:64}}>
+      <div className="grid-4" style={{gap:16,marginBottom:64}}>
         {[
           {icon:"🌐",num:"1st",label:"Virtual world for a drug launch",sub:"Won the world's top corporate learning award.",c:"#F4801F"},
           {icon:"🎮",num:"100%",label:"Gamified training participation",sub:"600 sales managers. The first program with universal adoption.",c:"#7C3AED"},

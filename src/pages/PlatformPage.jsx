@@ -72,7 +72,7 @@ const PlatformPage = ({ setPage }) => (
                     <div style={{fontSize:12,color:"var(--st)"}}>{p.tag}</div>
                   </div>
                   <p style={{fontSize:14.5,color:"var(--bd)",lineHeight:1.7,marginBottom:22}}>{p.desc}</p>
-                  <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:9}}>
+                  <div className="grid-2" style={{gap:9}}>
                     {p.bullets.map(b=><div key={b} style={{display:"flex",alignItems:"flex-start",gap:9,fontSize:13,color:"var(--bd)"}}><div style={{width:5,height:5,borderRadius:"50%",background:p.c,flexShrink:0,marginTop:7}}/>{b}</div>)}
                   </div>
                 </div>
@@ -87,7 +87,7 @@ const PlatformPage = ({ setPage }) => (
             <div className="ey" style={{textAlign:"center"}}>Platform Previews</div>
             <h3 style={{fontFamily:"Manrope,sans-serif",fontSize:26,fontWeight:800,color:"var(--dk)",letterSpacing:"-.035em"}}>What it looks like inside.</h3>
           </div>
-          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:16}}>
+          <div className="grid-2">
             {[
               {c:"#F4801F",name:"InsiteHub Forge",sub:"Content creation agent session",rows:[
                 {label:"Launch Content Agent",pct:88,c:"#F4801F",bg:"rgba(244,128,31,.12)"},

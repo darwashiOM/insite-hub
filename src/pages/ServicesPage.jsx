@@ -52,7 +52,7 @@ const ServicesPage = ({ setPage }) => (
           <h2 className="h2">Your team can't use AI tools<br/>they don't understand or trust.</h2>
           <p className="lead">Before your organization deploys AI, it needs a foundation — the concepts, the vocabulary, the judgment to know when AI is helping and when it isn't. Role-targeted tracks for every part of your commercial structure.</p>
         </div>
-        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:14}}>
+        <div className="grid-3" style={{gap:14}}>
           {[
             {icon:"🧠",t:"What AI Actually Does",d:"How LLMs work, where they fail, and why outputs require human judgment.",audience:"All roles"},
             {icon:"⚖️",t:"AI in a Regulated Environment",d:"How AI interacts with MLR review, GxP validation, and compliance requirements.",audience:"Medical · Regulatory"},
@@ -80,7 +80,7 @@ const ServicesPage = ({ setPage }) => (
           <h2 className="h2">Built for field readiness.<br/>Not completion rates.</h2>
           <p className="lead">MLR-compliant content developed with behavioral effectiveness as a design requirement — AI-powered when you're ready, human-led when you're not.</p>
         </div>
-        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:16}}>
+        <div className="grid-2">
           {[
             {icon:"🤖",t:"AI-Powered Content (Forge)",d:"Forge agents generate MLR-compliant modules from PI, CSRs, and brand assets. Every claim cited. Development drops from months to hours."},
             {icon:"✍️",t:"Traditional Instructional Design",d:"Full-service content by practitioners with deep biopharma commercial backgrounds. Human-led, compliance-first, field-validated."},
@@ -105,7 +105,7 @@ const ServicesPage = ({ setPage }) => (
           <h2 className="h2">Your AI mandate deserves<br/>a properly designed experiment.</h2>
           <p className="lead">Proxa Labs helps you define the right AI use case, design a structured experiment, measure success against criteria that matter — and build the business case that turns results into action.</p>
         </div>
-        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr 1fr",gap:14}}>
+        <div className="grid-4" style={{gap:14}}>
           {[
             {n:"Phase 1",c:"#7C3AED",bg:"rgba(124,58,237,.07)",bc:"rgba(124,58,237,.18)",icon:"🎯",title:"Define the Right Use Case",d:"Map your landscape, identify where AI creates value, and produce a prioritized use case hypothesis."},
             {n:"Phase 2",c:"#F4801F",bg:"rgba(244,128,31,.07)",bc:"rgba(244,128,31,.2)",icon:"🔬",title:"Design the Experiment",d:"Structure a pilot against your real constraints — compliance, IT, governance — not a controlled demo."},
@@ -126,7 +126,7 @@ const ServicesPage = ({ setPage }) => (
     {/* INSITEX LMS */}
     <section className="sec sw">
       <div className="mw">
-        <div style={{background:"linear-gradient(135deg,#FFF8F1,#FFF2E4)",borderRadius:20,padding:"40px 48px",border:"1px solid rgba(244,128,31,.18)",display:"grid",gridTemplateColumns:"1fr 1fr",gap:48,alignItems:"center"}}>
+        <div className="grid-2" style={{background:"linear-gradient(135deg,#FFF8F1,#FFF2E4)",borderRadius:20,padding:"40px 48px",border:"1px solid rgba(244,128,31,.18)",gap:48,alignItems:"center"}}>
           <div>
             <div className="ey">InsiteX LMS</div>
             <h3 style={{fontFamily:"Manrope,sans-serif",fontSize:24,fontWeight:900,color:"var(--dk)",marginBottom:14,letterSpacing:"-.035em",lineHeight:1.16}}>Enterprise learning infrastructure.<br/>Built for biopharma.</h3>

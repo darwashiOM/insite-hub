@@ -15,7 +15,7 @@ const ContactPage = ({ setPage }) => {
           <h1 className="ph1" style={{color:"var(--dk)"}}>Where are you<br/>in the <span style={{color:"var(--o)"}}>journey?</span></h1>
           <p className="psub" style={{color:"var(--bd)",marginBottom:36}}>We'll route you to the right starting point — whether you're ready for a real conversation or just beginning to explore.</p>
           {/* Entry point selector */}
-          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:10}}>
+          <div className="grid-3" style={{gap:10}}>
             {[
               {id:"talk",icon:"🗣️",t:"Ready to talk",d:"Let's have a real conversation about your situation."},
               {id:"learn",icon:"📚",t:"Want to learn first",d:"Send me frameworks I can use before committing to anything."},
@@ -113,7 +113,7 @@ const ContactPage = ({ setPage }) => {
       <div className="mw" style={{textAlign:"center"}}>
         <div className="ey" style={{textAlign:"center"}}>Want to explore on your own first?</div>
         <h2 className="h2" style={{textAlign:"center",maxWidth:500,margin:"0 auto 32px"}}>Free frameworks you can use today.</h2>
-        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr 1fr",gap:14}}>
+        <div className="grid-4" style={{gap:14}}>
           {[
             {icon:"📋",c:"#F4801F",t:"AI Readiness Self-Assessment",d:"15-question framework for evaluating your organization's readiness to deploy AI."},
             {icon:"🗺️",c:"#7C3AED",t:"AI Pilot Failure Taxonomy",d:"The four failure patterns behind 80-95% of pharma AI pilot failures."},
