@@ -3,11 +3,14 @@ import { HexMarkLarge } from '../components/HexMark';
 
 const ContactPage = ({ setPage }) => {
   const [form,setForm]=useState({name:"",company:"",email:"",role:"",interest:"",message:""});
-  const [sent,setSent]=useState(false);
-  const [track,setTrack]=useState("talk"); // talk | learn | explore
+  const [sentTracks,setSentTracks]=useState([]); // tracks already submitted
+  const [track,setTrack]=useState("talk");
   const u=k=>e=>setForm(f=>({...f,[k]:e.target.value}));
   const [sending,setSending]=useState(false);
   const [error,setError]=useState('');
+  const justSent = sentTracks.length > 0 && sentTracks[sentTracks.length-1] === track;
+  const alreadySent = sentTracks.includes(track);
+  const previousTrack = sentTracks.length > 0 ? sentTracks[sentTracks.length-1] : null;
 
   const handleSubmit = async () => {
     if (!form.name || !form.email) return;
@@ -21,7 +24,7 @@ const ContactPage = ({ setPage }) => {
       });
       const data = await res.json();
       if (data.success) {
-        setSent(true);
+        setSentTracks(prev => [...prev, track]);
       } else {
         setError(data.error || 'Something went wrong. Please try again.');
       }
@@ -58,25 +61,48 @@ const ContactPage = ({ setPage }) => {
       <section className="sec sw"><div className="mw">
         <div className="cg">
           <div>
-            {sent?(
-              <div style={{background:"rgba(5,150,105,.07)",border:"1px solid rgba(5,150,105,.2)",borderRadius:16,padding:40,textAlign:"center"}}>
-                <div style={{fontSize:40,marginBottom:16}}>✅</div>
-                <div style={{fontSize:22,fontWeight:800,color:"var(--dk)",fontFamily:"Manrope,sans-serif",marginBottom:10,letterSpacing:"-.03em"}}>
-                  {track==="talk" ? "Message received." : track==="learn" ? "Frameworks on the way." : "We'll send you something useful."}
+            {/* Success banner — shows after any submission, stays visible */}
+            {justSent && (
+              <div style={{background:"rgba(5,150,105,.07)",border:"1px solid rgba(5,150,105,.2)",borderRadius:14,padding:"20px 24px",marginBottom:24}}>
+                <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:6}}>
+                  <span style={{fontSize:20}}>✅</span>
+                  <span style={{fontSize:16,fontWeight:700,color:"var(--dk)",fontFamily:"Manrope,sans-serif"}}>
+                    {track==="talk" ? "Message received." : track==="learn" ? "Frameworks on the way." : "We'll send you something useful."}
+                  </span>
                 </div>
-                <div style={{fontSize:14,color:"var(--bd)",lineHeight:1.68}}>
-                  {track==="talk" ? "We'll be in touch within one business day. Urgent launch timeline? We'll prioritize." : "Check your inbox within 24 hours for the AI Readiness Framework and Pilot Failure Taxonomy."}
+                <div style={{fontSize:13,color:"var(--bd)",lineHeight:1.6}}>
+                  {track==="talk" ? "We'll be in touch within one business day." : "Check your inbox within 24 hours."}
+                </div>
+                <div style={{fontSize:13,color:"var(--bd)",marginTop:10}}>Changed your mind? Pick a different option above and send again.</div>
+              </div>
+            )}
+            {/* If they switched to a new track after already submitting */}
+            {!justSent && previousTrack && !alreadySent && (
+              <div style={{background:"rgba(244,128,31,.06)",border:"1px solid var(--o20)",borderRadius:14,padding:"16px 20px",marginBottom:20}}>
+                <div style={{fontSize:13,fontWeight:600,color:"var(--o)",marginBottom:4}}>
+                  {track==="talk" ? "Great — we're glad you're ready to talk." : track==="learn" ? "No rush. We'll send you frameworks first." : "Got it — we'll send you something to start with."}
+                </div>
+                <div style={{fontSize:13,color:"var(--bd)",lineHeight:1.5}}>
+                  We already have your info from before. Just hit send and we'll adjust.
                 </div>
               </div>
-            ):(
+            )}
+            {/* Already sent this exact track */}
+            {!justSent && alreadySent && (
+              <div style={{background:"rgba(5,150,105,.05)",border:"1px solid rgba(5,150,105,.15)",borderRadius:14,padding:"16px 20px",marginBottom:20}}>
+                <div style={{fontSize:13,fontWeight:600,color:"#059669"}}>You've already submitted this one. Pick a different option above, or we'll be in touch soon.</div>
+              </div>
+            )}
+            {/* Form — always visible unless they just sent this track */}
+            {!justSent && (
               <>
-                {track==="learn" && (
+                {track==="learn" && !alreadySent && (
                   <div style={{background:"var(--o10)",border:"1px solid var(--o20)",borderRadius:12,padding:16,marginBottom:20}}>
                     <div style={{fontSize:13,fontWeight:600,color:"var(--o)",marginBottom:4}}>You'll receive:</div>
                     <div style={{fontSize:13,color:"var(--bd)",lineHeight:1.6}}>AI Readiness Self-Assessment · AI Pilot Failure Taxonomy · Business Case Template — three frameworks you can use immediately.</div>
                   </div>
                 )}
-                {track==="explore" && (
+                {track==="explore" && !alreadySent && (
                   <div style={{background:"var(--bl10)",border:"1px solid rgba(0,122,255,.2)",borderRadius:12,padding:16,marginBottom:20}}>
                     <div style={{fontSize:13,fontWeight:600,color:"var(--bl)",marginBottom:4}}>We'll send you:</div>
                     <div style={{fontSize:13,color:"var(--bd)",lineHeight:1.6}}>A short overview of how InsiteHub works and what kind of organizations get the most value — no pitch, no follow-up pressure.</div>
@@ -104,9 +130,11 @@ const ContactPage = ({ setPage }) => {
                     {error}
                   </div>
                 )}
-                <button className="fsub" onClick={handleSubmit} disabled={sending} style={{opacity:sending?.6:1}}>
-                  {sending ? "Sending..." : track==="talk" ? "Send Message →" : track==="learn" ? "Send Me the Frameworks →" : "Send Me the Overview →"}
-                </button>
+                {!alreadySent && (
+                  <button className="fsub" onClick={handleSubmit} disabled={sending} style={{opacity:sending?.6:1}}>
+                    {sending ? "Sending..." : track==="talk" ? "Send Message →" : track==="learn" ? "Send Me the Frameworks →" : "Send Me the Overview →"}
+                  </button>
+                )}
               </>
             )}
           </div>
