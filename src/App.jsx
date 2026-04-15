@@ -4,46 +4,78 @@ import Nav from './components/Nav';
 import Footer from './components/Footer';
 import HomePage from './pages/HomePage';
 import PlatformPage from './pages/PlatformPage';
-import ServicesPage from './pages/ServicesPage';
+import AdvisoryPage from './pages/AdvisoryPage';
+import LiteracyPage from './pages/LiteracyPage';
+import InsiteXPage from './pages/InsiteXPage';
+import ContentPage from './pages/ContentPage';
+import ProxaLabsPage from './pages/ProxaLabsPage';
 import AboutPage from './pages/AboutPage';
+import NewsPage from './pages/NewsPage';
+import ResourcesPage from './pages/ResourcesPage';
+import NewsletterPage from './pages/NewsletterPage';
 import ContactPage from './pages/ContactPage';
 
 const PAGE_TITLES = {
   home: "InsiteHub · AI-First Commercial Learning for Biopharma",
   platform: "AI Platform · Forge, Atlas, Echo & Certify · InsiteHub",
-  services: "Services · Advisory, AI Literacy, Content & Experimentation · InsiteHub",
+  advisory: "Advisory Services · AI Strategy for Biopharma L&D · InsiteHub",
+  literacy: "AI Literacy Program · Role-Targeted AI Fluency · InsiteHub",
+  insitex: "InsiteX LMS · Enterprise Learning for Biopharma · InsiteHub",
+  content: "Content Development · MLR-Compliant Biopharma Content · InsiteHub",
+  proxalab: "Proxa Labs · Structured AI Experimentation · InsiteHub",
   about: "About InsiteHub · Innovation-Led Biopharma L&D Since 2010",
+  news: "Announcements · Latest from InsiteHub",
+  resources: "Resources · Frameworks, Guides & Templates · InsiteHub",
+  newsletter: "Newsletter · Stay Ahead of AI in Biopharma · InsiteHub",
   contact: "Contact InsiteHub · Start a Conversation",
 };
 
+const DESCS = {
+  home: "InsiteHub is the AI implementation partner built for biopharma commercial learning. Advisory, platform, and experimentation — methodology-first, compliance by design.",
+  platform: "The only closed-loop AI platform in biopharma: Forge builds content, Atlas delivers learning, Echo assesses readiness, Certify confirms competency.",
+  advisory: "AI strategy, readiness assessments, governance frameworks, and infrastructure planning — advisory services purpose-built for biopharma commercial L&D.",
+  literacy: "Role-targeted AI literacy tracks for every part of your commercial organization. Build fluency before deploying tools.",
+  insitex: "Enterprise learning management built for biopharma compliance. SCORM, AICC, PMRC compliant. The foundation the AI platform builds on.",
+  content: "MLR-compliant content development — AI-powered (Forge) or traditional instructional design. Built by biopharma commercial practitioners.",
+  proxalab: "Structured AI experimentation for biopharma. Define the right use case, design the experiment, measure what matters, build the business case.",
+  about: "InsiteHub has been solving biopharma commercial learning challenges for 25 years. Innovation-led, compliance by design.",
+  news: "Announcements, partnerships, product updates, and research milestones from InsiteHub and Proxa Labs.",
+  resources: "Frameworks, guides, templates, and research from 25 years of biopharma commercial L&D expertise.",
+  newsletter: "Frameworks, research, and field notes from InsiteHub's practitioners. Sent when there's something worth saying.",
+  contact: "Start a conversation with InsiteHub. Ready to talk, want to learn first, or just exploring — we'll meet you where you are.",
+};
+
+const PAGES = {
+  home: HomePage, platform: PlatformPage, advisory: AdvisoryPage,
+  literacy: LiteracyPage, insitex: InsiteXPage, content: ContentPage,
+  proxalab: ProxaLabsPage, about: AboutPage, news: NewsPage,
+  resources: ResourcesPage, newsletter: NewsletterPage, contact: ContactPage,
+};
+
 export default function App() {
-  const [page,setPage]=useState("home");
-  const [scrolled,setScrolled]=useState(false);
+  const [page, setPage] = useState("home");
+  const [scrolled, setScrolled] = useState(false);
 
-  useEffect(()=>{ const fn=()=>setScrolled(window.scrollY>40); window.addEventListener("scroll",fn); return()=>window.removeEventListener("scroll",fn); },[]);
+  useEffect(() => {
+    const fn = () => setScrolled(window.scrollY > 40);
+    window.addEventListener("scroll", fn);
+    return () => window.removeEventListener("scroll", fn);
+  }, []);
 
-  useEffect(()=>{
-    window.scrollTo(0,0);
+  useEffect(() => {
+    window.scrollTo(0, 0);
     document.title = PAGE_TITLES[page] || PAGE_TITLES.home;
-    const descs = {
-      home:"InsiteHub is the AI implementation partner built for biopharma commercial learning. Advisory, platform, and experimentation — methodology-first, compliance by design.",
-      platform:"The only closed-loop AI platform in biopharma: Forge builds content, Atlas delivers learning, Echo assesses readiness, Certify confirms competency.",
-      services:"Advisory, AI literacy, content development, and structured experimentation — InsiteHub meets you where you are in your AI journey.",
-      about:"InsiteHub has been solving biopharma commercial learning challenges for 25 years. Innovation-led, compliance by design.",
-      contact:"Start a conversation with InsiteHub. Ready to talk, want to learn first, or just exploring — we'll meet you where you are.",
-    };
     let meta = document.querySelector('meta[name="description"]');
-    if(!meta){ meta=document.createElement('meta'); meta.name="description"; document.head.appendChild(meta); }
-    meta.content = descs[page] || descs.home;
-  },[page]);
+    if (!meta) { meta = document.createElement('meta'); meta.name = "description"; document.head.appendChild(meta); }
+    meta.content = DESCS[page] || DESCS.home;
+  }, [page]);
 
-  const pages={home:HomePage,platform:PlatformPage,services:ServicesPage,about:AboutPage,contact:ContactPage};
-  const Page=pages[page]||HomePage;
-  return(
+  const Page = PAGES[page] || HomePage;
+  return (
     <>
-      <Nav page={page} setPage={setPage} scrolled={scrolled}/>
-      <main><Page setPage={setPage}/></main>
-      <Footer setPage={setPage}/>
+      <Nav page={page} setPage={setPage} scrolled={scrolled} />
+      <main><Page setPage={setPage} /></main>
+      <Footer setPage={setPage} />
     </>
   );
 }
