@@ -466,6 +466,17 @@ h1,h2,h3,h4 { font-family:'Manrope',sans-serif; }
 .pull-quote-stat-n { font-family: 'Manrope', sans-serif; font-size: 24px; font-weight: 900; color: var(--o); letter-spacing: -0.03em; line-height: 1; margin-bottom: 4px; }
 .pull-quote-stat-l { font-size: 11px; color: var(--bd); line-height: 1.4; }
 
+.comparison-rail { max-width: 1000px; margin: 0 auto; border: 1.5px solid var(--br); border-radius: 16px; overflow: hidden; background: var(--wh); }
+.comparison-rail-head, .comparison-rail-row { display: grid; grid-template-columns: 2fr repeat(var(--cmp-cols, 3), 1fr); }
+.comparison-rail-row { border-top: 1px solid var(--br); }
+.comparison-rail-cell { padding: 16px 20px; font-family: 'DM Sans', sans-serif; }
+.comparison-rail-feature-label { font-size: 13px; color: var(--dk); font-weight: 500; }
+.comparison-rail-col-head { font-size: 13px; font-weight: 700; color: var(--dk); text-align: center; background: var(--lt); }
+.comparison-rail-cell:not(.comparison-rail-feature-label) { text-align: center; border-left: 1px solid var(--br); }
+.comparison-yes { color: var(--o); font-size: 18px; font-weight: 700; }
+.comparison-no { color: var(--br); font-size: 18px; }
+.comparison-partial { color: var(--bdl); font-size: 12px; }
+
 @media (max-width:960px) {
   .section { padding: var(--section-py-mobile) 20px; }
   .nav { padding:0 20px; }
