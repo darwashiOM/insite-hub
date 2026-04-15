@@ -82,24 +82,28 @@ exports.submitContact = onRequest(async (req, res) => {
 
 exports.submitNewsletter = onRequest(async (req, res) => {
   if (setCors(req, res)) return;
-
   if (req.method !== "POST") {
     res.status(405).json({ error: "Method not allowed" });
     return;
   }
-
-  const { email } = req.body;
-
+  const { email, name, role, interests } = req.body;
   if (!email || !email.includes("@")) {
     res.status(400).json({ error: "Valid email is required." });
     return;
   }
 
+  const rows = [
+    ["Email", email],
+    name && ["Name", name],
+    role && ["Role", role],
+    interests?.length && ["Interests", interests.join(", ")],
+  ].filter(Boolean);
+
   const html = `
     <h2>New Newsletter Subscriber</h2>
-    <p style="font-family:sans-serif;font-size:14px;">
-      <strong>${email}</strong> just subscribed to the InsiteHub newsletter.
-    </p>
+    <table style="border-collapse:collapse;font-family:sans-serif;font-size:14px;">
+      ${rows.map(([k, v]) => `<tr><td style="padding:8px 16px 8px 0;font-weight:bold;color:#666;">${k}</td><td style="padding:8px 0;">${v}</td></tr>`).join('')}
+    </table>
   `;
 
   try {
@@ -108,7 +112,7 @@ exports.submitNewsletter = onRequest(async (req, res) => {
       from: `"InsiteHub Website" <${process.env.SMTP_EMAIL}>`,
       to: process.env.NOTIFY_EMAIL,
       replyTo: email,
-      subject: `New newsletter subscriber: ${email}`,
+      subject: name ? `New newsletter subscriber: ${name} <${email}>` : `New newsletter subscriber: ${email}`,
       html,
     });
     res.status(200).json({ success: true });
