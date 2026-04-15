@@ -411,6 +411,28 @@ h1,h2,h3,h4 { font-family:'Manrope',sans-serif; }
 .split-feature-bullets li { display: flex; gap: 10px; font-size: 14px; color: var(--bd); line-height: 1.55; align-items: flex-start; }
 .bullet-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--o); flex-shrink: 0; margin-top: 8px; }
 
+.card-grid-header { margin-bottom: var(--space-6); }
+.card-grid-header-center { text-align: center; }
+.card-grid {
+  display: grid;
+  gap: var(--space-3);
+}
+.card-grid-2 { grid-template-columns: repeat(2, 1fr); }
+.card-grid-3 { grid-template-columns: repeat(3, 1fr); }
+.card-grid-4 { grid-template-columns: repeat(4, 1fr); }
+.card-grid-card {
+  background: var(--wh);
+  border: 1.5px solid var(--br);
+  border-radius: 16px;
+  transition: all 0.15s ease-out;
+}
+.card-grid-card:hover { border-color: var(--o20); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.06); }
+.card-grid-card-icon { margin-bottom: var(--space-3); color: var(--o); }
+.card-grid-card-tag { display: inline-block; font-size: 10px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; padding: 3px 9px; border-radius: 20px; background: var(--o10); color: var(--o); margin-bottom: var(--space-2); }
+.card-grid-card-title { font-family: 'Manrope', sans-serif; font-size: 16px; font-weight: 700; color: var(--dk); line-height: 1.3; margin-bottom: var(--space-2); letter-spacing: -0.02em; }
+.card-grid-card-body { font-family: 'DM Sans', sans-serif; font-size: 14px; line-height: 1.6; color: var(--bd); }
+.card-grid-card-link { margin-top: var(--space-3); font-size: 13px; font-weight: 600; color: var(--o); }
+
 @media (max-width:960px) {
   .section { padding: var(--section-py-mobile) 20px; }
   .nav { padding:0 20px; }
@@ -463,6 +485,7 @@ h1,h2,h3,h4 { font-family:'Manrope',sans-serif; }
   .editorial-hero-headline { font-size: clamp(32px, 9vw, 44px); }
   .split-feature { grid-template-columns: 1fr !important; gap: var(--space-5); }
   .split-feature-text, .split-feature-visual { order: unset !important; }
+  .card-grid-2, .card-grid-3, .card-grid-4 { grid-template-columns: 1fr !important; }
 }
 
 .mobile-accordion-head {
