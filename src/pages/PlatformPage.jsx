@@ -11,7 +11,7 @@ const PlatformPage = ({ setPage }) => (
           <p className="psub" style={{color:"var(--bd)",marginBottom:36}}>The only closed-loop platform that automatically turns assessment failures into new content builds. Four products. One shared data layer. No human handoff, no vendor dependency, no integration tax.</p>
           <div style={{display:"flex",gap:14,flexWrap:"wrap"}}>
             <button className="bp" onClick={()=>setPage("contact")}>Book a Demo</button>
-            <button className="bs" onClick={()=>setPage("services")}>Start with Advisory First</button>
+            <button className="bs" onClick={()=>setPage("advisory")}>Start with Advisory First</button>
           </div>
         </div>
       </div>
@@ -58,10 +58,10 @@ const PlatformPage = ({ setPage }) => (
         {/* Product detail cards */}
         <div style={{display:"flex",flexDirection:"column",gap:20}}>
           {[
-            {c:"#F4801F",bg:"rgba(244,128,31,.07)",icon:"⚡",name:"InsiteHub Forge",tag:"Agentic content creation",desc:"AI agents build MLR-compliant training content from your PI, CSRs, and brand assets — every claim cited, every artifact approval-ready.",bullets:["Auto-generation from clinical data and product labeling","Citation tracking: every claim traced to source","Content Gap Analyzer feeds directly from Echo failures"]},
-            {c:"#007AFF",bg:"rgba(0,122,255,.07)",icon:"🎓",name:"InsiteHub Atlas",tag:"AI-powered adaptive learning",desc:"Personalized learning pathways mapped to competencies and role requirements, with real-time gap detection that adjusts before reps reach the field.",bullets:["Competency-role mapping with behavioral rubrics","Adaptive pathways that respond dynamically to gaps","Manager dashboards with predictive readiness scoring"]},
-            {c:"#7C3AED",bg:"rgba(124,58,237,.07)",icon:"🎭",name:"InsiteHub Echo",tag:"AI roleplay & behavioral assessment",desc:"Live HCP roleplay with AI physician avatars and real-time compliance monitoring — flagging off-label language and unsupported claims before they become issues.",bullets:["8 HCP digital twin avatars with behavioral models","ComplianceGuard: real-time compliance flagging","Gap payload triggers Forge auto-rebuild pipeline"]},
-            {c:"#059669",bg:"rgba(5,150,105,.07)",icon:"✅",name:"Certify",tag:"Demonstrated field readiness",desc:"Certification earned through demonstrated behavioral competency — not attendance. Audit-ready records tied to specific evidence, retained for 10 years.",bullets:["Competency-gated — no attendance shortcuts","Behavioral evidence for every issued certification","SOC 2 Type II compliant, SHA-256 audit logs"]},
+            {c:"#F4801F",bg:"rgba(244,128,31,.07)",icon:"⚡",name:"InsiteHub Forge",tag:"Agentic content creation",desc:"Forge AI agents build MLR-compliant training content from your PI, CSRs, and brand assets. Every claim is automatically cited. MLR review artifacts are auto-generated alongside the content — not as an afterthought. The Content Gap Analyzer monitors Echo scorecard data and queues new content builds when competency gaps emerge, closing the loop without any human handoff.",bullets:["Auto-generation from clinical data and product labeling","Citation tracking: every claim traced to PI or CSR","Veeva MLR workflow integration — approval-ready output","Content Gap Analyzer feeds directly from Echo scorecard failures","AI-assisted and traditional instructional design options available"]},
+            {c:"#007AFF",bg:"rgba(0,122,255,.07)",icon:"🎓",name:"InsiteHub Atlas",tag:"AI-powered adaptive learning",desc:"Atlas delivers personalized learning pathways mapped to specific competencies and role requirements. The gap-aware engine identifies knowledge deficiencies in real time and adjusts content delivery before reps reach the field. Manager and admin dashboards provide full visibility into team readiness, certification progress, and competency heat maps across the commercial organization.",bullets:["Competency-role mapping with behavioral rubrics","Adaptive pathways that respond dynamically to gap detection","AI Tutor: four modes — Explain / Quiz / Deep Dive / Practice","Manager dashboards with predictive readiness scoring and alerts","Veeva and InsiteX LMS integration"]},
+            {c:"#7C3AED",bg:"rgba(124,58,237,.07)",icon:"🎭",name:"InsiteHub Echo",tag:"AI roleplay & behavioral assessment",desc:"Echo delivers live HCP roleplay using AI-powered physician avatars with behavioral models based on real physician interaction patterns. ComplianceGuard monitors every rep message in real time — flagging off-label language, unsupported claims, and competitor references before they become compliance issues. Behavioral scoring benchmarks reps against industry averages and top quartile performance.",bullets:["8 HCP digital twin avatars with physician behavioral models","ComplianceGuard: 8 real-time detection categories","Behavioral scorecard: pacing, objection handling, empathy signals","Full transcript + SHA-256 immutable audit log","Gap payload → Forge auto-rebuild pipeline"]},
+            {c:"#059669",bg:"rgba(5,150,105,.07)",icon:"✅",name:"Certify",tag:"Demonstrated field readiness",desc:"Certification is earned through demonstrated behavioral competency — not attendance. Reps must pass Echo assessments, complete Atlas pathways, and meet competency thresholds before receiving any credential. Certification records are audit-ready, tied to specific behavioral evidence, and retained for 10 years. When certification requirements change or gaps emerge, the loop restarts automatically.",bullets:["Competency-gated — no pathway shortcuts, no attendance credit","Behavioral evidence tied to every issued certification","10-year audit trail with SHA-256 immutable logs","SOC 2 Type II compliant certification architecture","Triggers Forge content rebuild automatically on competency failure"]},
           ].map(p=>(
             <div key={p.name} style={{background:"var(--wh)",border:"1.5px solid var(--br)",borderRadius:18,padding:34,borderLeft:("4px solid "+p.c)}}>
               <div style={{display:"flex",alignItems:"flex-start",gap:22}}>
@@ -79,6 +79,12 @@ const PlatformPage = ({ setPage }) => (
               </div>
             </div>
           ))}
+        </div>
+
+        <div className="sec-cta">
+          <button className="bp" onClick={()=>setPage("contact")}>Book a Platform Demo</button>
+          <button className="bs" onClick={()=>setPage("advisory")}>Start with Advisory First</button>
+          <button className="bt" onClick={()=>setPage("insitex")}>Not ready for AI? See InsiteX →</button>
         </div>
 
         {/* PRODUCT UI PREVIEWS */}
@@ -135,7 +141,8 @@ const PlatformPage = ({ setPage }) => (
 
         <div className="sec-cta">
           <button className="bp" onClick={()=>setPage("contact")}>Book a Platform Demo</button>
-          <button className="bs" onClick={()=>setPage("services")}>Start with Advisory First</button>
+          <button className="bs" onClick={()=>setPage("advisory")}>Start with Advisory First</button>
+          <button className="bt" onClick={()=>setPage("insitex")}>Not ready for AI? See InsiteX →</button>
         </div>
 
         {/* InsiteX Callout Card */}
@@ -143,10 +150,33 @@ const PlatformPage = ({ setPage }) => (
           <div style={{fontSize:13,fontWeight:700,letterSpacing:".08em",textTransform:"uppercase",color:"var(--o)",marginBottom:10}}>Traditional LMS</div>
           <h3 style={{fontFamily:"Manrope,sans-serif",fontSize:24,fontWeight:800,color:"var(--dk)",letterSpacing:"-.035em",marginBottom:12}}>Not ready for AI? Start with InsiteX LMS.</h3>
           <p style={{fontSize:15,color:"var(--bd)",maxWidth:560,margin:"0 auto 24px",lineHeight:1.7}}>InsiteX is our full-featured learning management system — SCORM-compliant, Veeva-integrated, and built for life sciences teams that need a reliable platform today with a clear upgrade path to AI when the time is right.</p>
-          <button className="bs" onClick={()=>setPage("services")} style={{margin:"0 auto"}}>Learn About InsiteX →</button>
+          <button className="bs" onClick={()=>setPage("insitex")} style={{margin:"0 auto"}}>Learn About InsiteX →</button>
         </div>
       </div>
     </section>
+
+    {/* AI LITERACY PREREQ CALLOUT */}
+    <section className="sec sl"><div className="mw">
+      <div style={{display:"grid",gridTemplateColumns:"2fr 1fr",gap:48,alignItems:"center"}}>
+        <div>
+          <div className="ey">Before You Deploy</div>
+          <h2 className="h2">Make sure your team is ready for what you're about to give them.</h2>
+          <p className="lead" style={{marginBottom:24}}>The most common reason AI platforms underdeliver isn't the technology — it's that the team hasn't built the foundation to use them well. InsiteHub's AI Literacy Program closes that gap before go-live, and makes every platform dollar work harder.</p>
+          <div style={{display:"flex",gap:12,flexWrap:"wrap"}}>
+            <button style={{display:"inline-flex",alignItems:"center",gap:8,fontFamily:"DM Sans,sans-serif",fontSize:15,fontWeight:700,color:"#fff",cursor:"pointer",padding:"14px 32px",borderRadius:11,border:"none",background:"#D97706",transition:"all .2s"}} onClick={()=>setPage("literacy")}>See the AI Literacy Program</button>
+            <button className="bs" onClick={()=>setPage("contact")}>Talk to Us About Sequencing</button>
+          </div>
+        </div>
+        <div style={{background:"rgba(245,158,11,.06)",border:"1.5px solid rgba(245,158,11,.2)",borderRadius:18,padding:28}}>
+          {["Teams understand what tools do — and don't do","Managers can interpret AI-generated readiness scores","Compliance teams know the MLR risk profile","Adoption happens faster, resistance is lower","Platform ROI is realized, not just purchased"].map(t=>(
+            <div key={t} style={{display:"flex",gap:12,alignItems:"flex-start",marginBottom:12}}>
+              <div style={{color:"#D97706",fontWeight:700,fontSize:14,flexShrink:0}}>✓</div>
+              <div style={{fontSize:13,color:"var(--dk)",lineHeight:1.5}}>{t}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div></section>
 
     <section className="cta-full">
       <div style={{position:"relative",zIndex:1}}>
@@ -154,7 +184,7 @@ const PlatformPage = ({ setPage }) => (
         <p className="cf-p">We'll walk you through Forge, Atlas, and Echo in the context of your commercial organization — not a generic product tour.</p>
         <div className="cf-btns">
           <button className="bp" onClick={()=>setPage("contact")}>Book a Demo</button>
-          <button className="bt-wt" onClick={()=>setPage("services")}>Start with Advisory →</button>
+          <button className="bt-wt" onClick={()=>setPage("advisory")}>Start with Advisory →</button>
         </div>
       </div>
     </section>
