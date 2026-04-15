@@ -1,92 +1,121 @@
-import { HexMarkLarge } from '../components/HexMark';
+import EditorialHero from '../components/sections/EditorialHero';
+import SplitFeature from '../components/sections/SplitFeature';
+import CardGrid from '../components/sections/CardGrid';
+import ComparisonRail from '../components/sections/ComparisonRail';
+import CTABand from '../components/sections/CTABand';
+import Icon from '../components/Icon';
 
-const InsiteXPage = ({ setPage }) => (
-  <>
-    {/* DARK HERO */}
-    <div className="ix-hero">
-      <svg style={{position:"absolute",inset:0,width:"100%",height:"100%",opacity:.04,pointerEvents:"none"}} preserveAspectRatio="none">
-        {Array.from({length:18},(_,i)=><line key={"v"+i} x1={(i*6)+"%"} y1="0%" x2={(i*6)+"%"} y2="100%" stroke="#F4801F" strokeWidth="1"/>)}
-        {Array.from({length:10},(_,i)=><line key={"h"+i} x1="0%" y1={(i*11.1)+"%"} x2="100%" y2={(i*11.1)+"%"} stroke="#F4801F" strokeWidth="1"/>)}
-      </svg>
-      <div style={{position:"absolute",top:-180,right:-180,width:700,height:700,background:"radial-gradient(circle,rgba(244,128,31,.14) 0%,transparent 68%)",borderRadius:"50%",pointerEvents:"none"}}/>
-      <div className="mw" style={{position:"relative",zIndex:1}}>
-        <div className="pbadge" style={{background:"rgba(244,128,31,.1)",border:"1px solid rgba(244,128,31,.25)",color:"#F4801F"}}>🖥️ InsiteX LMS</div>
-        <h1 className="ph1" style={{color:"var(--wh)",maxWidth:760}}>Enterprise learning infrastructure.<br/><span style={{color:"var(--o)"}}>Built for biopharma. Not bolted on.</span></h1>
-        <p className="psub" style={{color:"rgba(255,255,255,.48)",marginBottom:40,maxWidth:600}}>A cloud-based all-in-one learning platform for biopharma companies and health systems — with the compliance architecture, credentialing workflows, and content controls that life sciences actually requires.</p>
-        <div style={{display:"flex",gap:14,flexWrap:"wrap"}}>
-          <button className="bp" onClick={()=>setPage("contact")}>Request a Demo</button>
-          <button className="bt-wt" onClick={()=>setPage("contact")}>Talk to an Expert</button>
-        </div>
-        <div style={{display:"flex",gap:44,marginTop:52,paddingTop:40,borderTop:"1px solid rgba(255,255,255,.07)"}}>
-          {[{n:"4+",l:"Years serving biopharma"},{n:"30+",l:"Pharma & health system clients"},{n:"SCORM / AICC",l:"& PMRC compliant"},{n:"SOC 2",l:"Type II in progress"}].map(s=>(
-            <div key={s.n}><div style={{fontSize:22,fontWeight:900,color:"var(--o)",fontFamily:"Manrope,sans-serif",letterSpacing:"-.04em",marginBottom:4}}>{s.n}</div><div style={{fontSize:12,color:"rgba(255,255,255,.32)"}}>{s.l}</div></div>
-          ))}
-        </div>
-      </div>
-    </div>
+const CAPABILITIES = [
+  { icon: <Icon name="lms" size={22} />,           title: "SCORM, AICC, PMRC compliant",      body: "All major pharma content standards supported out of the box. Drop-in compatibility with existing libraries — no migration project required." },
+  { icon: <Icon name="audit" size={22} />,         title: "Credentialing + audit trails",     body: "Role-based credential tracking with full audit trail for regulatory inspection. 10-year retention. SHA-256 immutable logs." },
+  { icon: <Icon name="governance" size={22} />,    title: "Veeva integration",                 body: "Native bi-directional integration with Veeva PromoMats and Vault. Content state syncs both directions automatically." },
+  { icon: <Icon name="infrastructure" size={22} />, title: "Enterprise SSO + RBAC",            body: "SAML 2.0 + OIDC SSO support. Granular role-based permissions for L&D, content, compliance, and IT teams." },
+  { icon: <Icon name="content" size={22} />,        title: "Content lifecycle workflows",      body: "MLR routing, version control, expiration tracking. Built around how pharma content actually moves through approval." },
+  { icon: <Icon name="readiness" size={22} />,     title: "Manager dashboards + reporting",    body: "Live readiness reporting by team, region, and competency. Pre-built reports for the CCO scorecard, training compliance, and certification expiration." },
+];
 
-    {/* FEATURE GRID */}
-    <section className="sec sw"><div className="mw">
-      <div className="sh"><div className="ey">Learner Experience</div><h2 className="h2">Modern, intuitive, and built for the pace of biopharma commercial teams.</h2><p className="lead">InsiteX delivers an engaging learner experience across every device and content modality — with the compliance and credentialing architecture that gives your regulatory team confidence.</p></div>
-      <div className="ix-fg">
-        {[{icon:"🗺️",t:"Personalized Learning Journey",d:"Custom pathways for each learner based on assigned or elective content. Progress tracking and completion status built in from day one."},{icon:"📱",t:"Device Agnostic + Native App",d:"Full web app that works on any device. Native app adds device-specific enhancements and app store distribution for field teams."},{icon:"🎬",t:"Multiple Modality Support",d:"Handles all media types. Full event management for ILT and vILT. Video processing and custom player included."},{icon:"💬",t:"Live Coaching & Collaboration",d:"Live video coaching tool and online community for informal learning, mentoring, and peer collaboration over time."},{icon:"📅",t:"Live Event Management",d:"Tracks all live events and vILT sessions with full Outlook and calendar integration. Reps always know what to do and when."},{icon:"🏅",t:"Badging & Certifications",d:"Custom badge development, credential assignment, and completion certification. Tracks internal and external certifications in one place."}].map(f=>(
-          <div key={f.t} style={{background:"var(--lt)",border:"1.5px solid var(--br)",borderRadius:16,padding:26,transition:"all .2s"}} onMouseEnter={e=>{ e.currentTarget.style.borderColor="#F4801F"; e.currentTarget.style.background="rgba(244,128,31,.04)"; }} onMouseLeave={e=>{ e.currentTarget.style.borderColor="var(--br)"; e.currentTarget.style.background="var(--lt)"; }}>
-            <div style={{width:44,height:44,borderRadius:12,background:"var(--o10)",border:"1px solid var(--o20)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:20,marginBottom:14}}>{f.icon}</div>
-            <div style={{fontSize:15,fontWeight:700,color:"var(--dk)",fontFamily:"Manrope,sans-serif",marginBottom:8}}>{f.t}</div>
-            <div style={{fontSize:13,color:"var(--bd)",lineHeight:1.62}}>{f.d}</div>
-          </div>
-        ))}
-      </div>
-    </div></section>
+const COMPARISON_COLUMNS = [
+  { label: "InsiteX LMS", accent: "#F4801F" },
+  { label: "AI Platform", accent: "#7C3AED" },
+];
+const COMPARISON_ROWS = [
+  { label: "SCORM / AICC content delivery",        values: [true,  true] },
+  { label: "Credential + audit trail",             values: [true,  true] },
+  { label: "Veeva integration",                    values: [true,  true] },
+  { label: "Enterprise SSO + RBAC",                values: [true,  true] },
+  { label: "Agentic AI content creation (Forge)",  values: [false, true] },
+  { label: "AI roleplay assessment (Echo)",        values: [false, true] },
+  { label: "Behavioral certification (Certify)",   values: [false, true] },
+  { label: "Closed-loop gap remediation",          values: [false, true] },
+  { label: "Best for",                              values: ["Today: stable LMS", "Today: AI mandate"] },
+];
 
-    {/* 3-UP CAPABILITIES / ADMIN FEATURES */}
-    <section className="sec sd2"><div className="mw">
-      <div className="sh"><div className="ey-wt">Mission Control</div><h2 className="h2-wt">Admin tools built for compliance teams who can't afford surprises.</h2><p className="lead-wt">InsiteX gives L&D operations real-time dashboards, full versioning control, AI-enabled authoring, and the compliance audit infrastructure biopharma requires.</p></div>
-      <div className="grid-2" style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:14}}>
-        {[{icon:"📊",t:"Actionable Dashboards & Reports",d:"Real-time dashboards for critical information and custom reports for deeper analysis, customizable on the fly."},{icon:"🤖",t:"AI-Enabled Content Authoring",d:"Design and launch eLearning programs with AI assistance. Full versioning control, just-in-time editing, and form creation."},{icon:"📋",t:"Digital Forms & Workflow",d:"Design interactive forms tied back to the master learning record. Owner and approver assignment for compliance tracking."},{icon:"🔄",t:"Versioning Control & Revert",d:"All assets tracked with full versioning. External assets tracked via codes, expiration dates, and content owners."},{icon:"🔒",t:"Group & Role-Based Security",d:"All content access and administration controlled through group security and roles. SSO and Active Directory integration."},{icon:"📝",t:"AI-Enabled Assessments",d:"Comprehensive testing engine for formative and summative evaluation. Tracking, reporting, and custom analytics included."},{icon:"📁",t:"Flexible eLearning Support",d:"Design and launch within the platform or import external content. SCORM and AICC compliant for easy management."},{icon:"✅",t:"Validated & Compliant",d:"PMRC-aligned asset tracking. Fully validated version available. Digital signature capabilities. SOC 2 Type II in progress."}].map(f=>(
-          <div key={f.t} className="fc" style={{display:"flex",gap:16,borderRadius:14,padding:20}} onMouseEnter={e=>e.currentTarget.style.borderColor="rgba(244,128,31,.3)"} onMouseLeave={e=>e.currentTarget.style.borderColor="rgba(255,255,255,.07)"}>
-            <div style={{width:42,height:42,borderRadius:10,background:"rgba(244,128,31,.1)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:17,flexShrink:0}}>{f.icon}</div>
-            <div><div className="fc-t" style={{fontSize:14,marginBottom:5}}>{f.t}</div><div className="fc-d">{f.d}</div></div>
-          </div>
-        ))}
-      </div>
-      <div className="sec-cta">
-        <button className="bp" onClick={()=>setPage("contact")}>Request a Demo</button>
-        <button className="bt-wt" onClick={()=>setPage("platform")}>Ready for AI? See the Platform →</button>
-      </div>
-    </div></section>
+const TRANSITIONS = [
+  { from: "InsiteX", to: "Atlas",          body: "Existing InsiteX learner records carry forward into Atlas adaptive pathways. No data migration." },
+  { from: "Forge",   to: "InsiteX Library", body: "Forge-generated content publishes into your existing InsiteX content library. Teams keep working in the LMS they know." },
+  { from: "Echo",    to: "InsiteX Records", body: "Echo behavioral assessment outcomes log to InsiteX as completion + competency records, audit-ready." },
+];
 
-    {/* TRANSITION PATH */}
-    <section className="sec sw"><div className="mw">
-      <div style={{background:"linear-gradient(135deg,#FFF8F1,#FFF2E4)",borderRadius:22,padding:48,border:"1px solid rgba(244,128,31,.18)"}}>
-        <div className="grid-2" style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:48,alignItems:"center"}}>
-          <div>
-            <div className="ey">When You're Ready</div>
-            <h3 style={{fontFamily:"Manrope,sans-serif",fontSize:28,fontWeight:900,color:"var(--dk)",marginBottom:14,letterSpacing:"-.04em",lineHeight:1.16}}>InsiteX is the foundation.<br/>The AI platform is the upgrade.</h3>
-            <p style={{fontSize:15,color:"var(--bd)",lineHeight:1.7,marginBottom:24}}>When you're ready to add AI-powered content creation, adaptive learning, and HCP roleplay assessment, InsiteX already connects. No rip-and-replace. An expansion of the infrastructure you already have.</p>
-            <button className="bp" onClick={()=>setPage("platform")}>See the AI Platform →</button>
-          </div>
-          <div style={{display:"flex",flexDirection:"column",gap:11}}>
-            {[{f:"InsiteX LMS",fc:"#F4801F",to:"InsiteHub Atlas",tc:"#007AFF",d:"Atlas pathways live natively inside InsiteX. Competency data flows automatically."},{f:"Forge Content",fc:"#F4801F",to:"InsiteX Library",tc:"#007AFF",d:"MLR-approved Forge content publishes directly to the InsiteX content library."},{f:"Echo Scores",fc:"#7C3AED",to:"InsiteX Records",tc:"#059669",d:"Echo behavioral assessments tie back to the master learning record in InsiteX."}].map(r=>(
-              <div key={r.f} style={{background:"var(--wh)",border:"1.5px solid var(--br)",borderRadius:12,padding:18,display:"flex",gap:12,alignItems:"flex-start"}}>
-                <div style={{fontSize:12,fontWeight:700,padding:"3px 10px",borderRadius:20,background:"var(--o10)",color:"var(--o)",flexShrink:0,whiteSpace:"nowrap"}}>{r.f}</div>
-                <div style={{color:"var(--st)",fontSize:16}}>→</div>
-                <div style={{fontSize:12,fontWeight:700,padding:"3px 10px",borderRadius:20,background:"var(--bl10)",color:"var(--bl)",flexShrink:0,whiteSpace:"nowrap"}}>{r.to}</div>
-                <div style={{fontSize:13,color:"var(--bd)",lineHeight:1.5}}>{r.d}</div>
+export default function InsiteXPage({ setPage }) {
+  return (
+    <>
+      <EditorialHero
+        dark
+        eyebrow="InsiteX LMS · Enterprise Learning Infrastructure"
+        headline={<>Enterprise learning. <em>Built for biopharma.</em></>}
+        subhead="A cloud-based learning platform with the compliance architecture, credentialing workflows, and content controls life sciences requires. The foundation the AI platform builds on — and the upgrade path is seamless when your team is ready."
+        primaryCta={{ label: "Request a Demo", onClick: () => setPage("contact") }}
+        secondaryLink={{ label: "See the AI Platform", onClick: () => setPage("platform") }}
+      />
+
+      <SplitFeature
+        ratio="50-50"
+        eyebrow="When InsiteX Is the Right Choice"
+        heading="Not every team is ready for AI. That's fine."
+        body="If your organization needs reliable enterprise learning infrastructure today — with compliance built in, Veeva integration working, and credentialing audit-ready — InsiteX is purpose-built for it. The AI platform layers on top when you're ready, without rip-and-replace."
+        bullets={[
+          "4+ years serving biopharma",
+          "30+ pharma & health system clients",
+          "SCORM / AICC / PMRC compliant",
+          "SOC 2 Type II in progress",
+        ]}
+        cta={{ label: "Talk to Sales", onClick: () => setPage("contact") }}
+        visual={
+          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+            {[{n:"4+",l:"Years serving biopharma"},{n:"30+",l:"Pharma & health system clients"},{n:"SCORM / AICC",l:"& PMRC compliant"},{n:"SOC 2",l:"Type II in progress"}].map(s=>(
+              <div key={s.n} style={{display:"flex",alignItems:"center",gap:16,padding:"14px 18px",background:"#fff",borderRadius:12,border:"1px solid rgba(244,128,31,.12)"}}>
+                <div style={{fontSize:22,fontWeight:900,color:"#F4801F",fontFamily:"Manrope,sans-serif",letterSpacing:"-.04em",minWidth:80}}>{s.n}</div>
+                <div style={{fontSize:13,color:"#5C6370"}}>{s.l}</div>
               </div>
             ))}
           </div>
-        </div>
-      </div>
-    </div></section>
+        }
+      />
 
-    {/* CTA */}
-    <section className="cta-full"><div style={{position:"relative",zIndex:1}}>
-      <h2 className="cf-h">See InsiteX in your <em>commercial environment.</em></h2>
-      <p className="cf-p">We'll walk through the platform against your specific compliance requirements, content types, and team structure.</p>
-      <div className="cf-btns"><button className="bp" onClick={()=>setPage("contact")}>Request a Platform Demo</button><button className="bt-wt" onClick={()=>setPage("advisory")}>Start with Advisory →</button></div>
-    </div></section>
-  </>
-);
+      <CardGrid
+        eyebrow="Six Capability Areas"
+        heading="Everything biopharma L&D actually needs from an LMS."
+        columns={2}
+        cards={CAPABILITIES}
+        cardStyle="standard"
+        background="tinted"
+      />
 
-export default InsiteXPage;
+      <ComparisonRail
+        eyebrow="InsiteX vs AI Platform"
+        heading="Pick the right starting point."
+        columns={COMPARISON_COLUMNS}
+        rows={COMPARISON_ROWS}
+      />
+
+      <SplitFeature
+        ratio="60-40"
+        eyebrow="When You're Ready for AI"
+        heading="The upgrade path is built in."
+        body="Every InsiteX deployment is designed as the foundation layer for the AI platform. When your team is ready to add Forge, Atlas, or Echo, the integration is native — no migration, no re-platforming. Existing learner records, credentials, and content libraries flow forward automatically."
+        cta={{ label: "See the AI Platform", onClick: () => setPage("platform") }}
+        visual={
+          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+            {TRANSITIONS.map(t => (
+              <div key={t.from + t.to} style={{ background: "linear-gradient(90deg, rgba(244,128,31,.06) 0%, rgba(124,58,237,.06) 100%)", border: "1.5px solid rgba(244,128,31,.18)", borderRadius: 12, padding: 18, display: "flex", alignItems: "center", gap: 14 }}>
+                <div style={{ fontSize: 13, fontWeight: 700, color: "#F4801F", fontFamily: "Manrope,sans-serif" }}>{t.from}</div>
+                <div style={{ color: "#7C3AED", fontWeight: 800 }}>→</div>
+                <div style={{ fontSize: 13, fontWeight: 700, color: "#7C3AED", fontFamily: "Manrope,sans-serif" }}>{t.to}</div>
+                <div style={{ fontSize: 12, color: "#5C6370", marginLeft: "auto", maxWidth: 280, textAlign: "right" }}>{t.body}</div>
+              </div>
+            ))}
+          </div>
+        }
+        background="tinted"
+        reverse
+      />
+
+      <CTABand
+        heading={<>Get the LMS that becomes <em>the AI foundation.</em></>}
+        body="Demo InsiteX with your launch calendar in mind. We'll show you what your existing content library looks like inside, and what the upgrade path to AI would look like in 18 months."
+        primaryCta={{ label: "Request a Demo", onClick: () => setPage("contact") }}
+        secondaryLink={{ label: "Talk Strategy First", onClick: () => setPage("advisory") }}
+      />
+    </>
+  );
+}
