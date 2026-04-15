@@ -16,7 +16,7 @@ const NewsPage = ({ setPage }) => (
       {/* FEATURED ANNOUNCEMENT - UMU partnership */}
       <div style={{background:"linear-gradient(135deg,#F8F8FF,#F0F4FF)",border:"1.5px solid rgba(0,122,255,.2)",borderRadius:20,padding:40,marginBottom:40,position:"relative",overflow:"hidden"}}>
         <div style={{position:"absolute",top:16,right:20,fontSize:11,fontWeight:700,color:"#007AFF",background:"rgba(0,122,255,.1)",borderRadius:20,padding:"3px 11px",letterSpacing:".06em"}}>NEW PARTNERSHIP</div>
-        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:48,alignItems:"center"}}>
+        <div className="grid-2" style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:48,alignItems:"center"}}>
           <div>
             <div style={{fontSize:11,letterSpacing:".12em",textTransform:"uppercase",color:"var(--o)",fontWeight:700,marginBottom:10}}>April 2026 · Partnership Announcement</div>
             <h2 style={{fontFamily:"Manrope,sans-serif",fontSize:28,fontWeight:900,color:"var(--dk)",letterSpacing:"-.04em",lineHeight:1.15,marginBottom:14}}>InsiteHub partners with UMU.com to power AI Literacy delivery at scale.</h2>
@@ -43,7 +43,7 @@ const NewsPage = ({ setPage }) => (
       </div>
 
       {/* 4 ADDITIONAL ANNOUNCEMENTS - static cards */}
-      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:16,marginBottom:48}}>
+      <div className="grid-2" style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:16,marginBottom:48}}>
         {[
           {date:"March 2026",tag:"Platform Update",tagC:"#7C3AED",tagBg:"rgba(124,58,237,.08)",icon:"🚀",t:"InsiteHub Echo — ComplianceGuard v2 Released",d:"Real-time compliance monitoring now includes enhanced MLR flag categorization, automated rephrasing suggestions, and expanded banned phrase detection across all six commercial verticals. Available to all Echo clients immediately."},
           {date:"February 2026",tag:"Research",tagC:"#059669",tagBg:"rgba(5,150,105,.08)",icon:"🔬",t:"Proxa Labs publishes AI Readiness Scoring Model beta",d:"The Proxa Labs team has released a beta version of the AI Readiness Scoring Model — an 8-dimension maturity framework for measuring commercial L&D AI readiness. Available to advisory engagement clients as part of Phase 1 diagnostics."},

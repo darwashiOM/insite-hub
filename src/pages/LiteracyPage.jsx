@@ -20,7 +20,7 @@ const LiteracyPage = ({ setPage }) => (
 
     {/* WHY LITERACY FIRST */}
     <section className="sec sl"><div className="mw">
-      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:64,alignItems:"start"}}>
+      <div className="grid-2" style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:64,alignItems:"start"}}>
         <div>
           <div className="ey">Why AI Literacy First</div>
           <h2 className="h2">Most AI implementations fail before the technology is ever deployed.</h2>
@@ -53,7 +53,7 @@ const LiteracyPage = ({ setPage }) => (
         <h2 className="h2">Built for biopharma commercial teams.<br/>Not a generic AI course.</h2>
         <p className="lead">Every module is grounded in the commercial contexts your team actually works in — MLR review, HCP conversations, content creation, field execution, and compliance. This isn't a technology overview. It's a capability program.</p>
       </div>
-      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:14,marginBottom:48}}>
+      <div className="grid-3" style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:14,marginBottom:48}}>
         {[
           {icon:"🧠",t:"What AI Actually Does",d:"The foundational concepts — how large language models work, what they're good at, where they fail, and why the outputs require human judgment. Built for commercial professionals, not engineers.",audience:"All roles"},
           {icon:"⚖️",t:"AI in a Regulated Environment",d:"How AI interacts with MLR review, GxP validation, and compliance requirements. What the regulatory risk profile looks like. How to use AI tools without creating audit exposure.",audience:"Medical · Regulatory · Commercial"},
@@ -73,7 +73,7 @@ const LiteracyPage = ({ setPage }) => (
 
       {/* PROGRAM STRUCTURE / DELIVERY */}
       <div style={{background:"linear-gradient(135deg,#FFFBF0,#FFF5E0)",border:"1px solid rgba(245,158,11,.2)",borderRadius:20,padding:48}}>
-        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:56,alignItems:"center"}}>
+        <div className="grid-2" style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:56,alignItems:"center"}}>
           <div>
             <div style={{fontSize:11,letterSpacing:".12em",textTransform:"uppercase",color:"#D97706",fontWeight:700,marginBottom:12}}>How It's Delivered</div>
             <h3 style={{fontFamily:"Manrope,sans-serif",fontSize:24,fontWeight:800,color:"var(--dk)",marginBottom:14,letterSpacing:"-.03em",lineHeight:1.2}}>Modular. Role-specific.<br/>Designed to fit your launch calendar.</h3>

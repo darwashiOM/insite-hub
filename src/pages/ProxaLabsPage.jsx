@@ -19,7 +19,7 @@ const ProxaLabsPage = ({ setPage }) => (
       <div style={{position:"absolute",bottom:-80,left:200,width:400,height:400,borderRadius:"50%",background:"radial-gradient(circle,rgba(244,128,31,.1) 0%,transparent 65%)",pointerEvents:"none"}}/>
 
       <div className="mw" style={{position:"relative",zIndex:1}}>
-        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:72,alignItems:"center"}}>
+        <div className="grid-2" style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:72,alignItems:"center"}}>
           <div>
             <div className="pbadge" style={{background:"rgba(124,58,237,.1)",border:"1px solid rgba(124,58,237,.25)",color:"#7C3AED",marginBottom:20}}>🔬 Proxa Labs · AI Experimentation Partner</div>
             <h1 className="ph1" style={{color:"var(--dk)"}}>
@@ -37,7 +37,7 @@ const ProxaLabsPage = ({ setPage }) => (
             </div>
           </div>
           {/* Right: stat cards */}
-          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:14}}>
+          <div className="grid-2" style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:14}}>
             {[
               {icon:"🎯",label:"Use Case Definition",val:"Phase 1",desc:"Find the right problem before designing any solution — the step most organizations skip",c:"#7C3AED",bg:"rgba(124,58,237,.07)",bc:"rgba(124,58,237,.18)"},
               {icon:"🔬",label:"Experiment Design",val:"Phase 2",desc:"Built to test against your real constraints — not a controlled environment engineered to succeed",c:"#F4801F",bg:"rgba(244,128,31,.07)",bc:"rgba(244,128,31,.2)"},
@@ -58,7 +58,7 @@ const ProxaLabsPage = ({ setPage }) => (
 
     {/* WHAT IS PROXA LABS */}
     <section className="sec sw"><div className="mw">
-      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:64,alignItems:"center"}}>
+      <div className="grid-2" style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:64,alignItems:"center"}}>
         <div>
           <div className="ey">What is Proxa Labs</div>
           <h2 className="h2">The lab behind the platform.<br/>And your AI experimentation partner.</h2>
@@ -85,7 +85,7 @@ const ProxaLabsPage = ({ setPage }) => (
             </div>
           </div>
         </div>
-        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12}}>
+        <div className="grid-2" style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12}}>
           {[
             {icon:"🧪",t:"Lab-Based Methodology",d:"Every engagement starts with a structured experiment — not a deployment. We test fit in your environment before any scaling decision is made.",c:"#7C3AED",bg:"rgba(124,58,237,.07)"},
             {icon:"🤝",t:"NIH Partnership",d:"InsiteHub leads InsiteXcelerator — one of only two NIH-partnered biomedical accelerators outside a university in the US.",c:"#059669",bg:"rgba(5,150,105,.07)"},
@@ -109,7 +109,7 @@ const ProxaLabsPage = ({ setPage }) => (
         <h2 className="h2" style={{textAlign:"center"}}>Most AI pilots don't fail because the technology is wrong.<br/>They fail because the experiment was never designed properly.</h2>
         <p className="lead" style={{margin:"0 auto",textAlign:"center"}}>When there's no defined use case, no hypothesis, no success criteria, and no path from pilot to business case — the pilot produces interesting data and then quietly dies in a committee meeting. Proxa Labs exists to change that sequence.</p>
       </div>
-      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:14}}>
+      <div className="grid-3" style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:14}}>
         {[
           {icon:"❓",t:"The use case is too broad",d:"'Use AI in training' is not a use case. It's a mandate. Organizations that succeed with AI start with a specific problem that has a measurable outcome — and they validate that problem before building anything.",c:"#7C3AED",bg:"rgba(124,58,237,.07)",bc:"rgba(124,58,237,.15)"},
           {icon:"📐",t:"The experiment isn't designed to generate evidence",d:"A pilot that's scoped to succeed in controlled conditions proves nothing. A properly designed experiment tests the solution against your actual constraints — governance, data, workflow, compliance — so the results are defensible.",c:"#F4801F",bg:"rgba(244,128,31,.07)",bc:"rgba(244,128,31,.15)"},
@@ -170,7 +170,7 @@ const ProxaLabsPage = ({ setPage }) => (
         ].map((ph,i,arr)=>(
           <div key={ph.n} style={{position:"relative"}}>
             <div style={{background:ph.bg,border:("1.5px solid "+ph.bc),borderRadius:20,padding:40,transition:"box-shadow .2s"}} onMouseEnter={e=>e.currentTarget.style.boxShadow="0 16px 48px "+ph.c+"12"} onMouseLeave={e=>e.currentTarget.style.boxShadow="none"}>
-              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:48,alignItems:"start"}}>
+              <div className="grid-2" style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:48,alignItems:"start"}}>
                 {/* Left */}
                 <div>
                   <div style={{display:"flex",alignItems:"center",gap:14,marginBottom:20}}>
@@ -243,7 +243,7 @@ const ProxaLabsPage = ({ setPage }) => (
           <h2 className="h2">What Proxa Labs is working on.</h2>
           <p className="lead">Open research areas that will shape the next generation of InsiteHub products — and inform how we design client experimentation engagements.</p>
         </div>
-        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:16}}>
+        <div className="grid-3" style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:16}}>
           {[
             {icon:"🎭",c:"#7C3AED",bg:"rgba(124,58,237,.08)",bc:"rgba(124,58,237,.18)",t:"Open-Source HCP Avatar Engine",d:"Active hackathon to crowdsource a real-time, open-source conversational avatar system — reducing Echo's dependency on vendor-locked infrastructure. $10K prize pool. Open to developers worldwide.",tag:"Actively recruiting"},
             {icon:"🔬",c:"#F4801F",bg:"rgba(244,128,31,.08)",bc:"rgba(244,128,31,.2)",t:"AI Readiness Scoring Model",d:"Proprietary maturity model for measuring commercial L&D AI readiness across 8 organizational dimensions. Research goal: predictive modeling of pilot success probability before any technology is deployed.",tag:"In development"},

@@ -49,7 +49,7 @@ const AboutPage = ({ setPage }) => (
           <h2 className="h2" style={{marginBottom:12}}>We don't describe our approach as innovative.<br/>We point to what it produced.</h2>
           <p className="lead">InsiteHub's innovation track record spans virtual world deployments, gamified learning at scale, NIH-funded biomedical acceleration, and now the first closed-loop AI platform in biopharma commercial learning. In each case, the starting point was the same: the existing solution wasn't good enough.</p>
         </div>
-        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr 1fr",gap:16}}>
+        <div className="grid-4" style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr 1fr",gap:16}}>
           {[
             {icon:"🌐",num:"1st",label:"Virtual world for a drug launch",sub:"Built when competitors were quoting $5M platforms. Won the world's top corporate learning award.",c:"#F4801F"},
             {icon:"🎮",num:"100%",label:"Gamified training participation",sub:"600 sales managers. A SimCity-style game. The first program in the organization's history with universal adoption.",c:"#7C3AED"},

@@ -80,7 +80,7 @@ const NewsletterPage = ({ setPage }) => {
       {/* 2-COLUMN: form left, what-you-receive right */}
       <section className="sec sw">
         <div className="mw">
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 64, alignItems: "start" }}>
+          <div className="grid-2" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 64, alignItems: "start" }}>
 
             {/* LEFT: Form */}
             <div>
@@ -124,7 +124,7 @@ const NewsletterPage = ({ setPage }) => {
                   </select>
 
                   <label className="fl" style={{ marginBottom: 12 }}>What are you most interested in?</label>
-                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 20 }}>
+                  <div className="grid-2" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 20 }}>
                     {INTERESTS.map(i => (
                       <div
                         key={i}

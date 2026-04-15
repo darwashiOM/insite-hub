@@ -23,7 +23,7 @@ const AdvisoryPage = ({ setPage }) => (
     {/* THE PROBLEM */}
     <section className="sec sw">
       <div className="mw">
-        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:64,alignItems:"start"}}>
+        <div className="grid-2" style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:64,alignItems:"start"}}>
           <div>
             <div className="ey">Why Advisory First</div>
             <h2 className="h2">Advisory is always the entry point. Not a starting option — a structural requirement.</h2>
@@ -100,7 +100,7 @@ const AdvisoryPage = ({ setPage }) => (
     {/* PROOF */}
     <section className="sec sw">
       <div className="mw">
-        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:56,alignItems:"center"}}>
+        <div className="grid-2" style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:56,alignItems:"center"}}>
           <div>
             <div className="ey">Why InsiteHub</div>
             <h2 className="h2">We don't need you to explain biopharma to us.</h2>
@@ -139,7 +139,7 @@ const AdvisoryPage = ({ setPage }) => (
           </div>
           <button onClick={()=>setPage("literacy")} style={{padding:"10px 20px",borderRadius:9,background:"#D97706",border:"none",color:"#fff",fontSize:13,fontWeight:700,cursor:"pointer",fontFamily:"DM Sans,sans-serif",flexShrink:0,whiteSpace:"nowrap"}}>See the Literacy Program</button>
         </div>
-        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:64,alignItems:"start"}}>
+        <div className="grid-2" style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:64,alignItems:"start"}}>
           <div>
             <div className="ey">How We Engage</div>
             <h2 className="h2">Structured engagements.<br/>Clear starting points.<br/>No open-ended commitments.</h2>

@@ -18,7 +18,7 @@ const ResourcesPage = ({ setPage }) => (
         <div className="ey">Frameworks & Guides</div>
         <h2 className="h2">Start here if you're still figuring out<br/>where AI fits in your organization.</h2>
       </div>
-      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:16,marginBottom:60}}>
+      <div className="grid-3" style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:16,marginBottom:60}}>
         {[
           {icon:"📋",c:"#F4801F",bg:"rgba(244,128,31,.07)",bc:"rgba(244,128,31,.2)",tag:"Framework",t:"AI Readiness Self-Assessment",d:"A 15-question framework for evaluating your organization's readiness to deploy AI in commercial learning. Covers data foundations, governance structure, stakeholder alignment, technology infrastructure, and measurement capability.",cta:"Get the Framework"},
           {icon:"🗺️",c:"#7C3AED",bg:"rgba(124,58,237,.07)",bc:"rgba(124,58,237,.2)",tag:"Guide",t:"The AI Pilot Failure Taxonomy",d:"A breakdown of the four failure patterns that account for 80–95% of pharma AI pilot failures — and what each one looks like from the inside before it becomes a postmortem. Built from first-hand failure observation across 30+ biopharma organizations.",cta:"Get the Guide"},
@@ -46,7 +46,7 @@ const ResourcesPage = ({ setPage }) => (
           <h2 className="h2">Active research and early findings.</h2>
           <p className="lead">Open research from InsiteHub's AI lab — work in progress that will shape how we advise clients and build products.</p>
         </div>
-        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:14}}>
+        <div className="grid-3" style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:14}}>
           {[
             {icon:"🎭",tag:"Actively recruiting",tagC:"#7C3AED",t:"Open-Source HCP Avatar Engine",d:"Crowdsourcing a real-time, open-source conversational avatar system via hackathon. $10K prize pool. Reduces vendor lock-in for AI roleplay deployments across the industry."},
             {icon:"📈",tag:"Early results",tagC:"#059669",t:"Behavioral Analytics Correlation Study",d:"Early data shows r=0.84 correlation between AI-assessed behavioral competencies and field performance outcomes. Full study ongoing with InsiteHub Echo cohort data."},

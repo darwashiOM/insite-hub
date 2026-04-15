@@ -42,7 +42,7 @@ const InsiteXPage = ({ setPage }) => (
     {/* 3-UP CAPABILITIES / ADMIN FEATURES */}
     <section className="sec sd2"><div className="mw">
       <div className="sh"><div className="ey-wt">Mission Control</div><h2 className="h2-wt">Admin tools built for compliance teams who can't afford surprises.</h2><p className="lead-wt">InsiteX gives L&D operations real-time dashboards, full versioning control, AI-enabled authoring, and the compliance audit infrastructure biopharma requires.</p></div>
-      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:14}}>
+      <div className="grid-2" style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:14}}>
         {[{icon:"📊",t:"Actionable Dashboards & Reports",d:"Real-time dashboards for critical information and custom reports for deeper analysis, customizable on the fly."},{icon:"🤖",t:"AI-Enabled Content Authoring",d:"Design and launch eLearning programs with AI assistance. Full versioning control, just-in-time editing, and form creation."},{icon:"📋",t:"Digital Forms & Workflow",d:"Design interactive forms tied back to the master learning record. Owner and approver assignment for compliance tracking."},{icon:"🔄",t:"Versioning Control & Revert",d:"All assets tracked with full versioning. External assets tracked via codes, expiration dates, and content owners."},{icon:"🔒",t:"Group & Role-Based Security",d:"All content access and administration controlled through group security and roles. SSO and Active Directory integration."},{icon:"📝",t:"AI-Enabled Assessments",d:"Comprehensive testing engine for formative and summative evaluation. Tracking, reporting, and custom analytics included."},{icon:"📁",t:"Flexible eLearning Support",d:"Design and launch within the platform or import external content. SCORM and AICC compliant for easy management."},{icon:"✅",t:"Validated & Compliant",d:"PMRC-aligned asset tracking. Fully validated version available. Digital signature capabilities. SOC 2 Type II in progress."}].map(f=>(
           <div key={f.t} className="fc" style={{display:"flex",gap:16,borderRadius:14,padding:20}} onMouseEnter={e=>e.currentTarget.style.borderColor="rgba(244,128,31,.3)"} onMouseLeave={e=>e.currentTarget.style.borderColor="rgba(255,255,255,.07)"}>
             <div style={{width:42,height:42,borderRadius:10,background:"rgba(244,128,31,.1)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:17,flexShrink:0}}>{f.icon}</div>
@@ -59,7 +59,7 @@ const InsiteXPage = ({ setPage }) => (
     {/* TRANSITION PATH */}
     <section className="sec sw"><div className="mw">
       <div style={{background:"linear-gradient(135deg,#FFF8F1,#FFF2E4)",borderRadius:22,padding:48,border:"1px solid rgba(244,128,31,.18)"}}>
-        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:48,alignItems:"center"}}>
+        <div className="grid-2" style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:48,alignItems:"center"}}>
           <div>
             <div className="ey">When You're Ready</div>
             <h3 style={{fontFamily:"Manrope,sans-serif",fontSize:28,fontWeight:900,color:"var(--dk)",marginBottom:14,letterSpacing:"-.04em",lineHeight:1.16}}>InsiteX is the foundation.<br/>The AI platform is the upgrade.</h3>
