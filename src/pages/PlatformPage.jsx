@@ -10,8 +10,6 @@ import ForgeShowcase from '../components/showcase/ForgeShowcase';
 import AtlasShowcase from '../components/showcase/AtlasShowcase';
 import EchoShowcase from '../components/showcase/EchoShowcase';
 import CertifyShowcase from '../components/showcase/CertifyShowcase';
-import LoopVisual from '../components/LoopVisual';
-import LoopMobile from '../components/LoopMobile';
 
 const COMPARISON_COLUMNS = [
   { label: "InsiteHub AI Platform", accent: "#F4801F" },
@@ -37,7 +35,6 @@ export default function PlatformPage({ setPage }) {
         subhead="Forge builds content. Atlas delivers learning. Echo assesses readiness in HCP roleplay. Certify confirms behavioral competency. Every assessment failure feeds back into Forge to rebuild content automatically. No human handoffs."
         primaryCta={{ label: "Book a Demo", onClick: () => setPage("contact") }}
         secondaryLink={{ label: "Start with Advisory", onClick: () => setPage("advisory") }}
-        visual={<><div className="hero-loop-desktop"><LoopVisual /></div><div className="hero-loop-mobile"><LoopMobile /></div></>}
       />
 
       <ClosedLoopDiagram />

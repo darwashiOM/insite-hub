@@ -419,6 +419,11 @@ h1,h2,h3,h4 { font-family:'Manrope',sans-serif; }
   display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-7);
   align-items: center;
 }
+.editorial-hero-inner-solo {
+  grid-template-columns: 1fr;
+  max-width: 840px;
+}
+.editorial-hero-inner-solo .editorial-hero-subhead { max-width: 680px; }
 .editorial-hero-content { position: relative; z-index: 1; }
 .editorial-hero-eyebrow { margin-bottom: var(--space-3); }
 .editorial-hero-badge { display: inline-flex; align-items: center; gap: 8px; padding: 5px 14px; border-radius: 100px; background: var(--o10); border: 1px solid var(--o20); color: var(--o); font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: var(--space-3); }
