@@ -4,6 +4,10 @@ import LoopMobile from '../components/LoopMobile';
 import AnnouncementBand from '../components/AnnouncementBand';
 import DiffCard from '../components/DiffCard';
 import SituationCard from '../components/SituationCard';
+import StepCard from '../components/StepCard';
+import NewsletterInline from '../components/NewsletterInline';
+import { HexMark } from '../components/HexMark';
+import SocialIcon from '../components/SocialIcon';
 
 const HomePage = ({ setPage }) => {
   useReveal();
@@ -279,7 +283,128 @@ const HomePage = ({ setPage }) => {
   </div>
 </section>
 
-{/* sections 12-14 land in later tasks */}
+{/* FOR EVERY STAGE */}
+<section className="sec sw" style={{ paddingTop: 60 }}>
+  <div className="mw">
+    <div className="grid-1-1-lg">
+      <div>
+        <div className="ey">For Every Stage of the Journey</div>
+        <h2 className="h2">AI is where we're headed.<br />But we meet you where you are.</h2>
+        <p className="lead" style={{ marginBottom: 32 }}>InsiteHub has been delivering enterprise learning infrastructure for biopharma commercial teams for over four years. The AI platform is our destination. Your timeline is yours to set.</p>
+        <div className="grid-3" style={{ gap: 12 }}>
+          {[
+            { icon: "🗄️", n: "InsiteX LMS", d: "Enterprise learning management purpose-built for biopharma compliance, credentialing, and workflow.", tag: "Enterprise LMS", p: "insitex" },
+            { icon: "📚", n: "Traditional Content", d: "Full-service instructional design by practitioners with deep pharma commercial backgrounds. Human-led, compliance-first.", tag: "Content Services", p: "content" },
+            { icon: "🎓", n: "AI Literacy Program", d: "Build AI fluency across your commercial organization before deploying tools. The prerequisite every AI implementation needs.", tag: "New Program", p: "literacy", highlight: true },
+          ].map(c => (
+            <div key={c.n} onClick={() => setPage(c.p)} style={{ background: c.highlight ? "rgba(245,158,11,.05)" : "var(--lt)", border: c.highlight ? "1.5px solid rgba(245,158,11,.3)" : "1.5px solid var(--br)", borderRadius: 16, padding: 24, cursor: "pointer", position: "relative" }}>
+              {c.highlight && <div style={{ position: "absolute", top: 12, right: 12, fontSize: 10, fontWeight: 700, color: "#D97706", background: "rgba(245,158,11,.15)", borderRadius: 20, padding: "2px 8px", letterSpacing: ".05em" }}>NEW</div>}
+              <div style={{ fontSize: 26, marginBottom: 12 }}>{c.icon}</div>
+              <div style={{ fontSize: 17, fontWeight: 800, color: "var(--dk)", fontFamily: "Manrope,sans-serif", marginBottom: 7 }}>{c.n}</div>
+              <div style={{ fontSize: 13, color: "var(--bd)", lineHeight: 1.6, marginBottom: 14 }}>{c.d}</div>
+              <div style={{ fontSize: 11, fontWeight: 700, color: c.highlight ? "#D97706" : "var(--o)", background: c.highlight ? "rgba(245,158,11,.1)" : "var(--o10)", borderRadius: 20, padding: "4px 12px", display: "inline-block", letterSpacing: ".05em" }}>{c.tag}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+      <div style={{ background: "var(--wh)", borderRadius: 20, padding: 34, border: "1.5px solid var(--br)", boxShadow: "0 8px 36px rgba(0,0,0,.05)" }}>
+        <div style={{ fontSize: 10, letterSpacing: ".14em", textTransform: "uppercase", color: "var(--st)", fontWeight: 700, marginBottom: 24 }}>YOUR PATH WITH INSITEHUB</div>
+        {[
+          { n: "01", t: "Start where you are", d: "InsiteX LMS or traditional content. Proven, compliant, built for pharma." },
+          { n: "02", t: "Assess your AI readiness", d: "Advisory team maps your constraints before recommending anything. No technology pitch." },
+          { n: "03", t: "Build AI literacy across your team", d: "Equip every role — reps, managers, medical affairs — with the fluency to adopt AI tools effectively.", highlight: true },
+          { n: "04", t: "Experiment before committing", d: "Structured pilots generate evidence in your environment before you scale." },
+          { n: "05", t: "Deploy with confidence", d: "Forge, Atlas, and Echo built to survive your governance environment — not a generic enterprise." },
+        ].map(s => <StepCard key={s.n} number={s.n} title={s.t} description={s.d} highlight={s.highlight} />)}
+      </div>
+    </div>
+  </div>
+</section>
+
+{/* THOUGHT LEADERSHIP + NEWSLETTER */}
+<section className="sec sw">
+  <div className="mw">
+    <div className="grid-1-1-lg">
+      <div>
+        <div className="ey">Thought Leadership</div>
+        <h2 className="h2">We write what we know.<br />From the inside of biopharma.</h2>
+        <p className="lead" style={{ marginBottom: 32 }}>InsiteHub's practitioners have spent 25 years inside the environments they write about. Everything we publish is drawn from first-hand implementation experience — what works, what fails, and why the standard playbook keeps producing the same postmortems.</p>
+        <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 28 }}>
+          {[
+            { icon: "🔬", label: "Research & Data", d: "Original data from InsiteHub's advisory engagements and Proxa Labs experiments — failure patterns, readiness benchmarks, and correlation studies you won't find anywhere else.", tag: "Proxa Labs" },
+            { icon: "📋", label: "Frameworks & Tools", d: "Practical tools you can use before committing to anything — AI readiness assessments, pilot design canvases, vendor scorecards, and business case templates.", tag: "Free to Use" },
+            { icon: "🧠", label: "Field Notes", d: "Anonymized insight from active advisory engagements — what questions organizations are actually asking, what's failing in the field, and what separates the pilots that scale from the ones that don't.", tag: "Practitioner Insight" },
+          ].map(f => (
+            <div key={f.label} onClick={() => setPage("resources")} style={{ display: "flex", gap: 14, padding: "16px 20px", background: "var(--lt)", borderRadius: 12, border: "1.5px solid var(--br)", cursor: "pointer" }}>
+              <div style={{ fontSize: 22, flexShrink: 0 }}>{f.icon}</div>
+              <div style={{ flex: 1 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: "var(--dk)", fontFamily: "Manrope,sans-serif" }}>{f.label}</div>
+                  <div style={{ fontSize: 10, fontWeight: 700, color: "var(--o)", background: "var(--o10)", borderRadius: 20, padding: "2px 8px" }}>{f.tag}</div>
+                </div>
+                <div style={{ fontSize: 13, color: "var(--bd)", lineHeight: 1.55 }}>{f.d}</div>
+              </div>
+              <div style={{ color: "var(--o)", fontSize: 16, alignSelf: "center" }}>→</div>
+            </div>
+          ))}
+        </div>
+        <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
+          <button className="bp" onClick={() => setPage("resources")}>Browse All Frameworks & Guides</button>
+          <button className="bs" onClick={() => setPage("proxalab")}>Proxa Labs Research</button>
+        </div>
+      </div>
+      <div style={{ position: "sticky", top: 88 }}>
+        <div style={{ background: "var(--dk)", borderRadius: 22, padding: 36, position: "relative", overflow: "hidden" }}>
+          <div style={{ position: "absolute", top: -40, right: -40, opacity: .06, pointerEvents: "none" }}>
+            <HexMark size={220} color="#F4801F" strokeWidth={0.7} />
+          </div>
+          <div style={{ position: "relative", zIndex: 1 }}>
+            <div style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "rgba(244,128,31,.15)", borderRadius: 20, padding: "4px 12px", marginBottom: 16 }}>
+              <div style={{ width: 6, height: 6, borderRadius: "50%", background: "var(--o)" }} />
+              <span style={{ fontSize: 11, fontWeight: 700, color: "var(--o)", letterSpacing: ".06em" }}>FIELD NOTES · NEWSLETTER</span>
+            </div>
+            <h3 style={{ fontFamily: "Manrope,sans-serif", fontSize: 24, fontWeight: 900, color: "rgba(255,255,255,.9)", letterSpacing: "-.035em", lineHeight: 1.2, marginBottom: 12 }}>Stay ahead of AI in biopharma commercial learning.</h3>
+            <p style={{ fontSize: 14, color: "rgba(255,255,255,.38)", lineHeight: 1.68, marginBottom: 24 }}>Frameworks, research, field notes, and partnership announcements from InsiteHub's practitioners. Sent when there's something genuinely worth your time. No vendor noise.</p>
+            <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 24 }}>
+              {["Original research from Proxa Labs before it's published","New frameworks and tools — subscribers first","Field notes from active advisory engagements","Partnership & product announcements"].map(l => (
+                <div key={l} style={{ display: "flex", gap: 10, alignItems: "flex-start" }}>
+                  <div style={{ width: 16, height: 16, borderRadius: "50%", background: "rgba(244,128,31,.25)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, marginTop: 1 }}>
+                    <svg width="8" height="6" viewBox="0 0 8 6" fill="none"><path d="M1 3L3 5L7 1" stroke="#F4801F" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                  </div>
+                  <div style={{ fontSize: 13, color: "rgba(255,255,255,.45)", lineHeight: 1.5 }}>{l}</div>
+                </div>
+              ))}
+            </div>
+            <NewsletterInline buttonLabel="Get the Frameworks" />
+            <div style={{ marginTop: 16, paddingTop: 16, borderTop: "1px solid rgba(255,255,255,.07)", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+              <div style={{ fontSize: 12, color: "rgba(255,255,255,.2)" }}>No spam. Unsubscribe anytime.</div>
+              <div style={{ display: "flex", gap: 8 }}>
+                {[{type:"linkedin",href:"https://linkedin.com/company/insitehub"},{type:"facebook",href:"https://facebook.com/insitehub"},{type:"x",href:"https://x.com/insitehub"}].map(s => (
+                  <a key={s.type} href={s.href} target="_blank" rel="noopener noreferrer"
+                    style={{ width: 30, height: 30, borderRadius: 7, border: "1px solid rgba(255,255,255,.1)", display: "flex", alignItems: "center", justifyContent: "center", color: "rgba(255,255,255,.28)", textDecoration: "none" }}>
+                    <SocialIcon type={s.type} />
+                  </a>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{/* FINAL CTA */}
+<section className="cta-full">
+  <div style={{ position: "relative", zIndex: 1 }}>
+    <h2 className="cf-h">The mandate is clear.<br /><em>The platform is ready.</em></h2>
+    <p className="cf-p">InsiteHub works with commercial L&D leaders who have an AI imperative and no reliable way to execute it. Let's figure out what your actual next step is.</p>
+    <div className="cf-btns">
+      <button className="bp" onClick={() => setPage("contact")}>Book a Discovery Call</button>
+      <button className="bt-wt" onClick={() => setPage("contact")}>Request a Platform Demo</button>
+    </div>
+  </div>
+</section>
     </>
   );
 };
