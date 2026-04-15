@@ -2,7 +2,6 @@ import EditorialHero from '../components/sections/EditorialHero';
 import LongForm from '../components/sections/LongForm';
 import StepRail from '../components/sections/StepRail';
 import SplitFeature from '../components/sections/SplitFeature';
-import CardGrid from '../components/sections/CardGrid';
 import PullQuote from '../components/sections/PullQuote';
 import CTABand from '../components/sections/CTABand';
 import Icon from '../components/Icon';

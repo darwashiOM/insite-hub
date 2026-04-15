@@ -1,9 +1,7 @@
-import useReveal from '../hooks/useReveal';
 import LoopVisual from '../components/LoopVisual';
 import LoopMobile from '../components/LoopMobile';
 import EditorialHero from '../components/sections/EditorialHero';
 import StatBand from '../components/sections/StatBand';
-import SplitFeature from '../components/sections/SplitFeature';
 import CardGrid from '../components/sections/CardGrid';
 import PullQuote from '../components/sections/PullQuote';
 import StepRail from '../components/sections/StepRail';
@@ -50,7 +48,6 @@ const STEPS = [
 ];
 
 export default function HomePage({ setPage }) {
-  useReveal();
   return (
     <>
       <EditorialHero

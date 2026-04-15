@@ -603,6 +603,10 @@ h1,h2,h3,h4 { font-family:'Manrope',sans-serif; }
   .cta-band { padding: var(--space-8) 20px; }
   .cta-band-actions { flex-direction: column; gap: var(--space-2); width: 100%; }
   .cta-band-actions .bp { width: 100%; justify-content: center; }
+  .comparison-rail-head { display: none; }
+  .comparison-rail-row { grid-template-columns: 1fr !important; }
+  .comparison-rail-cell { border-left: none !important; text-align: left !important; padding: 10px 16px !important; }
+  .comparison-rail-feature-label { font-weight: 700 !important; background: var(--lt) !important; }
 }
 
 .mobile-accordion-head {
