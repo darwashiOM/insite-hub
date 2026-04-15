@@ -1,119 +1,101 @@
-import { HexMarkLarge } from '../components/HexMark';
+import EditorialHero from '../components/sections/EditorialHero';
+import LongForm from '../components/sections/LongForm';
+import CardGrid from '../components/sections/CardGrid';
+import StepRail from '../components/sections/StepRail';
+import StatBand from '../components/sections/StatBand';
+import SplitFeature from '../components/sections/SplitFeature';
+import CTABand from '../components/sections/CTABand';
+import Icon from '../components/Icon';
 
-const LiteracyPage = ({ setPage }) => (
-  <>
-    {/* HERO */}
-    <div className="ph">
-      <div className="mw" style={{position:"relative"}}>
-        <HexMarkLarge size={460} color="#F4801F" opacity={0.04}/>
-        <div style={{position:"relative",zIndex:1,maxWidth:800}}>
-          <div className="pbadge" style={{background:"rgba(245,158,11,.1)",border:"1px solid rgba(245,158,11,.25)",color:"#D97706"}}>🎓 AI Literacy</div>
-          <h1 className="ph1" style={{color:"var(--dk)"}}>Your team can't use AI tools<br/>they don't <span style={{color:"#D97706"}}>understand or trust.</span></h1>
-          <p className="psub" style={{color:"var(--bd)",marginBottom:36}}>Before your commercial organization can deploy AI effectively, it needs a foundation — the concepts, the vocabulary, the judgment to know when AI is helping and when it isn't. InsiteHub's AI Literacy program builds that foundation across every role in your commercial structure.</p>
-          <div style={{display:"flex",gap:14,flexWrap:"wrap"}}>
-            <button className="bp" style={{background:"#D97706"}} onClick={()=>setPage("contact")}>Get the Program Overview</button>
-            <button className="bs" onClick={()=>setPage("advisory")}>Start with Advisory First</button>
+const TRACKS = [
+  { icon: <Icon name="literacy" size={22} />,    title: "What AI Actually Does",           body: "How LLMs work, where they fail, and why outputs require human judgment.",                              tag: "All roles" },
+  { icon: <Icon name="compliance" size={22} />,  title: "AI in a Regulated Environment",   body: "How AI interacts with MLR review, GxP validation, and compliance requirements.",                       tag: "Medical · Regulatory" },
+  { icon: <Icon name="content" size={22} />,     title: "AI for Content Creation",          body: "Prompt design, output review, citation verification, and the human judgment layer.",                  tag: "L&D · Marketing" },
+  { icon: <Icon name="roleplay" size={22} />,    title: "AI in Field Conversations",       body: "AI-generated talking points, coached preparation, and HCP persona behaviors.",                         tag: "Commercial · Sales" },
+  { icon: <Icon name="readiness" size={22} />,   title: "AI and Performance Data",         body: "How to interpret AI-generated competency scores and readiness predictions.",                           tag: "Managers · Leaders" },
+  { icon: <Icon name="strategy" size={22} />,    title: "Building an AI-Ready Mindset",    body: "Experiment-first culture, evaluating vendor claims, and institutional vocabulary.",                    tag: "Leadership · CLO" },
+];
+
+const DELIVERY = [
+  { n: "01", title: "Role-Targeted Tracks",        body: "Every role gets a literacy track designed for the AI tools and decisions specific to their work — not generic 'what is AI' content." },
+  { n: "02", title: "Platform-Agnostic",            body: "Delivered via UMU.com partnership for enterprise-scale rollout. Integrates with existing LMS environments — no rip-and-replace." },
+  { n: "03", title: "Measurable Outcomes",          body: "Pre and post assessments track AI literacy gains by role and cohort. Reporting feeds directly into AI readiness planning and deployment sequencing." },
+  { n: "04", title: "4–8 Week Deployment",          body: "Cohort-based delivery scales from 50 to 5,000+ learners. Most enterprise rollouts complete in 6 weeks from kickoff to certification." },
+];
+
+const OUTCOMES = [
+  { n: "+87%",  l: "AI tool adoption rate vs deployments without literacy program" },
+  { n: "−72%",  l: "support tickets related to AI tool misuse in first 90 days" },
+  { n: "3.8×",  l: "speed to AI value vs technology-first deployments" },
+  { n: "100%",  l: "of completing learners pass post-assessment" },
+];
+
+export default function LiteracyPage({ setPage }) {
+  return (
+    <>
+      <EditorialHero
+        badge="🎓 New Program · Now Available"
+        eyebrow="AI Literacy Program"
+        headline={<>Your team can't use AI tools they <em>don't understand or trust.</em></>}
+        subhead="Before your organization deploys AI, it needs a foundation — the concepts, the vocabulary, the judgment to know when AI is helping and when it isn't. Role-targeted tracks for every part of your commercial structure."
+        primaryCta={{ label: "Get the Program Overview", onClick: () => setPage("contact") }}
+        secondaryLink={{ label: "See the AI Platform", onClick: () => setPage("platform") }}
+      />
+
+      <LongForm
+        eyebrow="Why Literacy First"
+        heading="Teams that understand AI adopt it. Teams that don't, resist it."
+        pullQuote="Every failed pharma AI deployment we've diagnosed had the same root cause: the people expected to use the tools didn't have the vocabulary or judgment to use them well."
+      >
+        <p>Most AI deployment failures in commercial L&D look like adoption failures, but they're really literacy failures. Reps don't trust AI-generated talking points because no one explained where they come from or how to spot when the AI is wrong. Managers can't interpret AI-generated readiness scores because they don't understand what the model is measuring. Medical and Regulatory teams reject AI content reviews because they have no framework for what "AI-generated" means in their workflow.</p>
+        <p>The fix isn't more training on the tool. The fix is foundational AI literacy across the roles that touch AI outputs. Once teams have the conceptual vocabulary — what LLMs do well, what they fail at, where human judgment lives in the loop — adoption stops being a fight and starts being normal use of normal tools.</p>
+        <p>That's what this program does. Six role-targeted tracks. Built on 25 years of pharma commercial training methodology. Delivered at scale through UMU.com.</p>
+      </LongForm>
+
+      <CardGrid
+        eyebrow="Six Role-Targeted Tracks"
+        heading="Built for every role that touches AI outputs."
+        lead="Each track is calibrated to the AI tools and decisions specific to that role. No generic 'what is AI' modules."
+        columns={3}
+        cards={TRACKS}
+        cardStyle="standard"
+        background="tinted"
+      />
+
+      <StepRail
+        eyebrow="Program Structure"
+        heading="Modular. Role-specific. Measurable."
+        steps={DELIVERY}
+      />
+
+      <StatBand stats={OUTCOMES} tone="light" />
+
+      <SplitFeature
+        ratio="60-40"
+        eyebrow="Delivery Partnership"
+        heading="Powered by UMU.com for enterprise-scale rollout."
+        body="InsiteHub's curriculum + UMU's enterprise learning delivery infrastructure. Together we deliver scalable, measurable AI literacy programs to commercial organizations across North America, Europe, and Asia-Pacific. Integrates with InsiteX, existing pharma LMS environments, and UMU's native platform."
+        bullets={[
+          "Global delivery infrastructure",
+          "LMS-agnostic — no rip-and-replace",
+          "Pre/post assessment + cohort reporting",
+        ]}
+        cta={{ label: "Talk to a Program Architect", onClick: () => setPage("contact") }}
+        visual={
+          <div style={{ background: "linear-gradient(135deg, rgba(0,122,255,.05), rgba(0,122,255,.1))", border: "1.5px solid rgba(0,122,255,.15)", borderRadius: 20, padding: 32, textAlign: "center" }}>
+            <div style={{ fontSize: 32, fontFamily: "Manrope,sans-serif", fontWeight: 900, color: "#007AFF", letterSpacing: "-0.03em", marginBottom: 6 }}>UMU.com</div>
+            <div style={{ fontSize: 12, color: "#5C6370", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 18 }}>Strategic Partnership · April 2026</div>
+            <div style={{ fontSize: 13, color: "#12141A", lineHeight: 1.6 }}>"InsiteHub's biopharma domain expertise meets UMU's enterprise learning infrastructure. Together: the AI literacy backbone every pharma deployment needs."</div>
           </div>
-        </div>
-      </div>
-    </div>
+        }
+      />
 
-    {/* WHY LITERACY FIRST */}
-    <section className="sec sl"><div className="mw">
-      <div className="grid-2" style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:64,alignItems:"start"}}>
-        <div>
-          <div className="ey">Why AI Literacy First</div>
-          <h2 className="h2">Most AI implementations fail before the technology is ever deployed.</h2>
-          <p className="lead" style={{marginBottom:20}}>The failure point isn't the platform. It's the team. Commercial organizations that try to deploy AI tools into a workforce that doesn't understand what AI actually does — and doesn't do — face resistance, misuse, and eventually abandonment.</p>
-          <p className="lead" style={{marginBottom:32}}>AI literacy isn't a nice-to-have prerequisite. It's the single most important investment you can make before any AI platform goes live. It's also the fastest way to build the internal credibility that lets AI adoption succeed at scale.</p>
-          <button className="bp" style={{background:"#D97706"}} onClick={()=>setPage("contact")}>Talk to Us About Literacy</button>
-        </div>
-        <div style={{display:"flex",flexDirection:"column",gap:12}}>
-          {[
-            {icon:"😰",t:"Teams that don't understand AI resist it",d:"Resistance to AI tools is almost always rooted in confusion, not opposition. People don't resist what they understand. They resist what feels opaque, unpredictable, or threatening to their role."},
-            {icon:"⚠️",t:"Teams that misuse AI create compliance risk",d:"In a regulated commercial environment, an AI-literate team is a compliance control. An AI-illiterate team is a liability. The difference shows up in MLR review, field conversations, and audit trails."},
-            {icon:"📉",t:"Low adoption kills ROI on every platform investment",d:"The fastest way to undermine a $500K AI platform investment is to deploy it into a team that doesn't know why it exists. Adoption without literacy is a slow-motion project failure."},
-          ].map(c=>(
-            <div key={c.t} style={{background:"var(--wh)",border:"1.5px solid var(--br)",borderRadius:14,padding:22,display:"flex",gap:16}}>
-              <div style={{fontSize:24,flexShrink:0}}>{c.icon}</div>
-              <div>
-                <div style={{fontSize:15,fontWeight:700,color:"var(--dk)",fontFamily:"Manrope,sans-serif",marginBottom:6}}>{c.t}</div>
-                <div style={{fontSize:13,color:"var(--bd)",lineHeight:1.62}}>{c.d}</div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div></section>
-
-    {/* 6 ROLE TRACKS + PROGRAM STRUCTURE / DELIVERY */}
-    <section className="sec sw"><div className="mw">
-      <div className="sh">
-        <div className="ey">Program Overview</div>
-        <h2 className="h2">Built for biopharma commercial teams.<br/>Not a generic AI course.</h2>
-        <p className="lead">Every module is grounded in the commercial contexts your team actually works in — MLR review, HCP conversations, content creation, field execution, and compliance. This isn't a technology overview. It's a capability program.</p>
-      </div>
-      <div className="grid-3" style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:14,marginBottom:48}}>
-        {[
-          {icon:"🧠",t:"What AI Actually Does",d:"The foundational concepts — how large language models work, what they're good at, where they fail, and why the outputs require human judgment. Built for commercial professionals, not engineers.",audience:"All roles"},
-          {icon:"⚖️",t:"AI in a Regulated Environment",d:"How AI interacts with MLR review, GxP validation, and compliance requirements. What the regulatory risk profile looks like. How to use AI tools without creating audit exposure.",audience:"Medical · Regulatory · Commercial"},
-          {icon:"✍️",t:"AI for Content Creation",d:"How to work effectively with AI content generation tools — prompt design, output review, citation verification, and the human judgment layer that MLR requires regardless of how content is generated.",audience:"L&D · Medical Affairs · Marketing"},
-          {icon:"🎭",t:"AI in Field Conversations",d:"What reps need to understand about AI-generated talking points, AI-coached preparation, and how HCP personas behave differently than human practice partners. How to trust — and verify — AI preparation tools.",audience:"Commercial · Sales"},
-          {icon:"📊",t:"AI and Commercial Performance Data",d:"How AI-generated competency scores, behavioral assessments, and readiness predictions should be interpreted by managers. The difference between AI-assisted coaching and AI-replacing judgment.",audience:"Managers · L&D Leaders"},
-          {icon:"🗺️",t:"Building an AI-Ready Mindset",d:"The organizational culture dimension — how to approach AI as an experiment-first capability, how to evaluate vendor claims, and how to develop the institutional vocabulary that lets AI governance work.",audience:"Leadership · CLO · VP L&D"},
-        ].map(m=>(
-          <div key={m.t} style={{background:"var(--lt)",border:"1.5px solid var(--br)",borderRadius:16,padding:26,transition:"all .2s"}} onMouseEnter={e=>{e.currentTarget.style.borderColor="#D97706";e.currentTarget.style.background="rgba(245,158,11,.04)";}} onMouseLeave={e=>{e.currentTarget.style.borderColor="var(--br)";e.currentTarget.style.background="var(--lt)";}}>
-            <div style={{fontSize:26,marginBottom:12}}>{m.icon}</div>
-            <div style={{fontSize:15,fontWeight:700,color:"var(--dk)",fontFamily:"Manrope,sans-serif",marginBottom:8,lineHeight:1.3}}>{m.t}</div>
-            <div style={{fontSize:13,color:"var(--bd)",lineHeight:1.62,marginBottom:12}}>{m.d}</div>
-            <div style={{fontSize:11,fontWeight:700,color:"#D97706",background:"rgba(245,158,11,.1)",borderRadius:20,padding:"3px 10px",display:"inline-block"}}>{m.audience}</div>
-          </div>
-        ))}
-      </div>
-
-      {/* PROGRAM STRUCTURE / DELIVERY */}
-      <div style={{background:"linear-gradient(135deg,#FFFBF0,#FFF5E0)",border:"1px solid rgba(245,158,11,.2)",borderRadius:20,padding:48}}>
-        <div className="grid-2" style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:56,alignItems:"center"}}>
-          <div>
-            <div style={{fontSize:11,letterSpacing:".12em",textTransform:"uppercase",color:"#D97706",fontWeight:700,marginBottom:12}}>How It's Delivered</div>
-            <h3 style={{fontFamily:"Manrope,sans-serif",fontSize:24,fontWeight:800,color:"var(--dk)",marginBottom:14,letterSpacing:"-.03em",lineHeight:1.2}}>Modular. Role-specific.<br/>Designed to fit your launch calendar.</h3>
-            <p style={{fontSize:14,color:"var(--bd)",lineHeight:1.7,marginBottom:20}}>The program is structured as a series of modular learning experiences — each role receives a targeted track, not a generic all-hands overview. Delivery can be integrated into InsiteX LMS, Atlas, or any existing LMS infrastructure.</p>
-            <p style={{fontSize:14,color:"var(--bd)",lineHeight:1.7}}>For organizations preparing to deploy an AI platform, the literacy program runs 4–8 weeks ahead of platform launch. For organizations still evaluating AI, it runs as a standalone capability investment that returns value regardless of which platform you ultimately choose.</p>
-          </div>
-          <div style={{display:"flex",flexDirection:"column",gap:12}}>
-            {[
-              {icon:"🎯",t:"Role-Targeted Tracks",d:"Separate pathways for reps, managers, medical affairs, regulatory, and L&D leadership. Each track covers only what's relevant to that role."},
-              {icon:"🔗",t:"Platform-Agnostic",d:"The program works independently of any InsiteHub platform. It doesn't require an AI deployment to be underway — it builds the foundation for one."},
-              {icon:"📏",t:"Measurable Readiness Outcomes",d:"Pre and post assessments track AI literacy gains by role. Outputs tie directly to your AI readiness score and inform deployment sequencing."},
-              {icon:"⚡",t:"4–8 Week Deployment",d:"Structured to integrate into existing commercial learning calendars. Minimal disruption to field teams. Maximum impact before AI tools go live."},
-            ].map(d=>(
-              <div key={d.t} style={{background:"rgba(255,255,255,.7)",borderRadius:12,padding:"14px 18px",display:"flex",gap:14,alignItems:"flex-start"}}>
-                <div style={{fontSize:18,flexShrink:0}}>{d.icon}</div>
-                <div><div style={{fontSize:14,fontWeight:700,color:"var(--dk)",fontFamily:"Manrope,sans-serif",marginBottom:3}}>{d.t}</div><div style={{fontSize:13,color:"var(--bd)",lineHeight:1.5}}>{d.d}</div></div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* OUTCOMES / CTA ROW */}
-      <div className="sec-cta">
-        <button className="bp" style={{background:"#D97706"}} onClick={()=>setPage("contact")}>Get the Program Overview</button>
-        <button className="bs" onClick={()=>setPage("advisory")}>Bundle with Advisory</button>
-        <button className="bt" onClick={()=>setPage("platform")}>See the AI Platform →</button>
-      </div>
-    </div></section>
-
-    {/* CTA */}
-    <section className="cta-full"><div style={{position:"relative",zIndex:1}}>
-      <h2 className="cf-h">AI tools don't fail.<br/><em>Unprepared teams do.</em></h2>
-      <p className="cf-p">Build the foundation before you deploy the platform. InsiteHub's AI Literacy program makes every subsequent AI investment more likely to stick.</p>
-      <div className="cf-btns">
-        <button className="bp" onClick={()=>setPage("contact")}>Get the Program Overview</button>
-        <button className="bt-wt" onClick={()=>setPage("proxalab")}>Start with an AI Experiment →</button>
-      </div>
-    </div></section>
-  </>
-);
-
-export default LiteracyPage;
+      <CTABand
+        heading={<>Build the foundation, <em>then deploy the tools.</em></>}
+        body="Teams that adopt AI well started with literacy. Teams that resist it started with the tools. Choose the right order."
+        primaryCta={{ label: "Get the Program Overview", onClick: () => setPage("contact") }}
+        secondaryLink={{ label: "See the AI Platform", onClick: () => setPage("platform") }}
+      />
+    </>
+  );
+}
