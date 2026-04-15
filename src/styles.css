@@ -477,6 +477,21 @@ h1,h2,h3,h4 { font-family:'Manrope',sans-serif; }
 .comparison-no { color: var(--br); font-size: 18px; }
 .comparison-partial { color: var(--bdl); font-size: 12px; }
 
+.product-showcase {
+  max-width: 1200px; margin: 0 auto;
+  display: flex; gap: var(--space-7); align-items: center;
+}
+.product-showcase-text { flex: 1; }
+.product-showcase-mockup {
+  flex: 1.1;
+  border: 1.5px solid;
+  border-radius: 20px;
+  padding: var(--space-5);
+  min-height: 480px;
+  display: flex;
+  flex-direction: column;
+}
+
 @media (max-width:960px) {
   .section { padding: var(--section-py-mobile) 20px; }
   .nav { padding:0 20px; }
@@ -533,6 +548,8 @@ h1,h2,h3,h4 { font-family:'Manrope',sans-serif; }
   .pull-quote { padding: var(--space-5); }
   .pull-quote-content { grid-template-columns: 1fr !important; }
   .pull-quote-text { font-size: 17px; }
+  .product-showcase { flex-direction: column !important; gap: var(--space-5); }
+  .product-showcase-mockup { width: 100%; min-height: auto; padding: var(--space-4); }
 }
 
 .mobile-accordion-head {
