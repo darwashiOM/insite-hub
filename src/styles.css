@@ -379,6 +379,29 @@ h1,h2,h3,h4 { font-family:'Manrope',sans-serif; }
 .quiet-link:hover { gap: 10px; }
 .quiet-link-arrow { font-weight: 400; }
 
+.editorial-hero {
+  padding: 148px 56px var(--space-8);
+  background: linear-gradient(160deg, #FEFEFE 0%, #F9FAFB 55%, #F4F6FF 100%);
+  position: relative;
+  overflow: hidden;
+}
+.editorial-hero-dark { background: linear-gradient(150deg, #0D1017 0%, #161B27 55%, #0D1017 100%); color: var(--wh); }
+.editorial-hero-dark .editorial-hero-headline { color: var(--wh); }
+.editorial-hero-dark .editorial-hero-subhead { color: rgba(255,255,255,.6); }
+.editorial-hero-inner {
+  max-width: 1200px; margin: 0 auto;
+  display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-7);
+  align-items: center;
+}
+.editorial-hero-content { position: relative; z-index: 1; }
+.editorial-hero-eyebrow { margin-bottom: var(--space-3); }
+.editorial-hero-badge { display: inline-flex; align-items: center; gap: 8px; padding: 5px 14px; border-radius: 100px; background: var(--o10); border: 1px solid var(--o20); color: var(--o); font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: var(--space-3); }
+.editorial-hero-headline { color: var(--dk); margin-bottom: var(--space-4); }
+.editorial-hero-headline em { font-style: normal; color: var(--o); }
+.editorial-hero-subhead { font-family: 'DM Sans', sans-serif; font-size: 18px; line-height: 1.7; color: var(--bd); max-width: 480px; margin-bottom: var(--space-6); }
+.editorial-hero-actions { display: flex; align-items: center; gap: var(--space-3); flex-wrap: wrap; }
+.editorial-hero-visual { position: relative; }
+
 @media (max-width:960px) {
   .section { padding: var(--section-py-mobile) 20px; }
   .nav { padding:0 20px; }
@@ -426,6 +449,9 @@ h1,h2,h3,h4 { font-family:'Manrope',sans-serif; }
   .ac { padding:20px; }
   .pc { padding:24px; }
   .dc { padding:24px; }
+  .editorial-hero { padding: 120px 20px var(--space-6); }
+  .editorial-hero-inner { grid-template-columns: 1fr !important; gap: var(--space-6); }
+  .editorial-hero-headline { font-size: clamp(32px, 9vw, 44px); }
 }
 
 .mobile-accordion-head {
