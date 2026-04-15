@@ -1,5 +1,7 @@
 import EditorialHero from '../components/sections/EditorialHero';
 import LongForm from '../components/sections/LongForm';
+import ClosedLoopDiagram from '../components/sections/ClosedLoopDiagram';
+import PlatformPreviews from '../components/sections/PlatformPreviews';
 import ProductShowcase from '../components/sections/ProductShowcase';
 import ComparisonRail from '../components/sections/ComparisonRail';
 import SplitFeature from '../components/sections/SplitFeature';
@@ -38,8 +40,10 @@ export default function PlatformPage({ setPage }) {
         visual={<><div className="hero-loop-desktop"><LoopVisual /></div><div className="hero-loop-mobile"><LoopMobile /></div></>}
       />
 
+      <ClosedLoopDiagram />
+
       <LongForm
-        eyebrow="The Closed Loop"
+        eyebrow="Methodology"
         heading="Why a closed loop matters."
         background="tinted"
       >
@@ -107,6 +111,8 @@ export default function PlatformPage({ setPage }) {
         reverse
         background="tinted"
       />
+
+      <PlatformPreviews />
 
       <ComparisonRail
         eyebrow="Why It's Different"
