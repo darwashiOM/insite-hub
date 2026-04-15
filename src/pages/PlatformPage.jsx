@@ -157,7 +157,7 @@ const PlatformPage = ({ setPage }) => (
 
     {/* AI LITERACY PREREQ CALLOUT */}
     <section className="sec sl"><div className="mw">
-      <div style={{display:"grid",gridTemplateColumns:"2fr 1fr",gap:48,alignItems:"center"}}>
+      <div className="grid-2-1" style={{display:"grid",gridTemplateColumns:"2fr 1fr",gap:48,alignItems:"center"}}>
         <div>
           <div className="ey">Before You Deploy</div>
           <h2 className="h2">Make sure your team is ready for what you're about to give them.</h2>

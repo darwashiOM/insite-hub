@@ -12,7 +12,7 @@ const AboutPage = ({ setPage }) => (
     </div></div>
 
     <section className="sec sw"><div className="mw">
-      <div style={{display:"grid",gridTemplateColumns:"3fr 2fr",gap:64,marginBottom:80}}>
+      <div className="grid-2-1" style={{display:"grid",gridTemplateColumns:"3fr 2fr",gap:64,marginBottom:80}}>
         <div>
           <div className="ey">Our Story</div>
           <h2 className="h2">Innovation that comes from the inside.</h2>

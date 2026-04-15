@@ -28,11 +28,16 @@ const ProxaLabsPage = ({ setPage }) => (
             </h1>
             <p className="psub" style={{color:"var(--bd)",marginBottom:36}}>Proxa Labs helps commercial L&D organizations define the right AI use case, design a structured experiment, measure success against criteria that matter to leadership — and build the business case that turns results into action. Evidence before investment. Every time.</p>
             <div style={{display:"flex",gap:14,flexWrap:"wrap"}}>
-              <button style={{display:"inline-flex",alignItems:"center",gap:8,fontFamily:"'DM Sans',sans-serif",fontSize:15,fontWeight:700,color:"#fff",cursor:"pointer",padding:"13px 28px",borderRadius:11,border:"none",background:"linear-gradient(135deg,#7C3AED,#9B3AED)",transition:"all .2s"}}
+              <a
+                href="https://proxalabs.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{display:"inline-flex",alignItems:"center",gap:8,fontFamily:"'DM Sans',sans-serif",fontSize:15,fontWeight:700,color:"#fff",cursor:"pointer",padding:"13px 28px",borderRadius:11,border:"none",background:"linear-gradient(135deg,#7C3AED,#9B3AED)",transition:"all .2s",textDecoration:"none"}}
                 onMouseEnter={e=>e.currentTarget.style.transform="translateY(-2px)"}
-                onMouseLeave={e=>e.currentTarget.style.transform="translateY(0)"}>
+                onMouseLeave={e=>e.currentTarget.style.transform="translateY(0)"}
+              >
                 Visit proxalabs.com →
-              </button>
+              </a>
               <button className="bs" onClick={()=>setPage("contact")}>Get in Touch</button>
             </div>
           </div>
@@ -268,7 +273,7 @@ const ProxaLabsPage = ({ setPage }) => (
       <p className="cf-p">Proxa Labs helps you design experiments that generate real evidence — and turn that evidence into a business case your leadership can act on.</p>
       <div className="cf-btns">
         <button className="bp" onClick={()=>setPage("contact")}>Start an Experimentation Engagement</button>
-        <button className="bt-wt">Visit proxalabs.com →</button>
+        <a href="https://proxalabs.com" target="_blank" rel="noopener noreferrer" className="bt-wt" style={{textDecoration:"none",display:"inline-flex"}}>Visit proxalabs.com →</a>
       </div>
     </div></section>
   </>
