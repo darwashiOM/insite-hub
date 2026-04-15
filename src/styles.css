@@ -386,8 +386,34 @@ h1,h2,h3,h4 { font-family:'Manrope',sans-serif; }
   overflow: hidden;
 }
 .editorial-hero-dark { background: linear-gradient(150deg, #0D1017 0%, #161B27 55%, #0D1017 100%); color: var(--wh); }
+.editorial-hero-dark::before {
+  content: ''; position: absolute; top: -180px; right: -180px;
+  width: 760px; height: 760px; border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(244,128,31,.12) 0%, transparent 62%);
+  pointer-events: none;
+}
+.editorial-hero-dark::after {
+  content: ''; position: absolute; bottom: -140px; left: -140px;
+  width: 580px; height: 580px; border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(124,58,237,.08) 0%, transparent 65%);
+  pointer-events: none;
+}
 .editorial-hero-dark .editorial-hero-headline { color: var(--wh); }
 .editorial-hero-dark .editorial-hero-subhead { color: rgba(255,255,255,.6); }
+
+/* Dark variant of LoopVisual card when used inside dark hero */
+.platform-loop-dark .loop-card {
+  background: rgba(255,255,255,.03);
+  border: 1px solid rgba(255,255,255,.08);
+  box-shadow: 0 28px 72px rgba(0,0,0,.4), 0 0 0 1px rgba(244,128,31,.08) inset;
+}
+.platform-loop-dark .loop-card::before { opacity: 0.85; }
+.platform-loop-dark .lc-label { color: rgba(255,255,255,.45); }
+.platform-loop-dark .loop-card svg text { fill: rgba(255,255,255,.85); }
+.platform-loop-dark .loop-card svg circle[fill="white"] { fill: rgba(18,20,26,.85); }
+.platform-loop-dark .lc-callout { background: rgba(255,255,255,.03) !important; border-color: rgba(255,255,255,.1) !important; }
+.platform-loop-dark .lc-callout > div:last-child { color: rgba(255,255,255,.7) !important; }
+.platform-loop-dark .lc-dot { background: rgba(255,255,255,.1); }
 .editorial-hero-inner {
   max-width: 1200px; margin: 0 auto;
   display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-7);
