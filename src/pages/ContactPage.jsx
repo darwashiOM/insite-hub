@@ -76,7 +76,7 @@ export default function ContactPage({ setPage }) {
       {justSent && (
         <div style={{ background: "rgba(5,150,105,.07)", border: "1px solid rgba(5,150,105,.2)", borderRadius: 14, padding: "20px 24px", marginBottom: 24 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6 }}>
-            <span style={{ fontSize: 20 }}>✅</span>
+            <Icon name="compliance" size={20} color="#059669" />
             <span style={{ fontSize: 16, fontWeight: 700, color: "#12141A", fontFamily: "Manrope,sans-serif" }}>
               {track === "talk" ? "Message received." : track === "learn" ? "Frameworks on the way." : "We'll send you something useful."}
             </span>

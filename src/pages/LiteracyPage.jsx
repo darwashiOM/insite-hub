@@ -34,7 +34,7 @@ export default function LiteracyPage({ setPage }) {
   return (
     <>
       <EditorialHero
-        badge="🎓 New Program · Now Available"
+        badge="New Program · Now Available"
         eyebrow="AI Literacy Program"
         headline={<>Your team can't use AI tools they <em>don't understand or trust.</em></>}
         subhead="Before your organization deploys AI, it needs a foundation — the concepts, the vocabulary, the judgment to know when AI is helping and when it isn't. Role-targeted tracks for every part of your commercial structure."

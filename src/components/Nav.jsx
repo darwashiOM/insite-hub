@@ -1,14 +1,15 @@
 import { useState, useEffect, useRef } from 'react';
 import { HexMark } from './HexMark';
+import Icon from './Icon';
 
 const DROP_ITEMS = [
-  {icon:"🧭",title:"I need an AI strategy",desc:"Assess your readiness and build a roadmap before any technology decision.",tag:"Advisory",p:"advisory"},
-  {icon:"🔬",title:"I want to run an AI pilot",desc:"Structure the experiment, define success criteria, build the business case.",tag:"Proxa Labs",p:"proxalab"},
-  {icon:"🎓",title:"I need AI literacy training",desc:"Build AI fluency across your commercial organization before deploying tools.",tag:"AI Literacy",p:"literacy"},
-  {icon:"🚀",title:"I'm ready for a platform",desc:"See Forge, Atlas, Echo, and Certify — the only closed-loop AI platform.",tag:"AI Platform",p:"platform"},
-  {icon:"📚",title:"I need content for a launch",desc:"AI-generated or human-led, MLR-compliant content on your timeline.",tag:"Content",p:"content"},
-  {icon:"🖥️",title:"I need an LMS first",desc:"Enterprise learning infrastructure built for biopharma compliance.",tag:"InsiteX LMS",p:"insitex"},
-  {icon:"💬",title:"I'm not sure yet",desc:"30 minutes. No pitch. Tell us where you're stuck.",tag:"Book a Call",p:"contact"},
+  {icon:<Icon name="strategy" size={20} />,title:"I need an AI strategy",desc:"Assess your readiness and build a roadmap before any technology decision.",tag:"Advisory",p:"advisory"},
+  {icon:<Icon name="pilot" size={20} />,title:"I want to run an AI pilot",desc:"Structure the experiment, define success criteria, build the business case.",tag:"Proxa Labs",p:"proxalab"},
+  {icon:<Icon name="literacy" size={20} />,title:"I need AI literacy training",desc:"Build AI fluency across your commercial organization before deploying tools.",tag:"AI Literacy",p:"literacy"},
+  {icon:<Icon name="platform" size={20} />,title:"I'm ready for a platform",desc:"See Forge, Atlas, Echo, and Certify — the only closed-loop AI platform.",tag:"AI Platform",p:"platform"},
+  {icon:<Icon name="content" size={20} />,title:"I need content for a launch",desc:"AI-generated or human-led, MLR-compliant content on your timeline.",tag:"Content",p:"content"},
+  {icon:<Icon name="lms" size={20} />,title:"I need an LMS first",desc:"Enterprise learning infrastructure built for biopharma compliance.",tag:"InsiteX LMS",p:"insitex"},
+  {icon:<Icon name="chat" size={20} />,title:"I'm not sure yet",desc:"30 minutes. No pitch. Tell us where you're stuck.",tag:"Book a Call",p:"contact"},
 ];
 
 const TOP_LINKS = [
@@ -62,7 +63,7 @@ const Nav = ({ page, setPage, scrolled }) => {
               }}>
                 {DROP_ITEMS.map(d => (
                   <div key={d.p} onClick={() => go(d.p)} className="ndm-item" style={{ padding: "14px 16px", borderRadius: 10, cursor: "pointer" }}>
-                    <div style={{ fontSize: 18, marginBottom: 5 }}>{d.icon}</div>
+                    <div style={{ color: 'var(--o)', marginBottom: 5 }}>{d.icon}</div>
                     <div style={{ fontSize: 13, fontWeight: 700, color: "var(--dk)", marginBottom: 3, fontFamily: "Manrope,sans-serif" }}>{d.title}</div>
                     <div style={{ fontSize: 11.5, color: "var(--bd)", lineHeight: 1.45, marginBottom: 6 }}>{d.desc}</div>
                     <span style={{ fontSize: 10, fontWeight: 700, color: "var(--o)", background: "var(--o10)", borderRadius: 20, padding: "2px 8px", display: "inline-block", letterSpacing: ".04em" }}>{d.tag}</span>
