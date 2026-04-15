@@ -1,57 +1,96 @@
-import { HexMarkLarge } from '../components/HexMark';
+import EditorialHero from '../components/sections/EditorialHero';
+import SplitFeature from '../components/sections/SplitFeature';
+import CardGrid from '../components/sections/CardGrid';
+import LongForm from '../components/sections/LongForm';
+import CTABand from '../components/sections/CTABand';
+import Icon from '../components/Icon';
 
-const ContentPage = ({ setPage }) => (
-  <>
-    {/* HERO */}
-    <div className="ph"><div className="mw" style={{position:"relative"}}>
-      <HexMarkLarge size={420} color="#F4801F" opacity={0.04}/>
-      <div style={{position:"relative",zIndex:1,maxWidth:720}}>
-        <div className="pbadge" style={{background:"var(--o10)",border:"1px solid var(--o20)",color:"var(--o)"}}>📄 Content Development</div>
-        <h1 className="ph1" style={{color:"var(--dk)"}}>Built for field readiness.<br/><span style={{color:"var(--o)"}}>Not completion rates.</span></h1>
-        <p className="psub" style={{color:"var(--bd)",marginBottom:36}}>A product launch doesn't get a second chance. InsiteHub content is developed with MLR compliance and behavioral effectiveness as design requirements — AI-powered when you're ready, human-led when you're not.</p>
-        <div style={{display:"flex",gap:14,flexWrap:"wrap"}}><button className="bp" onClick={()=>setPage("contact")}>Talk to a Content Expert</button><button className="bs" onClick={()=>setPage("platform")}>See Forge (AI Content)</button></div>
-      </div>
-    </div></div>
+const CAPABILITIES = [
+  { icon: <Icon name="agent" size={22} />,        title: "AI-Powered Content (Forge)",   body: "Forge agents generate MLR-compliant modules from PI, CSRs, and brand assets. Every claim cited. Development drops from months to hours. Best for high-volume, time-sensitive launch content." },
+  { icon: <Icon name="content" size={22} />,      title: "Traditional Instructional Design", body: "Full-service content by practitioners with deep biopharma commercial backgrounds. Human-led, compliance-first, field-validated. Best for nuanced therapeutic content and high-stakes launches." },
+  { icon: <Icon name="compliance" size={22} />,   title: "MLR-Integrated Design",         body: "Compliance as a design input, not a last gate. Fewer revision cycles. Faster time-to-field. We embed MLR considerations from day one of content design." },
+  { icon: <Icon name="checklist" size={22} />,    title: "AI-Assisted Human Review",      body: "Forge drafts the structure, citations, and compliance scaffolding. InsiteHub practitioners review and validate. Best of both worlds for organizations not ready for full AI authoring." },
+];
 
-    {/* SPLIT: AI-POWERED VS TRADITIONAL + 4 CAPABILITY CARDS */}
-    <section className="sec sw"><div className="mw">
-      <div className="sh"><div className="ey">Two Tracks. One Standard.</div><h2 className="h2">AI-powered when you're ready.<br/>Human-led when you're not.</h2><p className="lead">InsiteHub delivers across both tracks with the same compliance standards and behavioral orientation. The track you choose today doesn't determine where you go next.</p></div>
-      <div className="grid-2" style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:16,marginBottom:48}}>
-        {[{icon:"🤖",t:"AI-Powered Content (Forge)",d:"Forge agents generate MLR-compliant modules from PI, CSRs, and brand assets. Every claim cited. MLR review artifacts auto-generated. Development drops from months to hours — without sacrificing compliance integrity."},{icon:"✍️",t:"Traditional Instructional Design",d:"Full-service content by practitioners with deep biopharma commercial backgrounds. Therapy area expertise. Compliance-first. Field-validated. For organizations that need human judgment at every step."},{icon:"⚖️",t:"MLR-Integrated Design",d:"Compliance as a design input, not a last gate. Fewer revision cycles. Faster time-to-field. Content built to survive the governance process without sacrificing behavioral effectiveness. The buyers who've watched content stall in MLR review know exactly what this difference costs."},{icon:"🔄",t:"AI-Assisted Human Review",d:"Forge drafts the structure, citations, and compliance scaffolding. InsiteHub practitioners review, refine, and validate. The speed and consistency of AI with the quality assurance of experienced human judgment."}].map(c=>(
-          <div key={c.t} style={{background:"var(--lt)",border:"1.5px solid var(--br)",borderRadius:16,padding:28}}>
-            <div style={{fontSize:26,marginBottom:14}}>{c.icon}</div>
-            <div style={{fontSize:18,fontWeight:800,color:"var(--dk)",marginBottom:10,fontFamily:"Manrope,sans-serif",letterSpacing:"-.03em"}}>{c.t}</div>
-            <div style={{fontSize:14,color:"var(--bd)",lineHeight:1.67}}>{c.d}</div>
+const THERAPY_AREAS = ["Oncology","Hematology","Immunology","Cardiology","Endocrinology","Neurology","Rare Disease","Vaccines","Anti-Infectives","Respiratory"];
+
+export default function ContentPage({ setPage }) {
+  return (
+    <>
+      <EditorialHero
+        eyebrow="Content Development · Two Tracks"
+        headline={<>MLR-compliant content. <em>Built for field readiness.</em></>}
+        subhead="Whether you need AI-generated content at speed or human-led instructional design for high-stakes launches, InsiteHub delivers MLR-compliant training built by practitioners with deep biopharma commercial backgrounds. Pick the track that fits the moment."
+        primaryCta={{ label: "Talk to a Content Lead", onClick: () => setPage("contact") }}
+        secondaryLink={{ label: "See Forge", onClick: () => setPage("platform") }}
+      />
+
+      <SplitFeature
+        ratio="50-50"
+        eyebrow="Two Tracks. One Standard."
+        heading="AI-powered, human-led, or both."
+        body="Forge accelerates content development from months to hours when speed matters. Traditional instructional design protects the depth and nuance complex therapeutic content requires. Most launches benefit from both — Forge for foundational modules, human-led for the high-stakes objection handling."
+        bullets={[
+          "Compliance-first design — every output MLR-routable",
+          "Field-validated — built by people who've ridden along",
+          "Behavior-change targeted — completion is not the metric",
+        ]}
+        cta={{ label: "See How Forge Works", onClick: () => setPage("platform") }}
+        visual={
+          <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+            <div style={{ background: "rgba(244,128,31,.07)", border: "1.5px solid rgba(244,128,31,.18)", borderRadius: 14, padding: 22 }}>
+              <div style={{ fontFamily: "Manrope,sans-serif", fontWeight: 800, fontSize: 14, color: "#F4801F", marginBottom: 8 }}>AI-Powered (Forge)</div>
+              <div style={{ fontSize: 13, color: "#5C6370", lineHeight: 1.6 }}>Hours to draft. Auto-citation. MLR pre-checked.</div>
+            </div>
+            <div style={{ background: "rgba(124,58,237,.07)", border: "1.5px solid rgba(124,58,237,.18)", borderRadius: 14, padding: 22 }}>
+              <div style={{ fontFamily: "Manrope,sans-serif", fontWeight: 800, fontSize: 14, color: "#7C3AED", marginBottom: 8 }}>Traditional ID</div>
+              <div style={{ fontSize: 13, color: "#5C6370", lineHeight: 1.6 }}>Practitioner-authored. Field-validated. Behavior-change targeted.</div>
+            </div>
           </div>
-        ))}
-      </div>
+        }
+      />
 
-      {/* THERAPY AREA COVERAGE */}
-      <div style={{background:"var(--wh)",borderRadius:18,padding:32,border:"1.5px solid var(--br)"}}>
-        <div className="ey">Therapy Area Coverage</div>
-        <h3 style={{fontFamily:"Manrope,sans-serif",fontSize:22,fontWeight:800,color:"var(--dk)",marginBottom:14,letterSpacing:"-.03em"}}>Built for the complexity of biopharma commercial launches.</h3>
-        <p style={{fontSize:14,color:"var(--bd)",lineHeight:1.7,maxWidth:680,marginBottom:22}}>InsiteHub content practitioners bring deep therapy area expertise across biopharma's major commercial categories. Content is not generic — it is developed with scientific rigor, regulatory sensitivity, and the field deployment realities that distinguish pharma from enterprise L&D.</p>
-        <div style={{display:"flex",flexWrap:"wrap",gap:10}}>
-          {["Oncology","Immunology","Rare Disease","Cardiovascular","Metabolic","Neuroscience","Respiratory","Infectious Disease","Ophthalmology","Hematology"].map(t=>(
-            <div key={t} style={{fontSize:12,fontWeight:600,padding:"7px 16px",borderRadius:20,background:"var(--lt)",border:"1.5px solid var(--br)",color:"var(--bd)"}}>{t}</div>
-          ))}
-        </div>
-      </div>
+      <CardGrid
+        eyebrow="Four Capability Areas"
+        heading="Pick the right track for the moment."
+        columns={2}
+        cards={CAPABILITIES}
+        cardStyle="standard"
+        background="tinted"
+      />
 
-      {/* CTA BUTTONS */}
-      <div className="sec-cta">
-        <button className="bp" onClick={()=>setPage("contact")}>Talk to a Content Expert</button>
-        <button className="bs" onClick={()=>setPage("platform")}>See Forge in the AI Platform</button>
-      </div>
-    </div></section>
+      <LongForm
+        eyebrow="Example Scenario"
+        heading="A 9-month launch window. Three therapeutic indications. One content team."
+      >
+        <p>The brand team needs MLR-compliant launch training for the field force across three approved indications. The launch window is 9 months. The content team has bandwidth for one indication using traditional instructional design. The other two indications would either be late or skipped entirely.</p>
+        <p>InsiteHub's mixed approach: Forge agents draft foundational training modules for indications two and three from PI, CSRs, and brand assets. Each draft includes auto-cited claims and an MLR pre-check pass. InsiteHub practitioners validate the drafts (typically 1-2 week review per module) and the brand team focuses traditional ID effort on the lead indication's high-stakes objection handling and HCP scenario work.</p>
+        <p>Result: all three indications launch with MLR-cleared training on time. The content team's bandwidth gets directed to the highest-value, hardest-to-automate work. Forge handles the foundational lift.</p>
+      </LongForm>
 
-    {/* CTA */}
-    <section className="cta-full"><div style={{position:"relative",zIndex:1}}>
-      <h2 className="cf-h">Content that reaches the field <em>on time.</em></h2>
-      <p className="cf-p">Tell us about your next launch or your current content bottleneck. We'll show you how InsiteHub handles it.</p>
-      <div className="cf-btns"><button className="bp" onClick={()=>setPage("contact")}>Talk to a Content Expert</button><button className="bt-wt" onClick={()=>setPage("platform")}>See Forge →</button></div>
-    </div></section>
-  </>
-);
+      <SplitFeature
+        ratio="60-40"
+        eyebrow="Therapeutic Area Coverage"
+        heading="We've worked across the major therapeutic areas pharma sells into."
+        body="InsiteHub's content practitioners have authored launch training across oncology, hematology, immunology, cardiology, endocrinology, neurology, rare disease, vaccines, anti-infectives, and respiratory. The therapeutic depth shows in the work: nuanced PI handling, accurate MOA framing, and HCP persona behaviors that match real specialty conversations."
+        cta={{ label: "Discuss Your Launch", onClick: () => setPage("contact") }}
+        visual={
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+            {THERAPY_AREAS.map(t => (
+              <span key={t} style={{ padding: "8px 16px", borderRadius: 100, background: "#fff", border: "1.5px solid #E3E5EA", fontSize: 13, fontWeight: 600, color: "#12141A", fontFamily: "DM Sans,sans-serif" }}>{t}</span>
+            ))}
+          </div>
+        }
+        reverse
+        background="tinted"
+      />
 
-export default ContentPage;
+      <CTABand
+        heading={<>Launch on time. <em>MLR clean.</em></>}
+        body="Tell us about your launch window and content backlog. We'll show you the mix of AI-powered and human-led work that fits."
+        primaryCta={{ label: "Start a Conversation", onClick: () => setPage("contact") }}
+        secondaryLink={{ label: "See Forge", onClick: () => setPage("platform") }}
+      />
+    </>
+  );
+}
