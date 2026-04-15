@@ -149,28 +149,47 @@ Current About is trimmed. Restore:
 
 ### NewsPage
 
-- Hero (light)
-- Filter chips (All / Partnerships / Platform Updates / Research)
-- Card grid of announcements (tag, date, title, excerpt)
-- Each card links to external source or in-app detail where relevant
-- Newsletter signup footer strip
+- Hero (light) — "What's new at InsiteHub"
+- **Featured announcement** (large card, blue gradient): UMU.com partnership — 2-col with 3 feature bullets (Global Delivery, LMS Integration, Measurable Literacy Outcomes) + dual CTA (See the AI Literacy Program · Request Partnership Info)
+- **Additional announcements** — 4 static cards in 2-col grid (display-only, no navigation — they're news items, not navigation):
+  1. *March 2026 · Platform Update* — InsiteHub Echo ComplianceGuard v2
+  2. *February 2026 · Research* — Proxa Labs AI Readiness Scoring Model beta
+  3. *January 2026 · Partnership* — University of Delaware AI Center of Excellence Business Partner in Residence
+  4. *December 2025 · Platform Launch* — InsiteHub Forge v4.0 General Availability
+- **Newsletter strip** (dark) — "Get announcements in your inbox" → `newsletter` page
 
 ### ResourcesPage
 
-- Hero
-- Filter chips (All / Frameworks / Research / Templates / Scorecards)
-- Card grid: AI Readiness Self-Assessment · Pilot Failure Taxonomy · Business Case Template · Vendor Evaluation Scorecard · Research briefs
-- Cards are teasers — CTA is "Get it via email" which routes to `contact` with `track=learn` preselected
-- Newsletter strip at bottom
+- Hero (light) — "Tools and frameworks you can use before you commit to anything"
+- **Frameworks & Guides** — 6-card 3-col grid:
+  1. *Framework* · AI Readiness Self-Assessment (15-question)
+  2. *Guide* · The AI Pilot Failure Taxonomy (4 failure patterns)
+  3. *Template* · Commercial L&D AI Business Case Template
+  4. *Model* · Proxa Labs Experimentation Design Canvas
+  5. *Checklist* · AI Vendor Evaluation Scorecard (24-point)
+  6. *Guide* · AI Literacy Program Overview (incl. UMU partnership)
+  Per-card CTA routes to `contact` with `track=learn` preselected.
+- **From Proxa Labs — Active Research** section (top border separator), 3 cards:
+  1. *Actively recruiting* · Open-Source HCP Avatar Engine ($10K hackathon)
+  2. *Early results* · Behavioral Analytics Correlation Study (r=0.84)
+  3. *In development* · AI Readiness Predictive Model (30+ engagements)
+- Bottom CTA pair: `Subscribe for New Resources` (→ `newsletter`) + `Explore Proxa Labs Research` (→ `proxalab`)
 
 ### NewsletterPage
 
-- Dedicated signup page with:
-  - Context: "Frameworks, research, field notes — no vendor noise"
-  - What you get (4 bullets)
-  - Sample issues preview (3 past topics)
-  - Inline signup form (shared component)
-  - Social links
+2-column layout.
+
+**Left column — signup form:**
+- First Name *
+- Work Email *
+- Role select (VP/Head of Commercial L&D · CLO · Director of Learning Technology · Head of Sales Force Effectiveness · Commercial IT/Digital · Other)
+- "What are you most interested in?" — 6 toggle chips (multi-select): AI Platform Updates · Advisory Insights · Proxa Labs Research · AI Literacy Program · Announcements & Partnerships · New Frameworks & Guides
+- Submit → wires to Firebase newsletter function (passes name/role/interests in payload)
+- Success state: "You're subscribed" + CTA to `resources`
+
+**Right column — What You'll Receive:**
+- 4 expectation cards: Proxa Labs Research Updates · Partnership & Product Announcements · New Frameworks & Guides · Field Notes from Advisory Engagements
+- Follow-us-on-social block with LinkedIn / Facebook / X icons linking to the respective InsiteHub profiles
 
 ### ContactPage
 
@@ -218,7 +237,7 @@ No CSS framework, no CSS-in-JS switch — plain stylesheet stays.
 
 The following carry forward from the current app into the restored site:
 
-- **Firebase Cloud Functions** for contact + newsletter (`functions/index.js`, `submitContact`, `submitNewsletter`) with Gmail SMTP, CORS allowlist, validation
+- **Firebase Cloud Functions** for contact + newsletter (`functions/index.js`, `submitContact`, `submitNewsletter`) with Gmail SMTP, CORS allowlist, validation. `submitNewsletter` gets extended to accept optional `name`, `role`, `interests[]` fields (used by `NewsletterPage`; footer widget still sends email-only). Missing fields degrade gracefully.
 - **Mobile hamburger menu** + responsive CSS (960px breakpoint, utility grid classes)
 - **LoopVisual** upgrade (animated dashed flow, per-node glow, labels outside circles, single-line center text)
 - **LoopMobile** vertical-timeline component
