@@ -445,6 +445,27 @@ h1,h2,h3,h4 { font-family:'Manrope',sans-serif; }
   margin: var(--space-6) 0;
 }
 
+.pull-quote {
+  max-width: 1100px; margin: 0 auto;
+  background: linear-gradient(135deg, #FFFAF6, #FFF4E8);
+  border: 1.5px solid rgba(244,128,31,.2);
+  border-radius: 24px;
+  padding: var(--space-6) var(--space-7);
+  position: relative;
+}
+.pull-quote-mark { position: absolute; top: var(--space-4); left: var(--space-5); font-family: 'Manrope', sans-serif; font-size: 80px; line-height: 1; color: var(--o); opacity: 0.18; font-weight: 900; }
+.pull-quote-content { display: grid; gap: var(--space-6); align-items: center; }
+.pull-quote-text { font-family: 'DM Sans', sans-serif; font-size: 20px; line-height: 1.65; color: var(--dk); font-style: italic; margin-bottom: var(--space-5); }
+.pull-quote-attribution { display: flex; align-items: center; gap: var(--space-3); }
+.pull-quote-avatar { width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-family: 'Manrope', sans-serif; font-weight: 700; font-size: 18px; flex-shrink: 0; }
+.pull-quote-name { font-family: 'Manrope', sans-serif; font-size: 15px; font-weight: 700; color: var(--dk); }
+.pull-quote-title { font-size: 13px; color: var(--bd); }
+.pull-quote-company { font-size: 12px; color: var(--o); font-weight: 600; margin-top: 2px; }
+.pull-quote-stats { display: flex; flex-direction: column; gap: var(--space-3); }
+.pull-quote-stat { text-align: center; padding: 14px 20px; background: rgba(255,255,255,.8); border-radius: 12px; border: 1px solid rgba(244,128,31,.15); }
+.pull-quote-stat-n { font-family: 'Manrope', sans-serif; font-size: 24px; font-weight: 900; color: var(--o); letter-spacing: -0.03em; line-height: 1; margin-bottom: 4px; }
+.pull-quote-stat-l { font-size: 11px; color: var(--bd); line-height: 1.4; }
+
 @media (max-width:960px) {
   .section { padding: var(--section-py-mobile) 20px; }
   .nav { padding:0 20px; }
@@ -498,6 +519,9 @@ h1,h2,h3,h4 { font-family:'Manrope',sans-serif; }
   .split-feature { grid-template-columns: 1fr !important; gap: var(--space-5); }
   .split-feature-text, .split-feature-visual { order: unset !important; }
   .card-grid-2, .card-grid-3, .card-grid-4 { grid-template-columns: 1fr !important; }
+  .pull-quote { padding: var(--space-5); }
+  .pull-quote-content { grid-template-columns: 1fr !important; }
+  .pull-quote-text { font-size: 17px; }
 }
 
 .mobile-accordion-head {
