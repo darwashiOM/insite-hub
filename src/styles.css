@@ -433,6 +433,18 @@ h1,h2,h3,h4 { font-family:'Manrope',sans-serif; }
 .card-grid-card-body { font-family: 'DM Sans', sans-serif; font-size: 14px; line-height: 1.6; color: var(--bd); }
 .card-grid-card-link { margin-top: var(--space-3); font-size: 13px; font-weight: 600; color: var(--o); }
 
+.long-form { max-width: 720px; margin: 0 auto; }
+.long-form-body p { font-family: 'DM Sans', sans-serif; font-size: 16px; line-height: 1.75; color: var(--bd); margin-bottom: var(--space-4); }
+.long-form-body p:last-child { margin-bottom: 0; }
+.long-form-quote {
+  font-family: 'Manrope', sans-serif;
+  font-size: 22px; font-weight: 600; line-height: 1.4; font-style: italic;
+  color: var(--dk);
+  border-left: 3px solid var(--o);
+  padding-left: var(--space-5);
+  margin: var(--space-6) 0;
+}
+
 @media (max-width:960px) {
   .section { padding: var(--section-py-mobile) 20px; }
   .nav { padding:0 20px; }
