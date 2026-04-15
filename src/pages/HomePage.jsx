@@ -6,11 +6,6 @@ import CardGrid from '../components/sections/CardGrid';
 import PullQuote from '../components/sections/PullQuote';
 import StepRail from '../components/sections/StepRail';
 import CTABand from '../components/sections/CTABand';
-import ProductShowcase from '../components/sections/ProductShowcase';
-import ForgeShowcase from '../components/showcase/ForgeShowcase';
-import AtlasShowcase from '../components/showcase/AtlasShowcase';
-import EchoShowcase from '../components/showcase/EchoShowcase';
-import CertifyShowcase from '../components/showcase/CertifyShowcase';
 import AnnouncementBand from '../components/AnnouncementBand';
 import Icon from '../components/Icon';
 
@@ -87,44 +82,20 @@ export default function HomePage({ setPage }) {
         background="tinted"
       />
 
-      <ProductShowcase
-        product="forge"
-        eyebrow="InsiteHub Forge"
-        tagline="Agentic content creation."
-        body="AI agents build MLR-compliant training from your PI, CSRs, and brand assets. Hours, not months. Every claim traced to source."
-        bullets={["Auto-generation from clinical data and PI", "Every claim cited — MLR artifacts auto-built", "Veeva workflow integration", "Content Gap Analyzer closes the loop from Echo"]}
-        mockup={<ForgeShowcase />}
-      />
-
-      <ProductShowcase
-        product="atlas"
-        eyebrow="InsiteHub Atlas"
-        tagline="AI-powered adaptive learning."
-        body="Personalized pathways closing knowledge gaps in real time, ensuring reps are field-ready before the launch window closes."
-        bullets={["Competency-mapped personalized pathways", "Gap-aware adaptive remediation engine", "Manager dashboards with predictive readiness", "Integrates with InsiteX LMS and Veeva"]}
-        mockup={<AtlasShowcase />}
-        reverse
+      <CardGrid
+        eyebrow="The AI Platform"
+        heading="Four products. One closed loop."
+        lead="Content published in Forge → delivered by Atlas → assessed by Echo → certified by Certify — and every gap automatically restarts the loop. See the full platform for product detail and UI previews."
+        columns={2}
+        cards={[
+          { icon: <Icon name="agent"    size={26} color="#F4801F" />, tag: "Forge",   tagColor: "#F4801F", title: "Agentic content creation.",      body: "AI agents build MLR-compliant training from your PI, CSRs, and brand assets. Hours, not months.",     linkLabel: "See details", onClick: () => setPage("platform") },
+          { icon: <Icon name="pathway"  size={26} color="#007AFF" />, tag: "Atlas",   tagColor: "#007AFF", title: "AI-powered adaptive learning.",  body: "Personalized pathways that close knowledge gaps in real time, ensuring reps are field-ready.",         linkLabel: "See details", onClick: () => setPage("platform") },
+          { icon: <Icon name="roleplay" size={26} color="#7C3AED" />, tag: "Echo",    tagColor: "#7C3AED", title: "AI roleplay + compliance guard.", body: "Live HCP conversations with AI physician avatars. ComplianceGuard monitors every message in real time.", linkLabel: "See details", onClick: () => setPage("platform") },
+          { icon: <Icon name="audit"    size={26} color="#059669" />, tag: "Certify", tagColor: "#059669", title: "Demonstrated field readiness.",   body: "Certification earned through behavioral competency — not attendance. 10-year audit trail.",           linkLabel: "See details", onClick: () => setPage("platform") },
+        ]}
+        cardStyle="feature"
         background="tinted"
-      />
-
-      <ProductShowcase
-        product="echo"
-        eyebrow="InsiteHub Echo"
-        tagline="AI roleplay & behavioral assessment."
-        body="Reps practice live HCP conversations with AI physician avatars. ComplianceGuard monitors every message in real time."
-        bullets={["8 HCP digital twin avatars", "ComplianceGuard real-time flagging", "Behavioral scorecard + industry benchmarks", "Gap payload feeds Forge auto-rebuild"]}
-        mockup={<EchoShowcase />}
-      />
-
-      <ProductShowcase
-        product="certify"
-        eyebrow="Certify"
-        tagline="Demonstrated field readiness."
-        body="Certification earned through demonstrated competency — not attendance. Behavioral evidence tied to every credential. 10-year audit trail."
-        bullets={["Competency-gated — no attendance shortcuts", "Behavioral evidence for every credential", "SHA-256 immutable 10-year audit log", "SOC 2 Type II compliant"]}
-        mockup={<CertifyShowcase />}
-        reverse
-        background="tinted"
+        centerHeader
       />
 
       <PullQuote
