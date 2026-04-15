@@ -178,7 +178,7 @@ const ContactPage = ({ setPage }) => {
             {icon:"📊",c:"#007AFF",t:"Business Case Template",d:"The ROI model structure for framing pilot results in leadership language."},
             {icon:"⚖️",c:"#D97706",t:"Vendor Evaluation Scorecard",d:"24-point matrix for assessing AI platform vendors in biopharma."},
           ].map(r=>(
-            <div key={r.t} style={{background:"var(--wh)",border:"1.5px solid var(--br)",borderRadius:16,padding:24,textAlign:"left",transition:"all .2s",cursor:"pointer"}} onMouseEnter={e=>e.currentTarget.style.boxShadow="0 8px 24px rgba(0,0,0,.06)"} onMouseLeave={e=>e.currentTarget.style.boxShadow="none"}>
+            <div key={r.t} onClick={()=>setPage("resources")} style={{background:"var(--wh)",border:"1.5px solid var(--br)",borderRadius:16,padding:24,textAlign:"left",transition:"all .2s",cursor:"pointer"}} onMouseEnter={e=>e.currentTarget.style.boxShadow="0 8px 24px rgba(0,0,0,.06)"} onMouseLeave={e=>e.currentTarget.style.boxShadow="none"}>
               <div style={{width:40,height:40,borderRadius:11,background:(r.c+"12"),display:"flex",alignItems:"center",justifyContent:"center",fontSize:18,marginBottom:12}}>{r.icon}</div>
               <div style={{fontSize:14,fontWeight:700,color:"var(--dk)",fontFamily:"Manrope,sans-serif",marginBottom:6,lineHeight:1.3}}>{r.t}</div>
               <div style={{fontSize:12,color:"var(--bd)",lineHeight:1.55}}>{r.d}</div>
