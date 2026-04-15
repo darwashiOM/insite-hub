@@ -30,13 +30,12 @@ export default function PlatformPage({ setPage }) {
   return (
     <>
       <EditorialHero
-        dark
         eyebrow="AI-First Platform · Closed Loop"
         headline={<>One closed-loop AI platform for biopharma <em>commercial learning.</em></>}
         subhead="Forge builds content. Atlas delivers learning. Echo assesses readiness in HCP roleplay. Certify confirms behavioral competency. Every assessment failure feeds back into Forge to rebuild content automatically. No human handoffs."
         primaryCta={{ label: "Book a Demo", onClick: () => setPage("contact") }}
         secondaryLink={{ label: "Start with Advisory", onClick: () => setPage("advisory") }}
-        visual={<div className="platform-loop-dark"><div className="hero-loop-desktop"><LoopVisual /></div><div className="hero-loop-mobile"><LoopMobile /></div></div>}
+        visual={<><div className="hero-loop-desktop"><LoopVisual /></div><div className="hero-loop-mobile"><LoopMobile /></div></>}
       />
 
       <LongForm

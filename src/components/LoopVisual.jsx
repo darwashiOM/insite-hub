@@ -1,13 +1,14 @@
 import { useState, useEffect } from 'react';
+import Icon from './Icon';
 
 const LoopVisual = () => {
   const [active, setActive] = useState(0);
   useEffect(()=>{ const t=setInterval(()=>setActive(a=>(a+1)%4),3500); return()=>clearInterval(t); },[]);
   const nodes=[
-    {id:0,label:"Forge",  sub:"Builds content",    icon:"⚡",c:"#F4801F",bg:"rgba(244,128,31,.06)", cx:220,cy:52},
-    {id:1,label:"Atlas",  sub:"Delivers learning", icon:"🎓",c:"#007AFF",bg:"rgba(0,122,255,.06)",  cx:370,cy:180},
-    {id:2,label:"Echo",   sub:"Assesses readiness",icon:"🎭",c:"#7C3AED",bg:"rgba(124,58,237,.06)",cx:220,cy:290},
-    {id:3,label:"Certify",sub:"Confirms competency",icon:"✅",c:"#059669",bg:"rgba(5,150,105,.06)", cx:75, cy:180},
+    {id:0,label:"Forge",  sub:"Builds content",    iconName:"agent",    c:"#F4801F",bg:"rgba(244,128,31,.06)", cx:220,cy:52},
+    {id:1,label:"Atlas",  sub:"Delivers learning", iconName:"pathway",  c:"#007AFF",bg:"rgba(0,122,255,.06)",  cx:370,cy:180},
+    {id:2,label:"Echo",   sub:"Assesses readiness",iconName:"roleplay", c:"#7C3AED",bg:"rgba(124,58,237,.06)",cx:220,cy:290},
+    {id:3,label:"Certify",sub:"Confirms competency",iconName:"audit",   c:"#059669",bg:"rgba(5,150,105,.06)", cx:75, cy:180},
   ];
   const flows=[
     {f:0,t:1,label:"content published",c:"#F4801F"},
@@ -72,7 +73,11 @@ const LoopVisual = () => {
               {isAct && <circle cx={n.cx} cy={n.cy} r={r+10} fill="none" stroke={n.c} strokeWidth="1.2" strokeOpacity=".14" strokeDasharray="5 6"/>}
               <circle cx={n.cx} cy={n.cy} r={r} fill="white"/>
               <circle cx={n.cx} cy={n.cy} r={r} fill={n.bg} stroke={n.c} strokeWidth={isAct?2.2:1} strokeOpacity={isAct?.6:.14} style={{transition:"all .4s"}}/>
-              <text x={n.cx} y={n.cy+6} textAnchor="middle" style={{fontSize:isAct?28:22,transition:"font-size .3s"}}>{n.icon}</text>
+              <foreignObject x={n.cx-14} y={n.cy-14} width={28} height={28} style={{pointerEvents:"none"}}>
+                <div style={{display:"flex",alignItems:"center",justifyContent:"center",width:"100%",height:"100%",color:n.c,transition:"transform .3s",transform:isAct?"scale(1.15)":"scale(1)"}}>
+                  <Icon name={n.iconName} size={isAct?24:20} strokeWidth={1.8}/>
+                </div>
+              </foreignObject>
               <text x={n.cx} y={n.cy+r+18} textAnchor="middle" style={{fontSize:14,fontWeight:800,fill:n.c,fontFamily:"Manrope,sans-serif"}}>{n.label}</text>
               <text x={n.cx} y={n.cy+r+32} textAnchor="middle" style={{fontSize:10.5,fill:"rgba(92,99,112,.55)",fontFamily:"DM Sans,sans-serif"}}>{n.sub}</text>
             </g>
