@@ -1,4 +1,4 @@
-export default function ProductShowcase({ product, eyebrow, tagline, body, bullets, mockup, reverse = false, background = 'light' }) {
+export default function ProductShowcase({ product, eyebrow, tagline, body, bullets, mockup, reverse = false, background = 'light', id }) {
   const accents = {
     forge:   { color: '#F4801F', bg: 'rgba(244,128,31,.07)' },
     atlas:   { color: '#007AFF', bg: 'rgba(0,122,255,.07)' },
@@ -8,7 +8,7 @@ export default function ProductShowcase({ product, eyebrow, tagline, body, bulle
   const a = accents[product] || accents.forge;
   const bg = background === 'tinted' ? 'section-tinted' : background === 'dark' ? 'section-dark' : 'section-light';
   return (
-    <section className={`section ${bg}`}>
+    <section id={id} className={`section ${bg}`}>
       <div className="product-showcase" style={{ flexDirection: reverse ? 'row-reverse' : 'row' }}>
         <div className="product-showcase-text">
           {eyebrow && <div className="t-eyebrow" style={{ color: a.color, marginBottom: 'var(--space-2)' }}>{eyebrow}</div>}

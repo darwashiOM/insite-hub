@@ -12,10 +12,10 @@ import Icon from '../components/Icon';
 const CLIENT_LOGOS = ["AbbVie","Allergan","Amgen","AstraZeneca","Bayer","Biogen","BMS","Genentech","GSK","Janssen","Merck","Novartis","Novo Nordisk","Pfizer","Roche","Sanofi","Takeda","Teva","Gilead","Mass General","Penn Medicine","MD Anderson"];
 
 const STATS = [
-  { n: "80–95%", l: "of pharma AI pilots never scale or deliver measurable value" },
-  { n: "11 mo",  l: "average ramp to full rep productivity in biopharma" },
-  { n: "84%",    l: "of pharma reps missed quota last year" },
-  { n: "25 yrs", l: "biopharma commercial L&D expertise behind our methodology" },
+  { n: "80–95%", l: "of pharma AI pilots never scale or deliver measurable value", source: "Source: Saama / Forbes, 2025" },
+  { n: "11 mo",  l: "average ramp to full rep productivity in biopharma", source: "Source: Salesforce State of Sales, 2024" },
+  { n: "84%",    l: "of pharma reps missed quota last year", source: "Source: Salesforce State of Sales, 2024" },
+  { n: "25 yrs", l: "biopharma commercial L&D expertise behind our methodology", source: "InsiteHub" },
 ];
 
 const DIFFERENTIATORS = [
@@ -46,10 +46,9 @@ export default function HomePage({ setPage }) {
   return (
     <>
       <EditorialHero
-        eyebrow="AI-First · Innovation-Led · Purpose-Built for Biopharma"
-        headline={<>The <em>strategy, literacy,<br />and platform</em> to turn<br />your AI mandate into results.</>}
-        subhead="The only closed-loop AI platform built for biopharma — and the only partner with the advisory methodology, AI literacy program, and implementation track record to make it stick."
-        primaryCta={{ label: "Book a Demo", onClick: () => setPage("contact") }}
+        eyebrow="FOR COMMERCIAL L&D LEADERS IN BIOPHARMA"
+        headline={<>The AI commercial learning partner <em>built for biopharma</em> — not adapted for it.</>}
+        subhead="Most platforms were built for enterprise sales and retrofitted for pharma. InsiteHub was built for biopharma from day one: advisory methodology, AI literacy programming, and a closed-loop platform designed around the constraints you actually operate in: MLR review, launch timelines, federated commercial structures."
         secondaryLink={{ label: "See the Platform", onClick: () => setPage("platform") }}
         visual={<><div className="hero-loop-desktop"><LoopVisual /></div><div className="hero-loop-mobile"><LoopMobile /></div></>}
       />
@@ -65,17 +64,16 @@ export default function HomePage({ setPage }) {
 
       <AnnouncementBand
         icon={<Icon name="literacy" size={24} color="#D97706" />}
-        tag="New Program"
+        tag="New"
         title="AI Literacy Program — the prerequisite every AI deployment needs."
         description="Build AI fluency across every role before tools go live. Teams that understand AI adopt it. Teams that don't, resist it."
         primaryCta={{ label: "See the Program", onClick: () => setPage("literacy") }}
-        secondaryCta={{ label: "Get the Overview", onClick: () => setPage("contact") }}
       />
 
       <CardGrid
-        eyebrow="The InsiteHub Difference"
-        heading="Innovation isn't a talking point here. It's a track record."
-        lead="Methodology before technology. Compliance by design. Insider credibility. Experimentation before commitment. The same four principles behind 25 years of award-winning work."
+        eyebrow="Four Principles for Evaluating Any AI Partner"
+        heading="How do you know if AI is actually working in your organization?"
+        lead={<>Most biopharma L&D leaders can't answer that question with confidence because the data that matters isn't in the dashboard.<br /><br />These four principles are how InsiteHub diagnoses whether AI is actually delivering, and how we've built 25-years of award-winning work around them.</>}
         columns={2}
         cards={DIFFERENTIATORS}
         cardStyle="feature"
@@ -85,13 +83,13 @@ export default function HomePage({ setPage }) {
       <CardGrid
         eyebrow="The AI Platform"
         heading="Four products. One closed loop."
-        lead="Content published in Forge → delivered by Atlas → assessed by Echo → certified by Certify — and every gap automatically restarts the loop. See the full platform for product detail and UI previews."
+        lead={<>Content published in Forge → delivered by Atlas → assessed by Echo → verified in Certify. Every gap automatically restarts the loop.<br /><br /><a href="https://www.notion.so/98543fc20d0b4edcabc5c033bb1ae295?pvs=21" target="_blank" rel="noopener noreferrer">See the full platform for product detail and UI previews.</a></>}
         columns={2}
         cards={[
-          { icon: <Icon name="agent"    size={26} color="#F4801F" />, tag: "Forge",   tagColor: "#F4801F", title: "Agentic content creation.",      body: "AI agents build MLR-compliant training from your PI, CSRs, and brand assets. Hours, not months.",     linkLabel: "See details", onClick: () => setPage("platform") },
-          { icon: <Icon name="pathway"  size={26} color="#007AFF" />, tag: "Atlas",   tagColor: "#007AFF", title: "AI-powered adaptive learning.",  body: "Personalized pathways that close knowledge gaps in real time, ensuring reps are field-ready.",         linkLabel: "See details", onClick: () => setPage("platform") },
-          { icon: <Icon name="roleplay" size={26} color="#7C3AED" />, tag: "Echo",    tagColor: "#7C3AED", title: "AI roleplay + compliance guard.", body: "Live HCP conversations with AI physician avatars. ComplianceGuard monitors every message in real time.", linkLabel: "See details", onClick: () => setPage("platform") },
-          { icon: <Icon name="audit"    size={26} color="#059669" />, tag: "Certify", tagColor: "#059669", title: "Demonstrated field readiness.",   body: "Certification earned through behavioral competency — not attendance. 10-year audit trail.",           linkLabel: "See details", onClick: () => setPage("platform") },
+          { icon: <Icon name="agent"    size={26} color="#F4801F" />, tag: "Forge",   tagColor: "#F4801F", title: "Agentic content creation.",      body: "AI agents build MLR-compliant training from your PI, CSRs, and brand assets. Hours, not months." },
+          { icon: <Icon name="pathway"  size={26} color="#007AFF" />, tag: "Atlas",   tagColor: "#007AFF", title: "AI-powered adaptive learning.",  body: "Personalized pathways that close knowledge gaps in real time, ensuring reps are field-ready." },
+          { icon: <Icon name="roleplay" size={26} color="#7C3AED" />, tag: "Echo",    tagColor: "#7C3AED", title: "AI roleplay + compliance guard.", body: "Live HCP conversations with AI physician avatars. ComplianceGuard monitors every message in real time." },
+          { icon: <Icon name="audit"    size={26} color="#059669" />, tag: "Certify", tagColor: "#059669", title: "Demonstrated field readiness.",   body: "Certification earned through behavioral competency — not attendance. 10-year audit trail." },
         ]}
         cardStyle="feature"
         background="tinted"
@@ -99,7 +97,7 @@ export default function HomePage({ setPage }) {
       />
 
       <PullQuote
-        quote="We had been trying to make AI work for 18 months. Two pilots, two postmortems, and a CCO who was starting to ask whether L&D could actually lead this. What Proxa Labs did differently was refuse to let us skip the hard part — defining what success actually looked like before we built anything. We walked into our budget review with evidence, not a pitch deck."
+        quote="We had been trying to make AI work for 18 months. Two pilots, two postmortems, and a CCO who was starting to ask whether L&D could actually lead this. What InsiteHub did differently was refuse to let us skip the hard part — defining what success actually looked like before we built anything. We walked into our budget review with evidence, not a pitch deck."
         author={{ name: "Sarah Chen", title: "VP, Commercial Learning & Development", company: "Mid-Size Oncology Biopharma · Series C", avatarInitials: "SC" }}
         stats={[
           { n: "23%", l: "improvement in manager-assessed call quality" },
@@ -110,7 +108,7 @@ export default function HomePage({ setPage }) {
       />
 
       <CardGrid
-        eyebrow="Who InsiteHub Is For"
+        eyebrow="When to Call Us"
         heading="Built for the commercial L&D leader who's done with pilots that go nowhere."
         lead="If any of these sound like your situation, you're in the right place."
         columns={3}
@@ -121,17 +119,16 @@ export default function HomePage({ setPage }) {
 
       <StepRail
         eyebrow="For Every Stage of the Journey"
-        heading="AI is where we're headed. But we meet you where you are."
-        lead="InsiteHub has been delivering enterprise learning infrastructure for biopharma commercial teams for over four years. The AI platform is our destination. Your timeline is yours to set."
+        heading="From where you are to AI-ready."
+        lead="Four years of enterprise learning infrastructure in biopharma. A closed-loop AI platform built on top of it. You decide when and how fast to move."
         steps={STEPS}
         background="tinted"
       />
 
       <CTABand
-        heading={<>The mandate is clear.<br /><em>The platform is ready.</em></>}
-        body="InsiteHub works with commercial L&D leaders who have an AI imperative and no reliable way to execute it. Let's figure out what your actual next step is."
-        primaryCta={{ label: "Book a Discovery Call", onClick: () => setPage("contact") }}
-        secondaryLink={{ label: "Request a Platform Demo", onClick: () => setPage("contact") }}
+        heading={<>The mandate is clear.<br /><em>The path forward isn't always.</em></>}
+        body="InsiteHub works with commercial L&D leaders who have been told to deliver on AI but haven't found a partner who understands what that actually requires in a biopharma environment. Start with a conversation. We'll tell you what we'd look at first."
+        primaryCta={{ label: "Book a Consult", onClick: () => setPage("contact") }}
       />
     </>
   );

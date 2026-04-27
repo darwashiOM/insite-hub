@@ -9,7 +9,7 @@ const DROP_ITEMS = [
   {icon:<Icon name="platform" size={20} />,title:"I'm ready for a platform",desc:"See Forge, Atlas, Echo, and Certify — the only closed-loop AI platform.",tag:"AI Platform",p:"platform"},
   {icon:<Icon name="content" size={20} />,title:"I need content for a launch",desc:"AI-generated or human-led, MLR-compliant content on your timeline.",tag:"Content",p:"content"},
   {icon:<Icon name="lms" size={20} />,title:"I need an LMS first",desc:"Enterprise learning infrastructure built for biopharma compliance.",tag:"InsiteX LMS",p:"insitex"},
-  {icon:<Icon name="chat" size={20} />,title:"I'm not sure yet",desc:"30 minutes. No pitch. Tell us where you're stuck.",tag:"Book a Call",p:"contact"},
+  {icon:<Icon name="chat" size={20} />,title:"I'm not sure yet",desc:"30 minutes. No pitch. Tell us where you're stuck.",tag:"Book a Consult",p:"contact",track:"talk"},
 ];
 
 const TOP_LINKS = [
@@ -32,7 +32,11 @@ const Nav = ({ page, setPage, scrolled }) => {
     return () => { document.removeEventListener("mousedown", handler); document.removeEventListener("keydown", esc); };
   }, [dropOpen]);
 
-  const go = (p) => { setDropOpen(false); setMobileOpen(false); setMobileDropOpen(false); setPage(p); };
+  const go = (p, track) => {
+    setDropOpen(false); setMobileOpen(false); setMobileDropOpen(false);
+    if (p === "contact" && track) window.location.hash = track;
+    setPage(p);
+  };
 
   return (
     <>
@@ -62,7 +66,7 @@ const Nav = ({ page, setPage, scrolled }) => {
                 display: "grid", gridTemplateColumns: "1fr 1fr", gap: 4
               }}>
                 {DROP_ITEMS.map(d => (
-                  <div key={d.p} onClick={() => go(d.p)} className="ndm-item" style={{ padding: "14px 16px", borderRadius: 10, cursor: "pointer" }}>
+                  <div key={d.title} onClick={() => go(d.p, d.track)} className="ndm-item" style={{ padding: "14px 16px", borderRadius: 10, cursor: "pointer" }}>
                     <div style={{ color: 'var(--o)', marginBottom: 5 }}>{d.icon}</div>
                     <div style={{ fontSize: 13, fontWeight: 700, color: "var(--dk)", marginBottom: 3, fontFamily: "Manrope,sans-serif" }}>{d.title}</div>
                     <div style={{ fontSize: 11.5, color: "var(--bd)", lineHeight: 1.45, marginBottom: 6 }}>{d.desc}</div>
@@ -77,8 +81,7 @@ const Nav = ({ page, setPage, scrolled }) => {
           ))}
         </div>
         <div className="nav-right">
-          <button className="ng" onClick={() => go("contact")}>Contact</button>
-          <button className="no" onClick={() => go("contact")}>Book a Demo</button>
+          <button className="no" onClick={() => go("contact", "demo")}>Book a Demo</button>
           <button className="nav-hamburger" onClick={() => setMobileOpen(o => !o)} aria-label="Menu">
             <span style={mobileOpen ? { transform: "rotate(45deg) translate(5px,5px)" } : {}} />
             <span style={mobileOpen ? { opacity: 0 } : {}} />
@@ -94,7 +97,7 @@ const Nav = ({ page, setPage, scrolled }) => {
         {mobileDropOpen && (
           <div className="mobile-accordion-body">
             {DROP_ITEMS.map(d => (
-              <button key={d.p} onClick={() => go(d.p)}>
+              <button key={d.title} onClick={() => go(d.p, d.track)}>
                 <span style={{ marginRight: 10 }}>{d.icon}</span>{d.title}
               </button>
             ))}
@@ -103,8 +106,7 @@ const Nav = ({ page, setPage, scrolled }) => {
         {TOP_LINKS.map(([l, p]) => (
           <button key={p} className={page === p ? "on" : ""} onClick={() => go(p)}>{l}</button>
         ))}
-        <button onClick={() => go("contact")}>Contact</button>
-        <button className="mobile-cta" onClick={() => go("contact")}>Book a Demo</button>
+        <button className="mobile-cta" onClick={() => go("contact", "demo")}>Book a Demo</button>
       </div>
     </>
   );

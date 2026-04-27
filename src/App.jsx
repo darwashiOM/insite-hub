@@ -35,7 +35,7 @@ const DESCS = {
   platform: "The only closed-loop AI platform in biopharma: Forge builds content, Atlas delivers learning, Echo assesses readiness, Certify confirms competency.",
   advisory: "AI strategy, readiness assessments, governance frameworks, and infrastructure planning — advisory services purpose-built for biopharma commercial L&D.",
   literacy: "Role-targeted AI literacy tracks for every part of your commercial organization. Build fluency before deploying tools.",
-  insitex: "Enterprise learning management built for biopharma compliance. SCORM, AICC, PMRC compliant. The foundation the AI platform builds on.",
+  insitex: "Enterprise learning management built for biopharma compliance. SCORM, AICC, and PMRC compliance. The foundation the AI platform builds on.",
   content: "MLR-compliant content development — AI-powered (Forge) or traditional instructional design. Built by biopharma commercial practitioners.",
   proxalab: "Structured AI experimentation for biopharma. Define the right use case, design the experiment, measure what matters, build the business case.",
   about: "InsiteHub has been solving biopharma commercial learning challenges for 25 years. Innovation-led, compliance by design.",

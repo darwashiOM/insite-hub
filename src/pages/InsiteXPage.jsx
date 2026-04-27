@@ -1,22 +1,22 @@
 import EditorialHero from '../components/sections/EditorialHero';
 import SplitFeature from '../components/sections/SplitFeature';
 import CardGrid from '../components/sections/CardGrid';
-import ComparisonRail from '../components/sections/ComparisonRail';
+import StatBand from '../components/sections/StatBand';
 import CTABand from '../components/sections/CTABand';
 import Icon from '../components/Icon';
 
 const CAPABILITIES = [
-  { icon: <Icon name="lms" size={22} />,           title: "SCORM, AICC, PMRC compliant",      body: "All major pharma content standards supported out of the box. Drop-in compatibility with existing libraries — no migration project required." },
-  { icon: <Icon name="audit" size={22} />,         title: "Credentialing + audit trails",     body: "Role-based credential tracking with full audit trail for regulatory inspection. 10-year retention. SHA-256 immutable logs." },
-  { icon: <Icon name="governance" size={22} />,    title: "Veeva integration",                 body: "Native bi-directional integration with Veeva PromoMats and Vault. Content state syncs both directions automatically." },
-  { icon: <Icon name="infrastructure" size={22} />, title: "Enterprise SSO + RBAC",            body: "SAML 2.0 + OIDC SSO support. Granular role-based permissions for L&D, content, compliance, and IT teams." },
-  { icon: <Icon name="content" size={22} />,        title: "Content lifecycle workflows",      body: "MLR routing, version control, expiration tracking. Built around how pharma content actually moves through approval." },
-  { icon: <Icon name="readiness" size={22} />,     title: "Manager dashboards + reporting",    body: "Live readiness reporting by team, region, and competency. Pre-built reports for the CCO scorecard, training compliance, and certification expiration." },
+  { icon: <Icon name="lms" size={22} />,           title: "SCORM, AICC, and PMRC compliance", body: "All major pharma content standards supported out of the box. Drop in your existing libraries. No migration project." },
+  { icon: <Icon name="audit" size={22} />,         title: "Credentialing + audit trails",     body: "Role-based credential tracking with full audit trails for regulatory inspection. 10-year retention, SHA-256 immutable logs." },
+  { icon: <Icon name="governance" size={22} />,    title: "Veeva integration",                body: "Native bi-directional integration with Veeva PromoMats and Vault. Content state syncs automatically, both directions." },
+  { icon: <Icon name="infrastructure" size={22} />, title: "Enterprise SSO + RBAC",           body: "SAML 2.0 and OIDC SSO. Granular role-based permissions across L&D, content, compliance, and IT teams." },
+  { icon: <Icon name="content" size={22} />,        title: "Content lifecycle workflows",     body: "MLR routing, version control, and expiration tracking — built around how pharma content actually moves through approval." },
+  { icon: <Icon name="readiness" size={22} />,     title: "Manager dashboards + reporting",   body: "Live readiness reporting by team, region, and competency. Pre-built reports for the CCO scorecard, training compliance, and certification expiration tracking." },
 ];
 
 const COMPARISON_COLUMNS = [
   { label: "InsiteX LMS", accent: "#F4801F" },
-  { label: "AI Platform", accent: "#7C3AED" },
+  { label: "InsiteHub AI Platform", accent: "#7C3AED" },
 ];
 const COMPARISON_ROWS = [
   { label: "SCORM / AICC content delivery",        values: [true,  true] },
@@ -27,13 +27,20 @@ const COMPARISON_ROWS = [
   { label: "AI roleplay assessment (Echo)",        values: [false, true] },
   { label: "Behavioral certification (Certify)",   values: [false, true] },
   { label: "Closed-loop gap remediation",          values: [false, true] },
-  { label: "Best for",                              values: ["Today: stable LMS", "Today: AI mandate"] },
+  { label: "Best for",                              values: ["Best for teams that need a reliable LMS today.", "Best for teams with an AI mandate now."] },
 ];
 
 const TRANSITIONS = [
-  { from: "InsiteX", to: "Atlas",          body: "Existing InsiteX learner records carry forward into Atlas adaptive pathways. No data migration." },
-  { from: "Forge",   to: "InsiteX Library", body: "Forge-generated content publishes into your existing InsiteX content library. Teams keep working in the LMS they know." },
-  { from: "Echo",    to: "InsiteX Records", body: "Echo behavioral assessment outcomes log to InsiteX as completion + competency records, audit-ready." },
+  { from: "InsiteX", to: "Atlas",          body: "Existing learner records flow from InsiteX into Atlas adaptive pathways. No data migration." },
+  { from: "Forge",   to: "InsiteX Library", body: "Forge-generated content publishes straight into your InsiteX content library. Teams keep working in the LMS they already know." },
+  { from: "Echo",    to: "InsiteX Records", body: "Echo assessment outcomes log to InsiteX as completion and competency records, audit-ready." },
+];
+
+const INSITEX_STATS = [
+  { n: "4+", l: "Years serving biopharma" },
+  { n: "30+", l: "Pharma & health system clients" },
+  { n: "SCORM, AICC, and PMRC", l: "compliance" },
+  { n: "SOC 2", l: "Type II in progress" },
 ];
 
 export default function InsiteXPage({ setPage }) {
@@ -42,35 +49,32 @@ export default function InsiteXPage({ setPage }) {
       <EditorialHero
         dark
         eyebrow="InsiteX LMS · Enterprise Learning Infrastructure"
-        headline={<>Enterprise learning. <em>Built for biopharma.</em></>}
-        subhead="A cloud-based learning platform with the compliance architecture, credentialing workflows, and content controls life sciences requires. The foundation the AI platform builds on — and the upgrade path is seamless when your team is ready."
-        primaryCta={{ label: "Request a Demo", onClick: () => setPage("contact") }}
-        secondaryLink={{ label: "See the AI Platform", onClick: () => setPage("platform") }}
+        headline={<>The LMS that becomes <em>the AI foundation.</em></>}
+        subhead="InsiteX is the enterprise learning platform underneath InsiteHub's AI. Purpose-built for biopharma — SCORM, AICC, and PMRC compliance, Veeva integration, credentialing workflows, and 10-year audit trails. When your organization is ready for AI, Forge, Atlas, and Echo layer on top. No migration. No rip-and-replace."
+        primaryCta={{ label: "Book a Demo", onClick: () => setPage("contact") }}
       />
 
       <SplitFeature
         ratio="50-50"
         eyebrow="When InsiteX Is the Right Choice"
-        heading="Not every team is ready for AI. That's fine."
-        body="If your organization needs reliable enterprise learning infrastructure today — with compliance built in, Veeva integration working, and credentialing audit-ready — InsiteX is purpose-built for it. The AI platform layers on top when you're ready, without rip-and-replace."
+        heading="Not every team is ready for AI. InsiteX is built for where you actually are."
+        body="If your organization needs reliable enterprise learning infrastructure today — with compliance built in, Veeva integration working, and credentialing audit-ready — InsiteX is purpose-built for it. When your organization is ready for AI, Forge, Atlas, and Echo layer on top of the same system. Your learners, your content, your audit trail all carry forward."
         bullets={[
           "4+ years serving biopharma",
           "30+ pharma & health system clients",
-          "SCORM / AICC / PMRC compliant",
+          "SCORM, AICC, and PMRC compliance",
           "SOC 2 Type II in progress",
         ]}
-        cta={{ label: "Talk to Sales", onClick: () => setPage("contact") }}
         visual={
-          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-            {[{n:"4+",l:"Years serving biopharma"},{n:"30+",l:"Pharma & health system clients"},{n:"SCORM / AICC",l:"& PMRC compliant"},{n:"SOC 2",l:"Type II in progress"}].map(s=>(
-              <div key={s.n} style={{display:"flex",alignItems:"center",gap:16,padding:"14px 18px",background:"#fff",borderRadius:12,border:"1px solid rgba(244,128,31,.12)"}}>
-                <div style={{fontSize:22,fontWeight:900,color:"#F4801F",fontFamily:"Manrope,sans-serif",letterSpacing:"-.04em",minWidth:80}}>{s.n}</div>
-                <div style={{fontSize:13,color:"#5C6370"}}>{s.l}</div>
-              </div>
-            ))}
+          <div style={{ background: "linear-gradient(135deg, #FFFAF6, #FFF4E8)", border: "1.5px solid rgba(244,128,31,.18)", borderRadius: 20, padding: 32 }}>
+            <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".08em", textTransform: "uppercase", color: "#F4801F", marginBottom: 10 }}>InsiteX LMS</div>
+            <div style={{ fontFamily: "Manrope,sans-serif", fontSize: 24, fontWeight: 800, color: "#12141A", letterSpacing: "-.035em", marginBottom: 14, lineHeight: 1.15 }}>Compliance-ready infrastructure today. AI-ready architecture tomorrow.</div>
+            <div style={{ fontSize: 13, color: "#5C6370", lineHeight: 1.65 }}>Use InsiteX as the operating layer for learning records, content libraries, credentialing, and audit trails before adding closed-loop AI.</div>
           </div>
         }
       />
+
+      <StatBand stats={INSITEX_STATS} tone="light" />
 
       <CardGrid
         eyebrow="Six Capability Areas"
@@ -81,40 +85,53 @@ export default function InsiteXPage({ setPage }) {
         background="tinted"
       />
 
-      <ComparisonRail
-        eyebrow="InsiteX vs AI Platform"
-        heading="Pick the right starting point."
-        columns={COMPARISON_COLUMNS}
-        rows={COMPARISON_ROWS}
-      />
-
-      <SplitFeature
-        ratio="60-40"
-        eyebrow="When You're Ready for AI"
-        heading="The upgrade path is built in."
-        body="Every InsiteX deployment is designed as the foundation layer for the AI platform. When your team is ready to add Forge, Atlas, or Echo, the integration is native — no migration, no re-platforming. Existing learner records, credentials, and content libraries flow forward automatically."
-        cta={{ label: "See the AI Platform", onClick: () => setPage("platform") }}
-        visual={
-          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-            {TRANSITIONS.map(t => (
-              <div key={t.from + t.to} style={{ background: "linear-gradient(90deg, rgba(244,128,31,.06) 0%, rgba(124,58,237,.06) 100%)", border: "1.5px solid rgba(244,128,31,.18)", borderRadius: 12, padding: 18, display: "flex", alignItems: "center", gap: 14 }}>
-                <div style={{ fontSize: 13, fontWeight: 700, color: "#F4801F", fontFamily: "Manrope,sans-serif" }}>{t.from}</div>
-                <div style={{ color: "#7C3AED", fontWeight: 800 }}>→</div>
-                <div style={{ fontSize: 13, fontWeight: 700, color: "#7C3AED", fontFamily: "Manrope,sans-serif" }}>{t.to}</div>
-                <div style={{ fontSize: 12, color: "#5C6370", marginLeft: "auto", maxWidth: 280, textAlign: "right" }}>{t.body}</div>
+      <section className="section section-light">
+        <div className="mw">
+          <div className="insitex-platform-header">
+            <div className="t-eyebrow">InsiteX + The AI Platform</div>
+            <h2 className="t-h2">Pick the right starting point. Upgrade when you're ready.</h2>
+            <p className="t-lead">InsiteX is the LMS foundation. The AI Platform adds Forge, Atlas, Echo, and Certify on top. Same system, different readiness — and when you're ready to bridge them, the integration is native.</p>
+          </div>
+          <div className="comparison-rail" style={{ '--cmp-cols': COMPARISON_COLUMNS.length }}>
+            <div className="comparison-rail-head">
+              <div className="comparison-rail-cell comparison-rail-feature-label" />
+              {COMPARISON_COLUMNS.map(c => (
+                <div key={c.label} className="comparison-rail-cell comparison-rail-col-head" style={{ color: c.accent }}>{c.label}</div>
+              ))}
+            </div>
+            {COMPARISON_ROWS.map((r, i) => (
+              <div key={i} className="comparison-rail-row">
+                <div className="comparison-rail-cell comparison-rail-feature-label">{r.label}</div>
+                {r.values.map((v, j) => (
+                  <div key={j} className="comparison-rail-cell">
+                    {v === true && <span className="comparison-yes">✓</span>}
+                    {v === false && <span className="comparison-no">—</span>}
+                    {typeof v === 'string' && <span style={{ fontSize: 13, color: 'var(--bd)' }}>{v}</span>}
+                  </div>
+                ))}
               </div>
             ))}
           </div>
-        }
-        background="tinted"
-        reverse
-      />
+          <p className="insitex-bridge-intro">Here's how your InsiteX data flows into the AI Platform when you're ready.</p>
+          <div className="insitex-bridge-grid">
+            {TRANSITIONS.map(t => (
+              <div key={t.from + t.to} className="insitex-bridge-card">
+                <div className="insitex-bridge-route">
+                  <span>{t.from}</span>
+                  <span>→</span>
+                  <span>{t.to}</span>
+                </div>
+                <div className="insitex-bridge-body">{t.body}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
       <CTABand
         heading={<>Get the LMS that becomes <em>the AI foundation.</em></>}
-        body="Demo InsiteX with your launch calendar in mind. We'll show you what your existing content library looks like inside, and what the upgrade path to AI would look like in 18 months."
-        primaryCta={{ label: "Request a Demo", onClick: () => setPage("contact") }}
-        secondaryLink={{ label: "Talk Strategy First", onClick: () => setPage("advisory") }}
+        body="Bring your launch calendar to the demo. We'll show you your existing content library inside InsiteX, and map what the upgrade path to AI looks like over the next 18 months."
+        primaryCta={{ label: "Book a Demo", onClick: () => setPage("contact") }}
       />
     </>
   );

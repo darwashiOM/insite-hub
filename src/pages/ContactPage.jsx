@@ -1,18 +1,17 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import EditorialHero from '../components/sections/EditorialHero';
 import CardGrid from '../components/sections/CardGrid';
-import CTABand from '../components/sections/CTABand';
 import Icon from '../components/Icon';
 
 const TRACK_OPTIONS = [
   { id: "talk",    icon: <Icon name="chat" size={22} />,     t: "Ready to talk",        d: "Let's have a real conversation about your situation." },
   { id: "learn",   icon: <Icon name="framework" size={22} />, t: "Want to learn first",  d: "Send me frameworks I can use before committing to anything." },
-  { id: "explore", icon: <Icon name="research" size={22} />,  t: "Just exploring",       d: "I'm early stage — send me what would be most useful." },
+  { id: "demo",    icon: <Icon name="platform" size={22} />,  t: "Ready for a demo",     d: "Show me Forge, Atlas, and Echo in the context of my organization." },
 ];
 
 const EXPECTATION_CARDS = [
   { icon: <Icon name="research" size={20} />,    track: "talk",  t: "Discovery Call (30 min)",      d: "Your environment. What you've tried. What's blocking you. We tell you what we'd look at first." },
-  { icon: <Icon name="platform" size={20} />,    track: "talk",  t: "Platform Demo",                 d: "Forge, Atlas, or Echo — in the context of your commercial organization." },
+  { icon: <Icon name="platform" size={20} />,    track: "demo",  t: "Platform Demo",                 d: "Forge, Atlas, or Echo — in the context of your commercial organization." },
   { icon: <Icon name="framework" size={20} />,   track: "learn", t: "AI Readiness Framework",        d: "A self-assessment and pilot failure taxonomy you can use before committing to any conversation." },
   { icon: <Icon name="strategy" size={20} />,    track: "talk",  t: "Advisory Assessment",           d: "A defined, time-bounded diagnostic that produces a deliverable you can act on." },
 ];
@@ -25,15 +24,27 @@ const RESOURCE_TEASERS = [
 ];
 
 export default function ContactPage({ setPage }) {
+  const initialTrack = () => window.location.hash === "#demo" ? "demo" : window.location.hash === "#talk" ? "talk" : "talk";
   const [form, setForm] = useState({ name: "", company: "", email: "", role: "", interest: "", message: "" });
   const [sentTracks, setSentTracks] = useState([]);
-  const [track, setTrack] = useState("talk");
+  const [track, setTrack] = useState(initialTrack);
   const [sending, setSending] = useState(false);
   const [error, setError] = useState('');
   const u = k => e => setForm(f => ({ ...f, [k]: e.target.value }));
   const justSent = sentTracks.length > 0 && sentTracks[sentTracks.length - 1] === track;
   const alreadySent = sentTracks.includes(track);
   const previousTrack = sentTracks.length > 0 ? sentTracks[sentTracks.length - 1] : null;
+  const isConversationTrack = track === "talk" || track === "demo";
+
+  useEffect(() => {
+    const syncTrackFromHash = () => {
+      if (window.location.hash === "#demo") setTrack("demo");
+      if (window.location.hash === "#talk") setTrack("talk");
+    };
+    syncTrackFromHash();
+    window.addEventListener("hashchange", syncTrackFromHash);
+    return () => window.removeEventListener("hashchange", syncTrackFromHash);
+  }, []);
 
   const handleSubmit = async () => {
     if (!form.name || !form.email) return;
@@ -78,11 +89,11 @@ export default function ContactPage({ setPage }) {
           <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6 }}>
             <Icon name="compliance" size={20} color="#059669" />
             <span style={{ fontSize: 16, fontWeight: 700, color: "#12141A", fontFamily: "Manrope,sans-serif" }}>
-              {track === "talk" ? "Message received." : track === "learn" ? "Frameworks on the way." : "We'll send you something useful."}
+              {isConversationTrack ? "Message received." : "Frameworks on the way."}
             </span>
           </div>
           <div style={{ fontSize: 13, color: "#5C6370", lineHeight: 1.6 }}>
-            {track === "talk" ? "We'll be in touch within one business day." : "Check your inbox within 24 hours."}
+            {isConversationTrack ? "We'll be in touch within one business day." : "Check your inbox within 24 hours."}
           </div>
           <div style={{ fontSize: 13, color: "#5C6370", marginTop: 10 }}>Changed your mind? Pick a different option above and send again.</div>
         </div>
@@ -90,7 +101,7 @@ export default function ContactPage({ setPage }) {
       {!justSent && previousTrack && !alreadySent && (
         <div style={{ background: "rgba(244,128,31,.06)", border: "1px solid rgba(244,128,31,.18)", borderRadius: 14, padding: "16px 20px", marginBottom: 20 }}>
           <div style={{ fontSize: 13, fontWeight: 600, color: "#F4801F", marginBottom: 4 }}>
-            {track === "talk" ? "Great — we're glad you're ready to talk." : track === "learn" ? "No rush. We'll send you frameworks first." : "Got it — we'll send you something to start with."}
+            {track === "demo" ? "Great — we'll route this as a demo request." : track === "talk" ? "Great — we're glad you're ready to talk." : "No rush. We'll send you frameworks first."}
           </div>
           <div style={{ fontSize: 13, color: "#5C6370", lineHeight: 1.5 }}>We already have your info from before. Just hit send and we'll adjust.</div>
         </div>
@@ -108,31 +119,21 @@ export default function ContactPage({ setPage }) {
               <div style={{ fontSize: 13, color: "#5C6370", lineHeight: 1.6 }}>AI Readiness Self-Assessment · AI Pilot Failure Taxonomy · Business Case Template — three frameworks you can use immediately.</div>
             </div>
           )}
-          {track === "explore" && !alreadySent && (
-            <div style={{ background: "rgba(0,122,255,.09)", border: "1px solid rgba(0,122,255,.2)", borderRadius: 12, padding: 16, marginBottom: 20 }}>
-              <div style={{ fontSize: 13, fontWeight: 600, color: "#007AFF", marginBottom: 4 }}>We'll send you:</div>
-              <div style={{ fontSize: 13, color: "#5C6370", lineHeight: 1.6 }}>A short overview of how InsiteHub works and what kind of organizations get the most value — no pitch, no follow-up pressure.</div>
-            </div>
-          )}
           <label className="fl">Full Name *</label><input className="fi" placeholder="Your name" value={form.name} onChange={u("name")} />
           <label className="fl">Work Email *</label><input className="fi" type="email" placeholder="you@company.com" value={form.email} onChange={u("email")} />
-          {track === "talk" && (
-            <>
-              <label className="fl">Company</label><input className="fi" placeholder="Your organization" value={form.company} onChange={u("company")} />
-              <label className="fl">Your Role</label>
-              <select className="fi" value={form.role} onChange={u("role")} style={{ appearance: "none" }}>
-                <option value="">Select your role…</option>
-                {["VP / Head of Commercial L&D","CLO","Director of Learning Technology","Head of Sales Force Effectiveness","Commercial IT / Digital","Other"].map(r => <option key={r}>{r}</option>)}
-              </select>
-              <label className="fl">I'm interested in…</label>
-              <select className="fi" value={form.interest} onChange={u("interest")} style={{ appearance: "none" }}>
-                <option value="">Select…</option>
-                {["AI Platform (Forge, Atlas, Echo)","InsiteX LMS","Advisory Services","Content Development","Proxa Labs Experimentation","General inquiry"].map(i => <option key={i}>{i}</option>)}
-              </select>
-              <label className="fl">Tell us about your situation</label>
-              <textarea className="fi" rows={4} placeholder="What are you trying to solve? Where have you been stuck?" value={form.message} onChange={u("message")} style={{ resize: "vertical" }} />
-            </>
-          )}
+          <label className="fl">Company</label><input className="fi" placeholder="Your organization" value={form.company} onChange={u("company")} />
+          <label className="fl">Your Role</label>
+          <select className="fi" value={form.role} onChange={u("role")} style={{ appearance: "none" }}>
+            <option value="">Select your role…</option>
+            {["VP / Head of Commercial L&D","CLO","Director of Learning Technology","Head of Sales Force Effectiveness","Commercial IT / Digital","Other"].map(r => <option key={r}>{r}</option>)}
+          </select>
+          <label className="fl">I'm interested in…</label>
+          <select className="fi" value={form.interest} onChange={u("interest")} style={{ appearance: "none" }}>
+            <option value="">Select…</option>
+            {["AI Platform demo","InsiteX LMS demo","Advisory consult","Content Development consult","Proxa Labs consult","AI Literacy consult","General inquiry"].map(i => <option key={i}>{i}</option>)}
+          </select>
+          <label className="fl">Tell us about your situation</label>
+          <textarea className="fi" rows={4} placeholder="What are you trying to solve? Where have you been stuck?" value={form.message} onChange={u("message")} style={{ resize: "vertical" }} />
           {error && (
             <div style={{ background: "rgba(239,68,68,.07)", border: "1px solid rgba(239,68,68,.2)", borderRadius: 10, padding: "12px 16px", marginBottom: 16, fontSize: 13, color: "#DC2626" }}>
               {error}
@@ -140,7 +141,7 @@ export default function ContactPage({ setPage }) {
           )}
           {!alreadySent && (
             <button className="fsub" onClick={handleSubmit} disabled={sending} style={{ opacity: sending ? .6 : 1 }}>
-              {sending ? "Sending…" : track === "talk" ? "Send Message →" : track === "learn" ? "Send Me the Frameworks →" : "Send Me the Overview →"}
+              {sending ? "Sending…" : isConversationTrack ? "Send Message →" : "Send Me the Frameworks →"}
             </button>
           )}
         </>
@@ -175,9 +176,9 @@ export default function ContactPage({ setPage }) {
   return (
     <>
       <EditorialHero
-        eyebrow="Contact · Diagnostic First"
-        headline={<>Where are you in <em>the journey?</em></>}
-        subhead="We'll route you to the right starting point — whether you're ready for a real conversation or just beginning to explore. Pick a track, send a note, hear back within one business day."
+        eyebrow="Start a Conversation"
+        headline={<>Tell us where you are. <em>We'll meet you there.</em></>}
+        subhead="Whether you want a demo, a diagnostic conversation, or just the frameworks — pick your track and we'll route you to the right starting point. Hear back within one business day."
         visual={TrackSelector}
       />
 
@@ -198,11 +199,6 @@ export default function ContactPage({ setPage }) {
         centerHeader
       />
 
-      <CTABand
-        heading={<>Or just <em>start the conversation.</em></>}
-        body="Sometimes the right next step is a 30-minute call. We're happy to start there."
-        secondaryLink={{ label: "Browse Resources Instead", onClick: () => setPage("resources") }}
-      />
     </>
   );
 }
