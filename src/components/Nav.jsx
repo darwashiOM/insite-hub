@@ -1,5 +1,4 @@
 import { useState, useEffect, useRef } from 'react';
-import { HexMark } from './HexMark';
 import Icon from './Icon';
 
 const DROP_ITEMS = [
@@ -41,8 +40,7 @@ const Nav = ({ page, setPage, scrolled }) => {
     <>
       <nav className={"nav" + (scrolled ? " up" : "")}>
         <div className="nav-logo" onClick={() => go("home")}>
-          <HexMark size={38} color="#F4801F" strokeWidth={1.7} />
-          <span className="nav-wm">Insite<b>HUB</b></span>
+          <img className="nav-logo-img" src="/assets/IH_horiz_full.png" alt="InsiteHub" />
         </div>
         <div className="nav-links">
           <div ref={dropRef} style={{ position: "relative" }}>

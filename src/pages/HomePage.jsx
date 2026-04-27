@@ -83,7 +83,7 @@ export default function HomePage({ setPage }) {
       <CardGrid
         eyebrow="The AI Platform"
         heading="Four products. One closed loop."
-        lead={<>Content published in Forge → delivered by Atlas → assessed by Echo → verified in Certify. Every gap automatically restarts the loop.<br /><br /><a href="https://www.notion.so/98543fc20d0b4edcabc5c033bb1ae295?pvs=21" target="_blank" rel="noopener noreferrer">See the full platform for product detail and UI previews.</a></>}
+        lead="Content published in Forge → delivered by Atlas → assessed by Echo → verified in Certify. Every gap automatically restarts the loop."
         columns={2}
         cards={[
           { icon: <Icon name="agent"    size={26} color="#F4801F" />, tag: "Forge",   tagColor: "#F4801F", title: "Agentic content creation.",      body: "AI agents build MLR-compliant training from your PI, CSRs, and brand assets. Hours, not months." },

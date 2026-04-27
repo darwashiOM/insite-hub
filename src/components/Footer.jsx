@@ -1,5 +1,3 @@
-import { HexMark } from './HexMark';
-
 const NAV_COLUMNS = [
   ["AI Platform", [
     ["Forge","platform"], ["Atlas","platform"],
@@ -34,8 +32,7 @@ const Footer = ({ setPage }) => {
             {/* Column 1: Brand */}
             <div>
               <div style={{ display: "flex", alignItems: "center", gap: 12, cursor: "pointer", marginBottom: 16 }} onClick={() => setPage("home")}>
-                <HexMark size={34} color="#F4801F" strokeWidth={1.6} />
-                <span style={{ fontFamily: "Manrope,sans-serif", fontSize: 18, fontWeight: 800, letterSpacing: "-.04em", color: "rgba(255,255,255,.75)" }}>Insite<span style={{ color: "#F4801F" }}>HUB</span></span>
+                <img className="footer-logo-img" src="/assets/IH_horiz_full.png" alt="InsiteHub" />
               </div>
               <p style={{ fontSize: 14, color: "rgba(255,255,255,.3)", lineHeight: 1.72, maxWidth: 280, marginBottom: 20 }}>The AI-native platform and implementation partner built for the organizational complexity of biopharma commercial learning — not adapted for it.</p>
               <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 24 }}>
