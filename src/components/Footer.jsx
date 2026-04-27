@@ -22,8 +22,7 @@ const QUICK_LINKS = [
 
 const Footer = ({ setPage }) => {
   const go = (p, track) => {
-    if (p === "contact" && track) window.location.hash = track;
-    setPage(p);
+    setPage(p, track ? { hash: track } : undefined);
   };
 
   return (

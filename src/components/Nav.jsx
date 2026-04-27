@@ -34,8 +34,7 @@ const Nav = ({ page, setPage, scrolled }) => {
 
   const go = (p, track) => {
     setDropOpen(false); setMobileOpen(false); setMobileDropOpen(false);
-    if (p === "contact" && track) window.location.hash = track;
-    setPage(p);
+    setPage(p, track ? { hash: track } : undefined);
   };
 
   return (

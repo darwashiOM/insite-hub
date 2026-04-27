@@ -52,8 +52,44 @@ const PAGES = {
   resources: ResourcesPage, newsletter: NewsletterPage, contact: ContactPage,
 };
 
+const PAGE_PATHS = {
+  home: "/",
+  platform: "/platform",
+  advisory: "/advisory",
+  literacy: "/ai-literacy",
+  insitex: "/insitex-lms",
+  content: "/content-development",
+  proxalab: "/proxa-labs",
+  about: "/about",
+  news: "/announcements",
+  resources: "/resources",
+  newsletter: "/newsletter",
+  contact: "/contact",
+};
+
+const PATH_PAGES = Object.fromEntries(Object.entries(PAGE_PATHS).map(([page, path]) => [path, page]));
+
+const pageFromLocation = () => {
+  const normalized = window.location.pathname.replace(/\/+$/, "") || "/";
+  return PATH_PAGES[normalized] || "home";
+};
+
+const urlForPage = (page, hash) => {
+  const path = PAGE_PATHS[page] || PAGE_PATHS.home;
+  return hash ? `${path}#${hash.replace(/^#/, "")}` : path;
+};
+
+const scrollToHash = (hash) => {
+  const cleanHash = hash?.replace(/^#/, "");
+  if (!cleanHash) return false;
+  const target = document.getElementById(cleanHash);
+  if (!target) return false;
+  target.scrollIntoView({ behavior: "auto", block: "start" });
+  return true;
+};
+
 export default function App() {
-  const [page, setPage] = useState("home");
+  const [page, setCurrentPage] = useState(pageFromLocation);
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
@@ -63,12 +99,37 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    window.scrollTo(0, 0);
     document.title = PAGE_TITLES[page] || PAGE_TITLES.home;
     let meta = document.querySelector('meta[name="description"]');
     if (!meta) { meta = document.createElement('meta'); meta.name = "description"; document.head.appendChild(meta); }
     meta.content = DESCS[page] || DESCS.home;
+
+    const hash = window.location.hash.replace(/^#/, "");
+    window.setTimeout(() => {
+      if (!scrollToHash(hash)) window.scrollTo(0, 0);
+    }, 0);
   }, [page]);
+
+  useEffect(() => {
+    const handlePopState = () => {
+      setCurrentPage(pageFromLocation());
+      window.dispatchEvent(new Event("hashchange"));
+      window.setTimeout(() => scrollToHash(window.location.hash), 0);
+    };
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
+  }, []);
+
+  const setPage = (nextPage, options = {}) => {
+    const hash = typeof options === "string" ? options : options.hash;
+    const nextUrl = urlForPage(nextPage, hash);
+    if (window.location.pathname + window.location.hash !== nextUrl) {
+      window.history.pushState({}, "", nextUrl);
+      window.dispatchEvent(new Event("hashchange"));
+    }
+    setCurrentPage(PAGES[nextPage] ? nextPage : "home");
+    window.setTimeout(() => scrollToHash(hash), 0);
+  };
 
   const Page = PAGES[page] || HomePage;
   return (

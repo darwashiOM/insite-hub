@@ -6,8 +6,7 @@ const THERAPY_AREAS = ["Oncology","Hematology","Immunology","Cardiology","Endocr
 
 export default function ContentPage({ setPage }) {
   const goToForge = () => {
-    setPage("platform");
-    window.setTimeout(() => document.getElementById("forge")?.scrollIntoView({ behavior: "smooth", block: "start" }), 50);
+    setPage("platform", { hash: "forge" });
   };
 
   return (
