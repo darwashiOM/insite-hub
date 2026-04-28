@@ -10,6 +10,12 @@ const ALLOWED_ORIGINS = [
   "http://localhost:5181",
 ];
 
+const DEFAULT_NOTIFY_EMAILS = "sales@insitehub.com,john.royer@insitehub.com";
+
+function getNotifyEmails() {
+  return process.env.NOTIFY_EMAIL || DEFAULT_NOTIFY_EMAILS;
+}
+
 function setCors(req, res) {
   const origin = req.headers.origin;
   if (ALLOWED_ORIGINS.includes(origin)) {
@@ -49,7 +55,7 @@ exports.submitContact = onRequest(async (req, res) => {
     return;
   }
 
-  const trackLabel = { talk: "Ready to talk", learn: "Want to learn first", explore: "Just exploring" }[track] || track;
+  const trackLabel = { talk: "Ready to talk", learn: "Want to learn first", demo: "Ready for a demo" }[track] || track;
 
   const html = `
     <h2>New InsiteHub Inquiry</h2>
@@ -68,7 +74,7 @@ exports.submitContact = onRequest(async (req, res) => {
     const transporter = getTransporter();
     await transporter.sendMail({
       from: `"InsiteHub Website" <${process.env.SMTP_EMAIL}>`,
-      to: process.env.NOTIFY_EMAIL,
+      to: getNotifyEmails(),
       replyTo: email,
       subject: `New InsiteHub inquiry from ${name}`,
       html,
@@ -110,7 +116,7 @@ exports.submitNewsletter = onRequest(async (req, res) => {
     const transporter = getTransporter();
     await transporter.sendMail({
       from: `"InsiteHub Website" <${process.env.SMTP_EMAIL}>`,
-      to: process.env.NOTIFY_EMAIL,
+      to: getNotifyEmails(),
       replyTo: email,
       subject: name ? `New newsletter subscriber: ${name} <${email}>` : `New newsletter subscriber: ${email}`,
       html,
