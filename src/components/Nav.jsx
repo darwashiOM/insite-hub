@@ -13,6 +13,7 @@ const DROP_ITEMS = [
 
 const TOP_LINKS = [
   ["AI Platform","platform"], ["AI Literacy","literacy"], ["InsiteX LMS","insitex"],
+  ["InsiteXccelerator","https://www.insitexccelerator.com/","external"],
   ["Advisory","advisory"], ["Content","content"], ["Proxa Labs","proxalab"], ["About","about"],
 ];
 
@@ -73,8 +74,12 @@ const Nav = ({ page, setPage, scrolled }) => {
               </div>
             )}
           </div>
-          {TOP_LINKS.map(([l, p]) => (
-            <button key={p} className={"nl" + (page === p ? " on" : "")} onClick={() => go(p)}>{l}</button>
+          {TOP_LINKS.map(([l, p, type]) => (
+            type === "external" ? (
+              <a key={p} className="nl" href={p} target="_blank" rel="noopener noreferrer">{l}</a>
+            ) : (
+              <button key={p} className={"nl" + (page === p ? " on" : "")} onClick={() => go(p)}>{l}</button>
+            )
           ))}
         </div>
         <div className="nav-right">
@@ -100,8 +105,12 @@ const Nav = ({ page, setPage, scrolled }) => {
             ))}
           </div>
         )}
-        {TOP_LINKS.map(([l, p]) => (
-          <button key={p} className={page === p ? "on" : ""} onClick={() => go(p)}>{l}</button>
+        {TOP_LINKS.map(([l, p, type]) => (
+          type === "external" ? (
+            <a key={p} href={p} target="_blank" rel="noopener noreferrer">{l}</a>
+          ) : (
+            <button key={p} className={page === p ? "on" : ""} onClick={() => go(p)}>{l}</button>
+          )
         ))}
         <button className="mobile-cta" onClick={() => go("contact", "demo")}>Book a Demo</button>
       </div>
