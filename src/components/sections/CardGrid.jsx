@@ -7,18 +7,20 @@ export default function CardGrid({
   cardStyle = 'standard',
   background = 'light',
   centerHeader = false,
+  leadMaxWidth = 600,
+  className = '',
 }) {
   const bg = background === 'tinted' ? 'section-tinted' : background === 'dark' ? 'section-dark' : 'section-light';
   const padding = cardStyle === 'compact' ? 'var(--space-4)' : cardStyle === 'feature' ? 'var(--space-6)' : 'var(--space-5)';
 
   return (
-    <section className={`section ${bg}`}>
+    <section className={`section ${bg} ${className}`.trim()}>
       <div className="mw">
         {(eyebrow || heading || lead) && (
           <div className={centerHeader ? 'card-grid-header card-grid-header-center' : 'card-grid-header'}>
             {eyebrow && <div className="t-eyebrow" style={{ marginBottom: 'var(--space-2)' }}>{eyebrow}</div>}
             {heading && <h2 className="t-h2" style={{ marginBottom: 'var(--space-3)' }}>{heading}</h2>}
-            {lead && <p className="t-lead" style={{ maxWidth: 600, margin: centerHeader ? '0 auto' : 0 }}>{lead}</p>}
+            {lead && <p className="t-lead" style={{ maxWidth: leadMaxWidth, margin: centerHeader ? '0 auto' : 0 }}>{lead}</p>}
           </div>
         )}
         <div className={`card-grid card-grid-${columns}`}>

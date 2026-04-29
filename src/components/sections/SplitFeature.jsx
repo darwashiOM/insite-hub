@@ -4,6 +4,7 @@ export default function SplitFeature({
   heading,
   body,
   bullets,
+  children,
   cta,
   visual,
   reverse = false,
@@ -25,6 +26,7 @@ export default function SplitFeature({
               {bullets.map((b, i) => <li key={i}><span className="bullet-dot" />{b}</li>)}
             </ul>
           )}
+          {children}
           {cta && (
             <div style={{ marginTop: 'var(--space-5)' }}>
               <button className="bp" onClick={cta.onClick}>{cta.label}</button>

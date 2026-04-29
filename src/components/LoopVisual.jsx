@@ -1,103 +1,178 @@
-import { useState, useEffect } from 'react';
-import Icon from './Icon';
+import { useEffect, useState } from 'react';
 
-const LoopVisual = () => {
+const NODES = [
+  {
+    id: 0,
+    label: 'Forge',
+    sub: 'Builds MLR-compliant content',
+    color: '#993C1D',
+    text: '#712B13',
+    fill: '#FAECE7',
+    x: 40,
+    y: 80,
+  },
+  {
+    id: 1,
+    label: 'Atlas',
+    sub: 'Delivers adaptive learning',
+    color: '#185FA5',
+    text: '#0C447C',
+    fill: '#E6F1FB',
+    x: 440,
+    y: 80,
+  },
+  {
+    id: 2,
+    label: 'Echo',
+    sub: 'Assesses in live HCP roleplay',
+    color: '#534AB7',
+    text: '#3C3489',
+    fill: '#EEEDFE',
+    x: 440,
+    y: 320,
+  },
+  {
+    id: 3,
+    label: 'Certify',
+    sub: 'Verifies behavioral competency',
+    color: '#0F6E56',
+    text: '#085041',
+    fill: '#E1F5EE',
+    x: 40,
+    y: 320,
+  },
+];
+
+const FLOWS = [
+  { from: 0, label: 'content published', color: '#5F5E5A', d: 'M 240 120 Q 340 80 440 120', tx: 340, ty: 80, anchor: 'middle' },
+  { from: 1, label: 'readiness reached', color: '#5F5E5A', d: 'M 540 160 Q 620 240 540 320', tx: 640, ty: 244, anchor: 'end' },
+  { from: 2, label: 'competency demonstrated', color: '#5F5E5A', d: 'M 440 360 Q 340 400 240 360', tx: 340, ty: 424, anchor: 'middle' },
+  { from: 3, label: 'gap → rebuild', color: '#993C1D', d: 'M 140 320 Q 60 240 140 160', tx: 40, ty: 244, anchor: 'start', dashed: true },
+];
+
+const CALLOUTS = [
+  'AI agents generate MLR-compliant content from your PI, CSRs, and brand assets, with every claim cited automatically.',
+  'Adaptive learning pathways deliver competency-targeted content and close knowledge gaps before reps reach the field.',
+  'Live HCP roleplay assesses readiness with real-time compliance monitoring and behavioral scoring against benchmarks.',
+  'Competency-gated certification verifies demonstrated field readiness. Gaps automatically trigger Forge to rebuild.',
+];
+
+export default function LoopVisual() {
   const [active, setActive] = useState(0);
-  useEffect(()=>{ const t=setInterval(()=>setActive(a=>(a+1)%4),3500); return()=>clearInterval(t); },[]);
-  const nodes=[
-    {id:0,label:"Forge",  sub:"Builds content",    iconName:"agent",    c:"#F4801F",bg:"rgba(244,128,31,.06)", cx:220,cy:52},
-    {id:1,label:"Atlas",  sub:"Delivers learning", iconName:"pathway",  c:"#007AFF",bg:"rgba(0,122,255,.06)",  cx:370,cy:180},
-    {id:2,label:"Echo",   sub:"Assesses readiness",iconName:"roleplay", c:"#7C3AED",bg:"rgba(124,58,237,.06)",cx:220,cy:290},
-    {id:3,label:"Certify",sub:"Confirms competency",iconName:"audit",   c:"#059669",bg:"rgba(5,150,105,.06)", cx:75, cy:180},
-  ];
-  const flows=[
-    {f:0,t:1,label:"content published",c:"#F4801F"},
-    {f:1,t:2,label:"readiness reached",c:"#007AFF"},
-    {f:2,t:3,label:"gap detected",c:"#7C3AED"},
-    {f:3,t:0,label:"rebuild queued",c:"#059669"},
-  ];
-  const an=nodes[active];
-  const curvedPath=(from,to,offset=30)=>{
-    const mx=(from.cx+to.cx)/2, my=(from.cy+to.cy)/2;
-    const dx=to.cx-from.cx, dy=to.cy-from.cy;
-    const len=Math.sqrt(dx*dx+dy*dy)||1;
-    return {d:"M"+from.cx+" "+from.cy+" Q"+(mx-(dy/len)*offset)+" "+(my+(dx/len)*offset)+" "+to.cx+" "+to.cy, lx:mx-(dy/len)*(offset+14), ly:my+(dx/len)*(offset+14)};
-  };
-  const css = `
-    @keyframes loopDash { to { stroke-dashoffset: -20; } }
-    .loop-active-flow { animation: loopDash 0.8s linear infinite; }
-  `;
+
+  useEffect(() => {
+    const timer = setInterval(() => setActive(current => (current + 1) % NODES.length), 3500);
+    return () => clearInterval(timer);
+  }, []);
+
+  const activeNode = NODES[active];
+
   return (
     <div className="loop-card">
-      <style>{css}</style>
+      <style>{`
+        @keyframes loopDash { to { stroke-dashoffset: -22; } }
+        .loop-active-flow { animation: loopDash 0.8s linear infinite; }
+      `}</style>
       <div className="lc-label">The Closed Loop · Intelligent Capability Development</div>
-      <svg viewBox="0 0 440 380" style={{width:"100%",maxWidth:440,display:"block",margin:"0 auto"}}>
+      <svg viewBox="0 0 680 480" role="img" aria-labelledby="loop-title loop-desc" className="loop-oval-svg">
+        <title id="loop-title">InsiteHub closed-loop diagram</title>
+        <desc id="loop-desc">Four-product oval cycle showing Forge building content, Atlas delivering learning, Echo assessing readiness, and Certify verifying competency.</desc>
         <defs>
-          {flows.map((f,i)=>(
-            <marker key={i} id={"lm"+i} viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto">
-              <path d="M1 1L9 5L1 9" fill="none" stroke={f.c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          {FLOWS.map(flow => (
+            <marker key={flow.from} id={`loop-arrow-${flow.from}`} viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+              <path d="M2 1L8 5L2 9" fill="none" stroke={flow.color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
             </marker>
           ))}
-          {nodes.map(n=>(
-            <filter key={n.id} id={"lglow"+n.id} x="-50%" y="-50%" width="200%" height="200%">
-              <feGaussianBlur stdDeviation="8" result="blur"/>
-              <feFlood floodColor={n.c} floodOpacity="0.2" result="color"/>
-              <feComposite in="color" in2="blur" operator="in" result="glow"/>
-              <feMerge><feMergeNode in="glow"/><feMergeNode in="SourceGraphic"/></feMerge>
+          {NODES.map(node => (
+            <filter key={node.id} id={`loop-glow-${node.id}`} x="-25%" y="-60%" width="150%" height="220%">
+              <feGaussianBlur stdDeviation="9" result="blur" />
+              <feFlood floodColor={node.color} floodOpacity="0.18" result="color" />
+              <feComposite in="color" in2="blur" operator="in" result="glow" />
+              <feMerge>
+                <feMergeNode in="glow" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
             </filter>
           ))}
         </defs>
-        {/* Connection paths + flow labels */}
-        {flows.map((fl,i)=>{
-          const from=nodes[fl.f], to=nodes[fl.t];
-          const isAct=active===fl.f;
-          const {d,lx,ly}=curvedPath(from,to,42);
+
+        <ellipse cx="340" cy="240" rx="280" ry="180" fill="none" stroke="#B4B2A9" strokeWidth="0.5" strokeDasharray="3 4" />
+        <text x="340" y="228" textAnchor="middle" dominantBaseline="central" className="loop-center-text">Intelligent Capability</text>
+        <text x="340" y="252" textAnchor="middle" dominantBaseline="central" className="loop-center-text">Development</text>
+
+        {FLOWS.map(flow => {
+          const isActive = active === flow.from;
           return (
-            <g key={i}>
-              <path d={d} fill="none" stroke={fl.c} strokeWidth={1} strokeOpacity={.07} markerEnd={"url(#lm"+i+")"}/>
-              {isAct && <path d={d} fill="none" stroke={fl.c} strokeWidth={2.5} strokeOpacity={.55} strokeDasharray="6 14" className="loop-active-flow" markerEnd={"url(#lm"+i+")"}/>}
-              {isAct && <text x={lx} y={ly} textAnchor="middle" style={{fontSize:9,fontWeight:600,fill:fl.c,fontFamily:"DM Sans,sans-serif",opacity:.8}}>{fl.label}</text>}
+            <g key={flow.from}>
+              <path
+                d={flow.d}
+                fill="none"
+                stroke={flow.color}
+                strokeWidth={isActive ? 2.2 : 1}
+                strokeOpacity={isActive ? 0.9 : 0.5}
+                strokeDasharray={flow.dashed || isActive ? '4 4' : undefined}
+                className={isActive ? 'loop-active-flow' : undefined}
+                markerEnd={`url(#loop-arrow-${flow.from})`}
+              />
+              <text
+                x={flow.tx}
+                y={flow.ty}
+                textAnchor={flow.anchor}
+                fill={isActive ? activeNode.color : '#3D3D3A'}
+                className={isActive ? 'loop-flow-label loop-flow-label-active' : 'loop-flow-label'}
+              >
+                {flow.label}
+              </text>
             </g>
           );
         })}
-        {/* Center text */}
-        <text x="222" y="172" textAnchor="middle" style={{fontSize:7,fill:"rgba(147,155,161,.65)",letterSpacing:".18em",fontFamily:"Manrope,sans-serif"}}>
-          INTELLIGENT CAPABILITY DEVELOPMENT
-        </text>
-        {/* Nodes */}
-        {nodes.map(n=>{
-          const isAct=active===n.id;
-          const r = isAct ? 40 : 34;
+
+        {NODES.map(node => {
+          const isActive = active === node.id;
           return (
-            <g key={n.id} onClick={()=>setActive(n.id)} style={{cursor:"pointer"}} filter={isAct?("url(#lglow"+n.id+")"):undefined}>
-              {isAct && <circle cx={n.cx} cy={n.cy} r={r+10} fill="none" stroke={n.c} strokeWidth="1.2" strokeOpacity=".14" strokeDasharray="5 6"/>}
-              <circle cx={n.cx} cy={n.cy} r={r} fill="white"/>
-              <circle cx={n.cx} cy={n.cy} r={r} fill={n.bg} stroke={n.c} strokeWidth={isAct?2.2:1} strokeOpacity={isAct?.6:.14} style={{transition:"all .4s"}}/>
-              <foreignObject x={n.cx-14} y={n.cy-14} width={28} height={28} style={{pointerEvents:"none"}}>
-                <div style={{display:"flex",alignItems:"center",justifyContent:"center",width:"100%",height:"100%",color:n.c,transition:"transform .3s",transform:isAct?"scale(1.15)":"scale(1)"}}>
-                  <Icon name={n.iconName} size={isAct?24:20} strokeWidth={1.8}/>
-                </div>
-              </foreignObject>
-              <text x={n.cx} y={n.cy+r+18} textAnchor="middle" style={{fontSize:14,fontWeight:800,fill:n.c,fontFamily:"Manrope,sans-serif"}}>{n.label}</text>
-              <text x={n.cx} y={n.cy+r+32} textAnchor="middle" style={{fontSize:10.5,fill:"rgba(92,99,112,.55)",fontFamily:"DM Sans,sans-serif"}}>{n.sub}</text>
+            <g key={node.id} onClick={() => setActive(node.id)} className="loop-node" filter={isActive ? `url(#loop-glow-${node.id})` : undefined}>
+              <rect
+                x={node.x}
+                y={node.y}
+                width="200"
+                height="80"
+                rx="12"
+                fill={node.fill}
+                stroke={node.color}
+                strokeWidth={isActive ? 2.4 : 0.7}
+              />
+              <rect
+                x={node.x + 7}
+                y={node.y + 7}
+                width="186"
+                height="66"
+                rx="9"
+                fill="none"
+                stroke={node.color}
+                strokeWidth="1"
+                strokeOpacity={isActive ? 0.24 : 0}
+              />
+              <text x={node.x + 100} y={node.y + 32} textAnchor="middle" dominantBaseline="central" fill={node.text} className="loop-node-title">{node.label}</text>
+              <text x={node.x + 100} y={node.y + 56} textAnchor="middle" dominantBaseline="central" fill={node.color} className="loop-node-sub">{node.sub}</text>
             </g>
           );
         })}
       </svg>
-      <div className="lc-callout" style={{background:an.bg,border:("1px solid "+an.c+"25")}}>
-        <div style={{fontSize:13,fontWeight:700,color:an.c,marginBottom:4,fontFamily:"Manrope,sans-serif"}}>{an.label} is active</div>
-        <div style={{fontSize:12,color:"var(--bd)",lineHeight:1.55}}>
-          {["AI agents generating MLR-compliant content from your PI, CSRs, and brand assets. Every claim cited automatically.",
-            "Adaptive learning pathways delivering competency-targeted content and closing knowledge gaps before reps reach the field.",
-            "Live HCP roleplay with AI physician avatars. Real-time ComplianceGuard monitoring. Behavioral scoring against industry benchmarks.",
-            "Competency-gated certification issued against behavioral evidence — not attendance. Gaps automatically trigger Forge to rebuild."][active]}
-        </div>
+
+      <div className="lc-callout" style={{ background: activeNode.fill, border: `1px solid ${activeNode.color}25` }}>
+        <div style={{ fontSize: 13, fontWeight: 700, color: activeNode.color, marginBottom: 4, fontFamily: 'Manrope,sans-serif' }}>{activeNode.label} is active</div>
+        <div style={{ fontSize: 12, color: 'var(--bd)', lineHeight: 1.55 }}>{CALLOUTS[active]}</div>
       </div>
       <div className="lc-dots">
-        {nodes.map(n=><div key={n.id} className="lc-dot" style={{width:active===n.id?22:6,background:active===n.id?an.c:"var(--br)"}} onClick={()=>setActive(n.id)}/>)}
+        {NODES.map(node => (
+          <div
+            key={node.id}
+            className="lc-dot"
+            style={{ width: active === node.id ? 22 : 6, background: active === node.id ? activeNode.color : 'var(--br)' }}
+            onClick={() => setActive(node.id)}
+          />
+        ))}
       </div>
     </div>
   );
-};
-
-export default LoopVisual;
+}

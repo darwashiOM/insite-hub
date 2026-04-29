@@ -4,6 +4,8 @@ const nodemailer = require("nodemailer");
 const ALLOWED_ORIGINS = [
   "https://insite-hub-web.web.app",
   "https://insite-hub-web.firebaseapp.com",
+  "https://www.insitehub.com",
+  "https://insitehub.com",
   "http://localhost:5173",
   "http://localhost:5174",
   "http://localhost:5180",
@@ -11,9 +13,25 @@ const ALLOWED_ORIGINS = [
 ];
 
 const DEFAULT_NOTIFY_EMAILS = "sales@insitehub.com,john.royer@insitehub.com";
+const DEFAULT_FROM_NAME = "InsiteHub Website";
 
-function getNotifyEmails() {
-  return process.env.NOTIFY_EMAIL || DEFAULT_NOTIFY_EMAILS;
+function parseEmails(value) {
+  return (value || "")
+    .split(",")
+    .map(email => email.trim())
+    .filter(Boolean);
+}
+
+function getNotifyEmails(submitterEmail) {
+  const submitter = (submitterEmail || "").trim().toLowerCase();
+  return parseEmails(process.env.NOTIFY_EMAIL || DEFAULT_NOTIFY_EMAILS)
+    .filter(email => email.toLowerCase() !== submitter);
+}
+
+function getFromAddress() {
+  const fromName = process.env.FROM_NAME || DEFAULT_FROM_NAME;
+  const fromEmail = process.env.FROM_EMAIL || process.env.SMTP_EMAIL;
+  return `"${fromName}" <${fromEmail}>`;
 }
 
 function setCors(req, res) {
@@ -73,8 +91,8 @@ exports.submitContact = onRequest(async (req, res) => {
   try {
     const transporter = getTransporter();
     await transporter.sendMail({
-      from: `"InsiteHub Website" <${process.env.SMTP_EMAIL}>`,
-      to: getNotifyEmails(),
+      from: getFromAddress(),
+      to: getNotifyEmails(email),
       replyTo: email,
       subject: `New InsiteHub inquiry from ${name}`,
       html,
@@ -115,8 +133,8 @@ exports.submitNewsletter = onRequest(async (req, res) => {
   try {
     const transporter = getTransporter();
     await transporter.sendMail({
-      from: `"InsiteHub Website" <${process.env.SMTP_EMAIL}>`,
-      to: getNotifyEmails(),
+      from: getFromAddress(),
+      to: getNotifyEmails(email),
       replyTo: email,
       subject: name ? `New newsletter subscriber: ${name} <${email}>` : `New newsletter subscriber: ${email}`,
       html,

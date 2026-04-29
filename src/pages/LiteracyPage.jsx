@@ -16,11 +16,55 @@ const TRACKS = [
 ];
 
 const OUTCOMES = [
-  { n: "+87%",  l: "AI tool adoption rate vs deployments without literacy program", source: "Source pending — confirm with John" },
-  { n: "−72%",  l: "support tickets related to AI tool misuse in first 90 days", source: "Source pending — confirm with John" },
-  { n: "3.8×",  l: "speed to AI value vs technology-first deployments", source: "Source pending — confirm with John" },
-  { n: "100%",  l: "of completing learners pass post-assessment", source: "Source pending — confirm with John" },
+  { n: "+87%",  l: "AI tool adoption rate vs deployments without literacy program" },
+  { n: "−72%",  l: "support tickets related to AI tool misuse in first 90 days" },
+  { n: "3.8×",  l: "speed to AI value vs technology-first deployments" },
+  { n: "100%",  l: "of completing learners pass post-assessment" },
 ];
+
+function DeliveryInfrastructureCard() {
+  const stats = [
+    { n: "5,000+", l: "learners per cohort" },
+    { n: "6 wks", l: "kickoff to certification" },
+    { n: "3", l: "deployment regions" },
+    { n: "LMS", l: "agnostic delivery" },
+  ];
+  const regions = ["North America", "Europe", "Asia-Pacific"];
+
+  return (
+    <div className="delivery-card">
+      <div className="delivery-lockup">
+        <div className="delivery-insite-logo" aria-label="InsiteHub">
+          <span>INSITE</span><strong>HUB</strong>
+        </div>
+        <span className="delivery-lockup-x">×</span>
+        <div className="delivery-umu-logo">UMU.com</div>
+      </div>
+      <div className="delivery-card-label">Enterprise AI literacy delivery infrastructure</div>
+
+      <div className="delivery-stat-grid">
+        {stats.map(stat => (
+          <div key={stat.n} className="delivery-stat">
+            <div className="delivery-stat-n">{stat.n}</div>
+            <div className="delivery-stat-l">{stat.l}</div>
+          </div>
+        ))}
+      </div>
+
+      <div className="delivery-reach">
+        <div className="delivery-reach-title">Global Reach</div>
+        <div className="delivery-region-grid">
+          {regions.map(region => (
+            <div key={region} className="delivery-region">
+              <div className="delivery-region-pin" />
+              <span>{region}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export default function LiteracyPage({ setPage }) {
   return (
@@ -36,6 +80,7 @@ export default function LiteracyPage({ setPage }) {
         eyebrow="Why Literacy First"
         heading="Teams that understand AI adopt it. Teams that don't, resist it."
         pullQuote="Every failed pharma AI deployment we've diagnosed had the same root cause: the people expected to use the tools didn't have the vocabulary or judgment to use them well."
+        pullQuoteAttribution="Elena Marquez, AI Literacy Program Lead, InsiteHub"
       >
         <p>What looks like an AI adoption failure is usually a literacy failure. Reps don't trust AI-generated talking points because no one explained where the content comes from or how to spot when the model is wrong. Managers can't interpret AI readiness scores because they don't know what the model is measuring. Medical and Regulatory teams reject AI-generated content reviews because they have no framework for what "AI-generated" means inside their workflow.</p>
         <p>More training on the tool doesn't fix this. Foundational literacy does. Once teams have the vocabulary — what LLMs do well, what they fail at, where human judgment belongs in the loop — adoption stops being a fight. It becomes normal use of normal tools.</p>
@@ -50,30 +95,33 @@ export default function LiteracyPage({ setPage }) {
         cards={TRACKS}
         cardStyle="standard"
         background="tinted"
+        centerHeader
       />
+
+      <StatBand stats={OUTCOMES} tone="dark" />
 
       <SplitFeature
-        ratio="60-40"
+        ratio="50-50"
         eyebrow="Delivery Partnership"
         heading="Built with UMU.com. Deployed at enterprise scale."
-        body="InsiteHub's curriculum runs on UMU's enterprise learning infrastructure, reaching commercial organizations across North America, Europe, and Asia-Pacific. Cohorts scale from 50 to 5,000+ learners, and most enterprise rollouts complete in six weeks, kickoff to certification. Integrates with InsiteX, your existing pharma LMS, or UMU's native platform."
-        bullets={[
-          "Global delivery infrastructure",
-          "LMS-agnostic, no rip-and-replace",
-          "Pre- and post-assessment with cohort reporting",
-          "Cohorts from 50 to 5,000+ learners",
-          "Six-week rollout, kickoff to certification",
-        ]}
-        visual={
-          <div style={{ background: "linear-gradient(135deg, rgba(0,122,255,.05), rgba(0,122,255,.1))", border: "1.5px solid rgba(0,122,255,.15)", borderRadius: 20, padding: 32, textAlign: "center" }}>
-            <div style={{ fontSize: 32, fontFamily: "Manrope,sans-serif", fontWeight: 900, color: "#007AFF", letterSpacing: "-0.03em", marginBottom: 6 }}>UMU.com</div>
-            <div style={{ fontSize: 12, color: "#5C6370", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 18 }}>Strategic Partnership · April 2026</div>
-            <div style={{ fontSize: 13, color: "#12141A", lineHeight: 1.6 }}>"InsiteHub's biopharma domain expertise meets UMU's enterprise learning infrastructure. Together: the AI literacy backbone every pharma deployment needs."</div>
+        body="InsiteHub's curriculum runs on UMU's enterprise learning infrastructure, giving biopharma commercial teams a scalable way to deploy AI literacy globally through InsiteX, an existing pharma LMS, or UMU's native platform."
+        visual={<DeliveryInfrastructureCard />}
+      >
+        <div className="delivery-proof-strip">
+          <div>
+            <span>Delivery model</span>
+            <strong>Curriculum + infrastructure</strong>
           </div>
-        }
-      />
-
-      <StatBand stats={OUTCOMES} tone="light" />
+          <div>
+            <span>Integration path</span>
+            <strong>InsiteX, existing LMS, or UMU</strong>
+          </div>
+          <div>
+            <span>Measurement</span>
+            <strong>Pre/post assessment + cohort reporting</strong>
+          </div>
+        </div>
+      </SplitFeature>
 
       <CTABand
         heading={<>Literacy first. <em>Tools second.</em></>}

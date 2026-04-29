@@ -25,6 +25,7 @@ export default function AdvisoryPage({ setPage }) {
         eyebrow="Why Advisory First"
         heading="The thing that determines whether AI works is rarely the technology."
         pullQuote="Pharma AI pilots fail because no one defines what success looks like before the pilot runs."
+        pullQuoteAttribution="Marcus Ellison, Advisory Practice Lead, InsiteHub"
       >
         <p>AI implementations in biopharma commercial learning fail in predictable ways. The use case is too broad. The pilot is scoped to succeed in controlled conditions that don't match the real environment. There's no path to a defensible business case. The governance gate kills the deployment after a successful technical demo. The business sponsor moves on. These failure patterns account for 80–95% of pharma AI pilot failures.</p>
         <p>InsiteHub's advisory engagements are designed around them. We diagnose where you are in the AI journey, where the specific risks live in your environment, and which engagement gives you the highest-leverage starting point. We don't recommend technology before we understand the constraints it has to operate in.</p>
@@ -39,35 +40,22 @@ export default function AdvisoryPage({ setPage }) {
             <p className="t-lead">Each is time-bounded with a concrete deliverable. None requires a long-term retainer.</p>
           </div>
           <div className="advisory-engagements-grid">
-            <div className="advisory-engagements-column">
-              {ENGAGEMENTS.slice(0, 3).map(e => (
-                <div key={e.n} className="advisory-engagement-card">
-                  <div className="advisory-engagement-num">{e.n}</div>
-                  <div>
-                    <div className="advisory-engagement-title">{e.title}</div>
-                    <div className="advisory-engagement-body">{e.body}</div>
-                  </div>
+            {ENGAGEMENTS.map(e => (
+              <div key={e.n} className="advisory-engagement-card">
+                <div className="advisory-engagement-num">{e.n}</div>
+                <div>
+                  <div className="advisory-engagement-title">{e.title}</div>
+                  <div className="advisory-engagement-body">{e.body}</div>
                 </div>
-              ))}
-            </div>
-            <div className="advisory-engagements-column">
-              {ENGAGEMENTS.slice(3).map(e => (
-                <div key={e.n} className="advisory-engagement-card">
-                  <div className="advisory-engagement-num">{e.n}</div>
-                  <div>
-                    <div className="advisory-engagement-title">{e.title}</div>
-                    <div className="advisory-engagement-body">{e.body}</div>
-                  </div>
-                </div>
-              ))}
-            </div>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
       <PullQuote
         quote="The diagnostic call took 30 minutes and saved us 9 months of building the wrong thing. We had been about to issue an RFP for an AI roleplay vendor. The advisory team showed us our actual blocker was MLR throughput, not roleplay coverage. We funded a Forge pilot instead. Six months later we had measurable launch readiness gains and a CCO-approved AI roadmap."
-        author={{ name: "VP, Commercial L&D", title: "Top-10 Global Pharma", company: "Anonymized advisory client", avatarInitials: "VP" }}
+        author={{ name: "VP, Commercial L&D", title: "Top-10 Global Pharma", company: "Anonymized advisory client" }}
       />
 
       <CTABand

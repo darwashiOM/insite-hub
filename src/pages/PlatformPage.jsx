@@ -1,28 +1,12 @@
 import EditorialHero from '../components/sections/EditorialHero';
 import ProductShowcase from '../components/sections/ProductShowcase';
-import ComparisonRail from '../components/sections/ComparisonRail';
-import SplitFeature from '../components/sections/SplitFeature';
+import UpgradeComparison from '../components/sections/UpgradeComparison';
 import CTABand from '../components/sections/CTABand';
 import ForgeShowcase from '../components/showcase/ForgeShowcase';
 import AtlasShowcase from '../components/showcase/AtlasShowcase';
 import EchoShowcase from '../components/showcase/EchoShowcase';
 import CertifyShowcase from '../components/showcase/CertifyShowcase';
-import closedLoopOval from '../../insitehub_closed_loop_oval.svg';
-
-const COMPARISON_COLUMNS = [
-  { label: "InsiteHub AI Platform", accent: "#F4801F" },
-  { label: "Traditional LMS" },
-];
-const COMPARISON_ROWS = [
-  { label: "Agentic content creation",                 values: [true,  false] },
-  { label: "Real-time HCP roleplay assessment",        values: [true,  false] },
-  { label: "Behavioral certification (not attendance)", values: [true,  false] },
-  { label: "MLR-integrated authoring",                  values: [true,  "manual"] },
-  { label: "Closed-loop gap remediation",              values: [true,  false] },
-  { label: "SCORM / AICC compliance",                  values: [true,  true]  },
-  { label: "Veeva integration",                        values: [true,  "partial"] },
-  { label: "SOC 2 Type II",                            values: [true,  "partial"] },
-];
+import LoopVisual from '../components/LoopVisual';
 
 export default function PlatformPage({ setPage }) {
   return (
@@ -43,7 +27,7 @@ export default function PlatformPage({ setPage }) {
           </div>
           <div className="platform-loop-slice">
             <div className="platform-loop-visual">
-              <img src={closedLoopOval} alt="InsiteHub closed-loop AI platform diagram" />
+              <LoopVisual />
             </div>
             <div className="platform-loop-copy">
               <p>Most pharma learning platforms are one-way. Content flows from authors to learners, assessments measure completion, and that's where the loop ends. When a rep can't handle an HCP objection in the field, the platform doesn't know. The next cohort gets the same content. The same gaps appear.</p>
@@ -115,32 +99,10 @@ export default function PlatformPage({ setPage }) {
         background="tinted"
       />
 
-      <ComparisonRail
-        eyebrow="Why It's Different"
-        heading="What a closed-loop platform does that a traditional LMS can't."
-        columns={COMPARISON_COLUMNS}
-        rows={COMPARISON_ROWS}
-      />
-
-      <SplitFeature
-        ratio="50-50"
-        eyebrow="Not Ready for AI Yet"
-        heading="Start with the LMS. Add AI when you're ready."
-        body="InsiteX is our enterprise LMS — SCORM-compliant, Veeva-integrated, and built for life sciences teams that need a reliable platform today. When the organization is ready for AI, Forge, Atlas, and Echo layer on top. No migration project. No rip-and-replace."
-        bullets={[
-          "Full SCORM, AICC, and PMRC compliance",
-          "Veeva, ServiceNow, and Workday integration",
-          "Migration path to InsiteHub AI when ready",
-        ]}
-        cta={{ label: "Learn About InsiteX", onClick: () => setPage("insitex") }}
-        visual={
-          <div style={{ background: "linear-gradient(135deg, #FFFAF6, #FFF4E8)", border: "1.5px solid rgba(244,128,31,.18)", borderRadius: 20, padding: 32, textAlign: "center" }}>
-            <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".08em", textTransform: "uppercase", color: "#F4801F", marginBottom: 10 }}>Traditional LMS</div>
-            <div style={{ fontFamily: "Manrope,sans-serif", fontSize: 22, fontWeight: 800, color: "#12141A", letterSpacing: "-.035em", marginBottom: 12, lineHeight: 1.2 }}>Enterprise learning. Built for biopharma.</div>
-            <div style={{ fontSize: 13, color: "#5C6370", lineHeight: 1.6 }}>4+ years serving biopharma. 30+ pharma & health system clients. SOC 2 Type II in progress.</div>
-          </div>
-        }
-        background="tinted"
+      <UpgradeComparison
+        eyebrow="Side by Side"
+        heading="How the three options compare."
+        lead="Two InsiteHub paths. One reason traditional LMS falls short."
       />
 
       <CTABand

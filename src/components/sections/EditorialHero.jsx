@@ -1,7 +1,7 @@
-export default function EditorialHero({ eyebrow, headline, subhead, primaryCta, secondaryLink, visual, badge, dark = false }) {
+export default function EditorialHero({ eyebrow, headline, subhead, primaryCta, secondaryLink, visual, badge, dark = false, className = '' }) {
   const hasVisual = !!visual;
   return (
-    <section className={dark ? 'editorial-hero editorial-hero-dark' : 'editorial-hero'}>
+    <section className={`${dark ? 'editorial-hero editorial-hero-dark' : 'editorial-hero'} ${className}`.trim()}>
       <div className={hasVisual ? 'editorial-hero-inner' : 'editorial-hero-inner editorial-hero-inner-solo'}>
         <div className="editorial-hero-content">
           {badge && <div className="editorial-hero-badge">{badge}</div>}

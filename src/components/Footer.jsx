@@ -40,6 +40,10 @@ const Footer = ({ setPage }) => {
                   <button key={b.l} onClick={() => go(b.p, b.track)} style={{ fontSize: 12, fontWeight: 600, padding: "6px 14px", borderRadius: 8, border: "1px solid rgba(255,255,255,.1)", background: "none", color: "rgba(255,255,255,.4)", cursor: "pointer", fontFamily: "DM Sans,sans-serif" }}>{b.l}</button>
                 ))}
               </div>
+              <div style={{ fontSize: 12, color: "rgba(255,255,255,.28)", lineHeight: 1.65 }}>
+                <div style={{ color: "rgba(255,255,255,.42)", fontWeight: 700, marginBottom: 4 }}>Newark, Delaware</div>
+                <div>591 Collaboration Way, Suite 613</div>
+              </div>
             </div>
             {/* Columns 2-4: Nav links */}
             {NAV_COLUMNS.map(([h, links]) => (
@@ -55,7 +59,7 @@ const Footer = ({ setPage }) => {
           <div style={{ borderTop: "1px solid rgba(255,255,255,.06)", paddingTop: 26, display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 14 }}>
             <div style={{ fontSize: 12, color: "rgba(255,255,255,.16)" }}>© 2026 InsiteHub, Inc. · Newark, DE · InsiteHub, Inc. is a Delaware S-Corp</div>
             <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
-              {["SOC 2 Type II in progress","NIH Partner","Biopharma Native","University of Delaware Partner"].map(t => (
+              {["SOC 2 Type II in progress","NIH Partner","University of Delaware Partner"].map(t => (
                 <div key={t} style={{ fontSize: 11, fontWeight: 600, padding: "4px 12px", borderRadius: 20, border: "1px solid rgba(255,255,255,.08)", color: "rgba(255,255,255,.2)" }}>{t}</div>
               ))}
             </div>

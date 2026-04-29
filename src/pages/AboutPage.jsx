@@ -26,18 +26,20 @@ export default function AboutPage({ setPage }) {
         eyebrow="About InsiteHub"
         headline={<>Built by practitioners. <em>For practitioners.</em></>}
         subhead="InsiteHub was founded by people who spent 25 years inside biopharma commercial organizations — under the same launch pressure, compliance constraints, and executive scrutiny our clients navigate now. The methodology didn't come from a consulting framework. It came from watching programs succeed and fail from the inside."
+        className="about-hero-section"
       />
 
       <LongForm
         eyebrow="Our Story"
         heading="We built what biopharma didn't have."
+        className="about-story-section"
       >
         <p>InsiteHub was founded because existing approaches were failing commercial organizations. Content missed launch windows. Training produced completion metrics instead of behavior change. Certification gave false confidence about field readiness. The industry had accepted these failures as the cost of doing business. We didn't.</p>
         <p>The work that followed became the foundation of how InsiteHub operates. A Vanguard Award for the world's best corporate learning program — built as an immersive virtual world for a drug launch while competitors quoted $5M platforms. An NIH grant and one of only two biomedical accelerators outside a university in the US. Gamification in pharmaceutical training before the category had a name. And the first closed-loop AI platform in biopharma commercial learning.</p>
         <p>Every one of these was the same move: diagnose the problem before building the solution, experiment in the real environment before committing at scale, and measure against field performance — not engagement metrics. That methodology is still how InsiteHub works today.</p>
       </LongForm>
 
-      <StatBand stats={PROOF_STATS} tone="light" />
+      <StatBand stats={PROOF_STATS} tone="dark" />
 
       <StepRail
         eyebrow="Our History"
@@ -46,6 +48,8 @@ export default function AboutPage({ setPage }) {
         steps={TIMELINE}
         background="tinted"
         orientation="vertical"
+        sectionClassName="about-history-section"
+        className="about-history-rail"
       />
 
       <CTABand

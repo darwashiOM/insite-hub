@@ -1,45 +1,70 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import EditorialHero from '../components/sections/EditorialHero';
-import CardGrid from '../components/sections/CardGrid';
 import Icon from '../components/Icon';
 
 const TRACK_OPTIONS = [
-  { id: "talk",    icon: <Icon name="chat" size={22} />,     t: "Ready to talk",        d: "Let's have a real conversation about your situation." },
-  { id: "learn",   icon: <Icon name="framework" size={22} />, t: "Want to learn first",  d: "Send me frameworks I can use before committing to anything." },
-  { id: "demo",    icon: <Icon name="platform" size={22} />,  t: "Ready for a demo",     d: "Show me Forge, Atlas, and Echo in the context of my organization." },
+  {
+    id: "talk",
+    icon: <Icon name="chat" size={22} />,
+    t: "Ready to talk",
+    d: "Let's have a real conversation about your situation.",
+    interest: "General inquiry",
+    expectationTitle: "Discovery Call",
+    expectationBody: "Your environment, what you've tried, and where you're stuck. No sales pitch. No deck. Just whether InsiteHub is the right fit for where you are.",
+  },
+  {
+    id: "learn",
+    icon: <Icon name="framework" size={22} />,
+    t: "Want to learn first",
+    d: "Send me frameworks I can use before committing to anything.",
+    interest: "AI Readiness Framework",
+    expectationTitle: "Frameworks First",
+    expectationBody: "We'll send practical frameworks you can use before committing to a conversation, then follow up if there is a useful next step.",
+  },
+  {
+    id: "demo",
+    icon: <Icon name="platform" size={22} />,
+    t: "Ready for a demo",
+    d: "Show me Forge, Atlas, and Echo in the context of my organization.",
+    interest: "AI Platform demo",
+    expectationTitle: "Platform Demo",
+    expectationBody: "Forge, Atlas, and Echo in the context of your commercial organization. We tailor the demo to your launch, therapeutic area, and governance environment.",
+  },
 ];
 
-const EXPECTATION_CARDS = [
-  { icon: <Icon name="research" size={20} />,    track: "talk",  t: "Discovery Call (30 min)",      d: "Your environment. What you've tried. What's blocking you. We tell you what we'd look at first." },
-  { icon: <Icon name="platform" size={20} />,    track: "demo",  t: "Platform Demo",                 d: "Forge, Atlas, or Echo — in the context of your commercial organization." },
-  { icon: <Icon name="framework" size={20} />,   track: "learn", t: "AI Readiness Framework",        d: "A self-assessment and pilot failure taxonomy you can use before committing to any conversation." },
-  { icon: <Icon name="strategy" size={20} />,    track: "talk",  t: "Advisory Assessment",           d: "A defined, time-bounded diagnostic that produces a deliverable you can act on." },
-];
-
-const RESOURCE_TEASERS = [
-  { icon: <Icon name="checklist" size={22} />, title: "AI Readiness Self-Assessment", body: "15-question framework for evaluating your organization's readiness to deploy AI." },
-  { icon: <Icon name="gap" size={22} />,        title: "AI Pilot Failure Taxonomy",     body: "The four failure patterns behind 80–95% of pharma AI pilot failures." },
-  { icon: <Icon name="template" size={22} />,   title: "Business Case Template",        body: "The ROI model structure for framing pilot results in leadership language." },
-  { icon: <Icon name="compliance" size={22} />, title: "Vendor Evaluation Scorecard",   body: "24-point matrix for assessing AI platform vendors in biopharma." },
-];
-
-export default function ContactPage({ setPage }) {
-  const initialTrack = () => window.location.hash === "#demo" ? "demo" : window.location.hash === "#talk" ? "talk" : "talk";
+export default function ContactPage() {
+  const initialTrack = () => {
+    const hashTrack = window.location.hash.replace("#", "");
+    return TRACK_OPTIONS.some(opt => opt.id === hashTrack) ? hashTrack : "";
+  };
   const [form, setForm] = useState({ name: "", company: "", email: "", role: "", interest: "", message: "" });
   const [sentTracks, setSentTracks] = useState([]);
   const [track, setTrack] = useState(initialTrack);
+  const formRef = useRef(null);
   const [sending, setSending] = useState(false);
   const [error, setError] = useState('');
   const u = k => e => setForm(f => ({ ...f, [k]: e.target.value }));
-  const justSent = sentTracks.length > 0 && sentTracks[sentTracks.length - 1] === track;
-  const alreadySent = sentTracks.includes(track);
+  const selectedTrack = TRACK_OPTIONS.find(opt => opt.id === track);
+  const activeTrackId = track || "general";
+  const justSent = sentTracks.length > 0 && sentTracks[sentTracks.length - 1] === activeTrackId;
+  const alreadySent = sentTracks.includes(activeTrackId);
   const previousTrack = sentTracks.length > 0 ? sentTracks[sentTracks.length - 1] : null;
-  const isConversationTrack = track === "talk" || track === "demo";
+  const isConversationTrack = track !== "learn";
+
+  const selectTrack = (id, shouldScroll = true) => {
+    const option = TRACK_OPTIONS.find(opt => opt.id === id);
+    if (!option) return;
+    setTrack(id);
+    setForm(f => ({ ...f, interest: option.interest }));
+    if (shouldScroll) {
+      setTimeout(() => formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 50);
+    }
+  };
 
   useEffect(() => {
     const syncTrackFromHash = () => {
-      if (window.location.hash === "#demo") setTrack("demo");
-      if (window.location.hash === "#talk") setTrack("talk");
+      const hashTrack = window.location.hash.replace("#", "");
+      if (TRACK_OPTIONS.some(opt => opt.id === hashTrack)) selectTrack(hashTrack, false);
     };
     syncTrackFromHash();
     window.addEventListener("hashchange", syncTrackFromHash);
@@ -53,10 +78,10 @@ export default function ContactPage({ setPage }) {
       const res = await fetch(import.meta.env.VITE_CONTACT_FUNCTION_URL || '/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...form, track }),
+        body: JSON.stringify({ ...form, track: activeTrackId }),
       });
       const data = await res.json();
-      if (data.success) setSentTracks(prev => [...prev, track]);
+      if (data.success) setSentTracks(prev => [...prev, activeTrackId]);
       else setError(data.error || 'Something went wrong. Please try again.');
     } catch (e) {
       setError('Something went wrong. Please try again.');
@@ -65,25 +90,15 @@ export default function ContactPage({ setPage }) {
     }
   };
 
-  const TrackSelector = (
-    <div style={{ background: "#fff", border: "1.5px solid #E3E5EA", borderRadius: 16, padding: 24 }}>
-      <div className="t-eyebrow" style={{ marginBottom: 16 }}>Pick Your Track</div>
-      <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-        {TRACK_OPTIONS.map(opt => (
-          <div key={opt.id} onClick={() => setTrack(opt.id)} style={{ padding: 18, borderRadius: 12, border: "1.5px solid " + (track === opt.id ? "#F4801F" : "#E3E5EA"), background: track === opt.id ? "rgba(244,128,31,.06)" : "#fff", cursor: "pointer", display: "flex", gap: 14, alignItems: "flex-start" }}>
-            <div style={{ color: track === opt.id ? "#F4801F" : "#5C6370", flexShrink: 0 }}>{opt.icon}</div>
-            <div>
-              <div style={{ fontSize: 14, fontFamily: "Manrope,sans-serif", fontWeight: 700, color: track === opt.id ? "#F4801F" : "#12141A", marginBottom: 4 }}>{opt.t}</div>
-              <div style={{ fontSize: 12, color: "#5C6370", lineHeight: 1.5 }}>{opt.d}</div>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-
   const FormBlock = (
     <div style={{ background: "#fff", border: "1.5px solid #E3E5EA", borderRadius: 16, padding: 32 }}>
+      {selectedTrack && (
+        <div className="contact-form-heading">
+          <div className="contact-step-label">Step 2 — Tell Us About You</div>
+          <h3>You picked: {selectedTrack.t}</h3>
+          <p>We've pre-filled your track below. Fill out the rest and we'll be in touch within one business day.</p>
+        </div>
+      )}
       {justSent && (
         <div style={{ background: "rgba(5,150,105,.07)", border: "1px solid rgba(5,150,105,.2)", borderRadius: 14, padding: "20px 24px", marginBottom: 24 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6 }}>
@@ -101,7 +116,7 @@ export default function ContactPage({ setPage }) {
       {!justSent && previousTrack && !alreadySent && (
         <div style={{ background: "rgba(244,128,31,.06)", border: "1px solid rgba(244,128,31,.18)", borderRadius: 14, padding: "16px 20px", marginBottom: 20 }}>
           <div style={{ fontSize: 13, fontWeight: 600, color: "#F4801F", marginBottom: 4 }}>
-            {track === "demo" ? "Great — we'll route this as a demo request." : track === "talk" ? "Great — we're glad you're ready to talk." : "No rush. We'll send you frameworks first."}
+            {track === "demo" ? "Great — we'll route this as a demo request." : track === "talk" ? "Great — we're glad you're ready to talk." : track === "learn" ? "No rush. We'll send you frameworks first." : "Great — we'll route this to the right person."}
           </div>
           <div style={{ fontSize: 13, color: "#5C6370", lineHeight: 1.5 }}>We already have your info from before. Just hit send and we'll adjust.</div>
         </div>
@@ -113,12 +128,6 @@ export default function ContactPage({ setPage }) {
       )}
       {!justSent && (
         <>
-          {track === "learn" && !alreadySent && (
-            <div style={{ background: "rgba(244,128,31,.09)", border: "1px solid rgba(244,128,31,.18)", borderRadius: 12, padding: 16, marginBottom: 20 }}>
-              <div style={{ fontSize: 13, fontWeight: 600, color: "#F4801F", marginBottom: 4 }}>You'll receive:</div>
-              <div style={{ fontSize: 13, color: "#5C6370", lineHeight: 1.6 }}>AI Readiness Self-Assessment · AI Pilot Failure Taxonomy · Business Case Template — three frameworks you can use immediately.</div>
-            </div>
-          )}
           <label className="fl">Full Name *</label><input className="fi" placeholder="Your name" value={form.name} onChange={u("name")} />
           <label className="fl">Work Email *</label><input className="fi" type="email" placeholder="you@company.com" value={form.email} onChange={u("email")} />
           <label className="fl">Company</label><input className="fi" placeholder="Your organization" value={form.company} onChange={u("company")} />
@@ -127,10 +136,10 @@ export default function ContactPage({ setPage }) {
             <option value="">Select your role…</option>
             {["VP / Head of Commercial L&D","CLO","Director of Learning Technology","Head of Sales Force Effectiveness","Commercial IT / Digital","Other"].map(r => <option key={r}>{r}</option>)}
           </select>
-          <label className="fl">I'm interested in…</label>
+          <label className="fl">I'm interested in… {selectedTrack && <span className="contact-prefill-note">Pre-filled from your track selection</span>}</label>
           <select className="fi" value={form.interest} onChange={u("interest")} style={{ appearance: "none" }}>
             <option value="">Select…</option>
-            {["AI Platform demo","InsiteX LMS demo","Advisory consult","Content Development consult","Proxa Labs consult","AI Literacy consult","General inquiry"].map(i => <option key={i}>{i}</option>)}
+            {["AI Platform demo","InsiteX LMS demo","Advisory consult","Content Development consult","Proxa Labs consult","AI Literacy consult","AI Readiness Framework","General inquiry"].map(i => <option key={i}>{i}</option>)}
           </select>
           <label className="fl">Tell us about your situation</label>
           <textarea className="fi" rows={4} placeholder="What are you trying to solve? Where have you been stuck?" value={form.message} onChange={u("message")} style={{ resize: "vertical" }} />
@@ -141,35 +150,11 @@ export default function ContactPage({ setPage }) {
           )}
           {!alreadySent && (
             <button className="fsub" onClick={handleSubmit} disabled={sending} style={{ opacity: sending ? .6 : 1 }}>
-              {sending ? "Sending…" : isConversationTrack ? "Send Message →" : "Send Me the Frameworks →"}
+              {sending ? "Sending…" : track === "learn" ? "Send Me the Frameworks →" : "Send Message →"}
             </button>
           )}
         </>
       )}
-    </div>
-  );
-
-  const SidebarBlock = (
-    <div>
-      <div className="t-eyebrow" style={{ marginBottom: 12 }}>What to Expect</div>
-      <h3 className="t-h3" style={{ marginBottom: 14, fontFamily: "Manrope,sans-serif", color: "#12141A", letterSpacing: "-.03em" }}>We respond within one business day.</h3>
-      <p style={{ fontSize: 14, color: "#5C6370", lineHeight: 1.7, marginBottom: 24 }}>The first conversation is always diagnostic — your environment, your constraints, what you've already tried. No sales pitch. No deck. Just whether InsiteHub is the right fit for where you are.</p>
-      <div style={{ display: "flex", flexDirection: "column", gap: 11, marginBottom: 22 }}>
-        {EXPECTATION_CARDS.map(c => (
-          <div key={c.t} onClick={() => setTrack(c.track)} style={{ display: "flex", gap: 14, padding: 16, background: track === c.track ? "rgba(244,128,31,.09)" : "#F5F6F8", borderRadius: 13, border: "1.5px solid " + (track === c.track ? "rgba(244,128,31,.18)" : "#E3E5EA"), cursor: "pointer" }}>
-            <div style={{ color: track === c.track ? "#F4801F" : "#5C6370", flexShrink: 0 }}>{c.icon}</div>
-            <div>
-              <div style={{ fontSize: 14, fontWeight: 700, color: track === c.track ? "#F4801F" : "#12141A", marginBottom: 3, fontFamily: "Manrope,sans-serif" }}>{c.t}</div>
-              <div style={{ fontSize: 13, color: "#5C6370", lineHeight: 1.5 }}>{c.d}</div>
-            </div>
-          </div>
-        ))}
-      </div>
-      <div style={{ padding: 20, background: "rgba(244,128,31,.09)", borderRadius: 13, border: "1px solid rgba(244,128,31,.18)" }}>
-        <div style={{ fontSize: 13, color: "#F4801F", fontWeight: 700, marginBottom: 4 }}>Newark, Delaware</div>
-        <div style={{ fontSize: 13, color: "#5C6370" }}>InsiteHub, Inc. · 591 Collaboration Way, Suite 613</div>
-        <div style={{ fontSize: 13, color: "#5C6370", marginTop: 3 }}>insitehub.com · proxalabs.com</div>
-      </div>
     </div>
   );
 
@@ -179,25 +164,58 @@ export default function ContactPage({ setPage }) {
         eyebrow="Start a Conversation"
         headline={<>Tell us where you are. <em>We'll meet you there.</em></>}
         subhead="Whether you want a demo, a diagnostic conversation, or just the frameworks — pick your track and we'll route you to the right starting point. Hear back within one business day."
-        visual={TrackSelector}
       />
 
-      <section className="section section-light">
-        <div className="split-feature" style={{ gridTemplateColumns: "3fr 2fr", maxWidth: 1100, margin: "0 auto" }}>
-          <div>{FormBlock}</div>
-          <div>{SidebarBlock}</div>
+      <section className="section section-light contact-track-section">
+        <div className="mw">
+          <div className="contact-section-header">
+            <div className="t-eyebrow">Step 1 — Pick Your Track</div>
+            <h2 className="t-h2">What's the right starting point for you?</h2>
+            <p className="t-lead">Pick the option that fits your situation. The form below will pre-fill based on your selection.</p>
+          </div>
+          <div className="contact-track-grid">
+            {TRACK_OPTIONS.map(opt => (
+              <button
+                key={opt.id}
+                type="button"
+                className={`contact-track-card ${track === opt.id ? "contact-track-card-active" : ""}`}
+                onClick={() => selectTrack(opt.id)}
+              >
+                <span className="contact-track-card-icon">{opt.icon}</span>
+                <span className="contact-track-card-title">{opt.t}</span>
+                <span className="contact-track-card-body">{opt.d}</span>
+                {track === opt.id && <span className="contact-track-selected">Selected ↓</span>}
+              </button>
+            ))}
+          </div>
         </div>
       </section>
 
-      <CardGrid
-        eyebrow="Want to Explore First?"
-        heading="Free frameworks you can use today."
-        columns={4}
-        cards={RESOURCE_TEASERS.map(r => ({ ...r, onClick: () => setPage("resources") }))}
-        cardStyle="compact"
-        background="tinted"
-        centerHeader
-      />
+      <section id={track || undefined} ref={formRef} className="section section-tinted contact-form-section">
+        <div className="contact-form-layout">
+          {FormBlock}
+          <aside className="contact-expect-panel">
+            <div className="t-eyebrow">What to Expect</div>
+            <h3>We respond within one business day.</h3>
+            {selectedTrack ? (
+              <div className="contact-expect-card">
+                <div className="contact-expect-icon">{selectedTrack.icon}</div>
+                <h4>{selectedTrack.expectationTitle}</h4>
+                <p>{selectedTrack.expectationBody}</p>
+              </div>
+            ) : (
+              <div className="contact-expect-card contact-expect-card-muted">
+                <h4>Pick a track above</h4>
+                <p>Select the starting point that fits your situation and this panel will show what happens next.</p>
+              </div>
+            )}
+            <div className="contact-diagnostic-note">
+              <strong>The first conversation is always diagnostic.</strong>
+              <p>Your environment, your constraints, what you've already tried. No sales pitch. No deck. Just whether InsiteHub is the right fit for where you are.</p>
+            </div>
+          </aside>
+        </div>
+      </section>
 
     </>
   );

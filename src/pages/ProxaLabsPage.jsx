@@ -61,28 +61,15 @@ export default function ProxaLabsPage({ setPage }) {
             <p className="t-lead">Each phase is time-bounded with a concrete deliverable. Most Lab engagements complete in six to ten weeks.</p>
           </div>
           <div className="proxa-phases-grid">
-            <div className="proxa-phases-column">
-              {PHASES.slice(0, 2).map(p => (
-                <div key={p.n} className="proxa-phase-card">
-                  <div className="proxa-phase-num">{p.n}</div>
-                  <div>
-                    <div className="proxa-phase-title">{p.title}</div>
-                    <div className="proxa-phase-body">{p.body}</div>
-                  </div>
+            {PHASES.map(p => (
+              <div key={p.n} className="proxa-phase-card">
+                <div className="proxa-phase-num">{p.n}</div>
+                <div>
+                  <div className="proxa-phase-title">{p.title}</div>
+                  <div className="proxa-phase-body">{p.body}</div>
                 </div>
-              ))}
-            </div>
-            <div className="proxa-phases-column">
-              {PHASES.slice(2).map(p => (
-                <div key={p.n} className="proxa-phase-card">
-                  <div className="proxa-phase-num">{p.n}</div>
-                  <div>
-                    <div className="proxa-phase-title">{p.title}</div>
-                    <div className="proxa-phase-body">{p.body}</div>
-                  </div>
-                </div>
-              ))}
-            </div>
+              </div>
+            ))}
           </div>
         </div>
       </section>

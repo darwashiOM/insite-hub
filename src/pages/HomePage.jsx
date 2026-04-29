@@ -1,5 +1,4 @@
 import LoopVisual from '../components/LoopVisual';
-import LoopMobile from '../components/LoopMobile';
 import EditorialHero from '../components/sections/EditorialHero';
 import StatBand from '../components/sections/StatBand';
 import CardGrid from '../components/sections/CardGrid';
@@ -47,14 +46,14 @@ export default function HomePage({ setPage }) {
     <>
       <EditorialHero
         eyebrow="FOR COMMERCIAL L&D LEADERS IN BIOPHARMA"
-        headline={<>The AI commercial learning partner <em>built for biopharma</em> — not adapted for it.</>}
+        headline={<span className="home-hero-headline">The AI commercial learning partner <em>built for biopharma</em>. Not adapted for it.</span>}
         subhead="Most platforms were built for enterprise sales and retrofitted for pharma. InsiteHub was built for biopharma from day one: advisory methodology, AI literacy programming, and a closed-loop platform designed around the constraints you actually operate in: MLR review, launch timelines, federated commercial structures."
-        secondaryLink={{ label: "See the Platform", onClick: () => setPage("platform") }}
-        visual={<><div className="hero-loop-desktop"><LoopVisual /></div><div className="hero-loop-mobile"><LoopMobile /></div></>}
+        primaryCta={{ label: "See the Platform", onClick: () => setPage("platform") }}
+        visual={<LoopVisual />}
       />
 
       <div className="logo-band">
-        <div className="lb-label">Trusted across biopharma and health systems</div>
+        <h2 className="t-h2 lb-label">Trusted across biopharma and health systems</h2>
         <div className="lb-row">
           {CLIENT_LOGOS.map(n => <span key={n} className="lb-co">{n}</span>)}
         </div>
@@ -78,6 +77,8 @@ export default function HomePage({ setPage }) {
         cards={DIFFERENTIATORS}
         cardStyle="feature"
         background="tinted"
+        centerHeader
+        leadMaxWidth={920}
       />
 
       <CardGrid
@@ -98,7 +99,7 @@ export default function HomePage({ setPage }) {
 
       <PullQuote
         quote="We had been trying to make AI work for 18 months. Two pilots, two postmortems, and a CCO who was starting to ask whether L&D could actually lead this. What InsiteHub did differently was refuse to let us skip the hard part — defining what success actually looked like before we built anything. We walked into our budget review with evidence, not a pitch deck."
-        author={{ name: "Sarah Chen", title: "VP, Commercial Learning & Development", company: "Mid-Size Oncology Biopharma · Series C", avatarInitials: "SC" }}
+        author={{ name: "Sarah Chen", title: "VP, Commercial Learning & Development", company: "Mid-Size Oncology Biopharma · Series C" }}
         stats={[
           { n: "23%", l: "improvement in manager-assessed call quality" },
           { n: "0",   l: "MLR compliance flags across all sessions" },
@@ -115,6 +116,7 @@ export default function HomePage({ setPage }) {
         cards={SITUATION_CARDS}
         cardStyle="standard"
         centerHeader
+        className="when-to-call-grid"
       />
 
       <StepRail
@@ -123,6 +125,9 @@ export default function HomePage({ setPage }) {
         lead="Four years of enterprise learning infrastructure in biopharma. A closed-loop AI platform built on top of it. You decide when and how fast to move."
         steps={STEPS}
         background="tinted"
+        orientation="horizontal"
+        centerHeader
+        className="journey-step-rail"
       />
 
       <CTABand
