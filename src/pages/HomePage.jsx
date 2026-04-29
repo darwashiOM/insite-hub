@@ -14,13 +14,13 @@ const STATS = [
   { n: "80–95%", l: "of pharma AI pilots never scale or deliver measurable value", source: "Source: Saama / Forbes, 2025" },
   { n: "11 mo",  l: "average ramp to full rep productivity in biopharma", source: "Source: Salesforce State of Sales, 2024" },
   { n: "84%",    l: "of pharma reps missed quota last year", source: "Source: Salesforce State of Sales, 2024" },
-  { n: "25 yrs", l: "biopharma commercial L&D expertise behind our methodology", source: "InsiteHub" },
+  { n: "25 yrs", l: "practitioner experience behind the InsiteHub methodology", source: "InsiteHub" },
 ];
 
 const DIFFERENTIATORS = [
   { icon: <Icon name="methodology" size={26} />, tag: "01 — Methodology", title: "We diagnose before we prescribe.", body: "Every engagement starts with the question your organization actually needs answered: what will determine whether any AI implementation succeeds or fails here? Most vendors skip this. We never do." },
   { icon: <Icon name="compliance" size={26} />,  tag: "02 — Compliance",  title: "Their compliance story is a retrofit. Ours is not.", body: "MLR review, GxP validation, and compressed launch windows are the operating conditions InsiteHub was designed around from day one." },
-  { icon: <Icon name="award" size={26} />,        tag: "03 — Insider",     title: "We don't need you to explain pharma to us.", body: "InsiteHub's practitioners have operated inside the environments they now advise. The failure modes are already known. That's a 25-year track record, not a talking point." },
+  { icon: <Icon name="award" size={26} />,        tag: "03 — Insider",     title: "We don't need you to explain pharma to us.", body: "InsiteHub's practitioners have operated inside the environments they now advise. The failure modes are already known. That's 25 years of practitioner experience, not a talking point." },
   { icon: <Icon name="pilot" size={26} />,       tag: "04 — Experiment",  title: "You don't commit until you have evidence.", body: "InsiteHub's model inverts the typical vendor sequence. We run structured experiments to test fit in your environment before you stake your credibility on it." },
 ];
 
@@ -59,7 +59,7 @@ export default function HomePage({ setPage }) {
         </div>
       </div>
 
-      <StatBand stats={STATS} tone="dark" />
+      <StatBand stats={STATS} />
 
       <AnnouncementBand
         icon={<Icon name="literacy" size={24} color="#D97706" />}
@@ -72,7 +72,7 @@ export default function HomePage({ setPage }) {
       <CardGrid
         eyebrow="Four Principles for Evaluating Any AI Partner"
         heading="How do you know if AI is actually working in your organization?"
-        lead={<>Most biopharma L&D leaders can't answer that question with confidence because the data that matters isn't in the dashboard.<br /><br />These four principles are how InsiteHub diagnoses whether AI is actually delivering, and how we've built 25-years of award-winning work around them.</>}
+        lead={<>Most biopharma L&D leaders can't answer that question with confidence because the data that matters isn't in the dashboard.<br /><br />These four principles are how InsiteHub diagnoses whether AI is actually delivering, and how our practitioners have built 25 years of award-winning work around them.</>}
         columns={2}
         cards={DIFFERENTIATORS}
         cardStyle="feature"
@@ -122,7 +122,7 @@ export default function HomePage({ setPage }) {
       <StepRail
         eyebrow="For Every Stage of the Journey"
         heading="From where you are to AI-ready."
-        lead="Four years of enterprise learning infrastructure in biopharma. A closed-loop AI platform built on top of it. You decide when and how fast to move."
+        lead="Four-plus years of InsiteX enterprise learning infrastructure in biopharma. A closed-loop AI platform built on top of it. You decide when and how fast to move."
         steps={STEPS}
         background="tinted"
         orientation="horizontal"

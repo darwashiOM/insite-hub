@@ -23,9 +23,9 @@ export default function ResourcesPage({ setPage }) {
   return (
     <>
       <EditorialHero
-        eyebrow="Resources · Frameworks & Tools"
+        eyebrow="Resources"
         headline={<>Tools and frameworks you can use <em>before you commit to anything.</em></>}
-        subhead="25 years of biopharma commercial L&D experience distilled into practical tools. No form required for the frameworks — just thinking you can take into your next leadership conversation."
+        subhead="25 years of practitioner biopharma commercial L&D experience distilled into practical tools. No form required for the frameworks — just thinking you can take into your next leadership conversation."
         primaryCta={{ label: "Subscribe for New Resources", onClick: () => setPage("newsletter") }}
         secondaryLink={{ label: "Explore Proxa Labs Research", onClick: () => setPage("proxalab") }}
       />

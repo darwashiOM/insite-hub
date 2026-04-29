@@ -12,7 +12,7 @@ export default function PlatformPage({ setPage }) {
   return (
     <>
       <EditorialHero
-        eyebrow="AI Platform · Closed Loop"
+        eyebrow="AI Platform"
         headline={<>One platform. Four products. <em>A closed loop that never breaks.</em></>}
         subhead="Forge builds MLR-compliant content. Atlas delivers adaptive learning. Echo assesses readiness in live HCP roleplay. Certify confirms behavioral competency. When a rep falls short, the system rebuilds the content automatically — no human handoffs, no stalled remediation cycles."
         primaryCta={{ label: "Book a Demo", onClick: () => setPage("contact") }}

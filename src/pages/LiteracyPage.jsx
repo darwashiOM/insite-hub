@@ -84,7 +84,7 @@ export default function LiteracyPage({ setPage }) {
       >
         <p>What looks like an AI adoption failure is usually a literacy failure. Reps don't trust AI-generated talking points because no one explained where the content comes from or how to spot when the model is wrong. Managers can't interpret AI readiness scores because they don't know what the model is measuring. Medical and Regulatory teams reject AI-generated content reviews because they have no framework for what "AI-generated" means inside their workflow.</p>
         <p>More training on the tool doesn't fix this. Foundational literacy does. Once teams have the vocabulary — what LLMs do well, what they fail at, where human judgment belongs in the loop — adoption stops being a fight. It becomes normal use of normal tools.</p>
-        <p>That's what this program does. Six role-targeted tracks, built on 25 years of biopharma commercial training methodology, delivered at enterprise scale through UMU.com.</p>
+        <p>That's what this program does. Six role-targeted tracks, built on 25 years of practitioner biopharma commercial training methodology, delivered at enterprise scale through UMU.com.</p>
       </LongForm>
 
       <CardGrid
@@ -98,7 +98,7 @@ export default function LiteracyPage({ setPage }) {
         centerHeader
       />
 
-      <StatBand stats={OUTCOMES} tone="dark" />
+      <StatBand stats={OUTCOMES} />
 
       <SplitFeature
         ratio="50-50"

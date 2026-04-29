@@ -117,7 +117,7 @@ export default function NewsletterPage({ setPage }) {
   return (
     <>
       <EditorialHero
-        eyebrow="Newsletter · Field Notes"
+        eyebrow="Newsletter"
         headline={<>Stay ahead of AI in <em>biopharma commercial learning.</em></>}
         subhead="Frameworks, research, field notes, and announcements from InsiteHub's practitioners. Sent when there's something worth saying. No vendor noise, no weekly cadence for its own sake."
       />

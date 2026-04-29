@@ -16,7 +16,7 @@ export default function AdvisoryPage({ setPage }) {
   return (
     <>
       <EditorialHero
-        eyebrow="Advisory · Diagnostic-First"
+        eyebrow="Advisory"
         headline={<>Most vendors lead with a demo. <em>We lead with a diagnosis.</em></>}
         subhead="Every InsiteHub engagement starts with the question your organization actually needs answered: what will determine whether AI succeeds or fails here? Six diagnostic engagements, each time-bounded, each producing a deliverable you can act on. No open-ended retainers."
       />

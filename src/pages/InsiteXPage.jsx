@@ -73,7 +73,7 @@ export default function InsiteXPage({ setPage }) {
   return (
     <>
       <EditorialHero
-        eyebrow="InsiteX LMS · Enterprise Learning Infrastructure"
+        eyebrow="InsiteX LMS"
         headline={<>The LMS that becomes <em>the AI foundation.</em></>}
         subhead="InsiteX is the enterprise learning platform underneath InsiteHub's AI. Purpose-built for biopharma — SCORM, AICC, and PMRC compliance, Veeva integration, credentialing workflows, and 10-year audit trails. When your organization is ready for AI, Forge, Atlas, and Echo layer on top. No migration. No rip-and-replace."
         primaryCta={{ label: "Book a Demo", onClick: () => setPage("contact") }}

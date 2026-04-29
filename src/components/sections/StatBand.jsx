@@ -1,6 +1,6 @@
-export default function StatBand({ stats, tone = 'dark' }) {
+export default function StatBand({ stats }) {
   return (
-    <section className={tone === 'dark' ? 'stat-band stat-band-dark' : 'stat-band stat-band-light'}>
+    <section className="stat-band stat-band-dark">
       <div className="stat-band-row">
         {stats.map(s => (
           <div key={s.n} className="stat-band-stat">

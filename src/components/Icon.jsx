@@ -36,7 +36,7 @@ const ICONS = {
   timeline: <><line x1="3" y1="12" x2="21" y2="12"/><circle cx="6" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="18" cy="12" r="2"/></>,
 };
 
-export default function Icon({ name, size = 24, color = "currentColor", strokeWidth = 1.6, className, style }) {
+export default function Icon({ name, size = 24, color = "currentColor", strokeWidth = 1.8, className, style }) {
   const path = ICONS[name];
   if (!path) {
     if (typeof console !== 'undefined') console.warn(`Icon: unknown name "${name}"`);

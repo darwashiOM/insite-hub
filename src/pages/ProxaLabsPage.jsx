@@ -37,8 +37,9 @@ export default function ProxaLabsPage({ setPage }) {
         eyebrow="Why Structured Experimentation"
         heading="The discipline that matches the environment."
         pullQuote="In biopharma, a failed AI pilot doesn't just cost a budget line — it costs launch momentum and CCO trust. We exist to prevent that outcome."
+        pullQuoteAttribution="Nina Patel, Proxa Labs Research Lead, InsiteHub"
       >
-        <p>Structured experimentation is the only discipline built for environments where you can't afford to be wrong. It's the approach Bell Labs used to test hypotheses against real constraints before committing to production. It's the approach that shaped 25 years of biopharma commercial operating decisions — where the constraints are MLR review, launch timelines, and federated commercial structures.</p>
+        <p>Structured experimentation is the only discipline built for environments where you can't afford to be wrong. It's the approach Bell Labs used to test hypotheses against real constraints before committing to production. It's the approach that shaped 25 years of practitioner biopharma commercial operating decisions — where the constraints are MLR review, launch timelines, and federated commercial structures.</p>
         <p>We apply that discipline to AI pilots: define the hypothesis, design for evidence, measure honestly, decide based on data. The method is old. The application to commercial AI is new. The result is a Lab engagement that produces defensible evidence — not engagement metrics — and business cases the CCO, CFO, and CHRO will fund.</p>
         <p>Every Lab engagement is structured around a single four-phase model. Each phase has a deliverable. Each deliverable feeds the next phase. The engagement produces either a funded AI roadmap or a defensible decision not to invest — both are valid outcomes.</p>
       </LongForm>

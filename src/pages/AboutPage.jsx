@@ -39,12 +39,12 @@ export default function AboutPage({ setPage }) {
         <p>Every one of these was the same move: diagnose the problem before building the solution, experiment in the real environment before committing at scale, and measure against field performance — not engagement metrics. That methodology is still how InsiteHub works today.</p>
       </LongForm>
 
-      <StatBand stats={PROOF_STATS} tone="dark" />
+      <StatBand stats={PROOF_STATS} />
 
       <StepRail
         eyebrow="Our History"
-        heading="Fifteen years of building from the inside."
-        lead="Each stage solved a problem the industry had accepted as unfixable."
+        heading="Since 2010, building from the inside."
+        lead="InsiteHub's company history began in 2010. Each stage solved a problem the industry had accepted as unfixable."
         steps={TIMELINE}
         background="tinted"
         orientation="vertical"
