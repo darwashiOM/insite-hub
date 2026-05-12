@@ -1,68 +1,88 @@
-const NAV_COLUMNS = [
-  ["AI Platform", [
-    ["Forge","platform"], ["Atlas","platform"],
-    ["Echo","platform"], ["Certify","platform"],
-    ["InsiteX LMS","insitex"], ["AI Literacy Program","literacy"],
+const FOOTER_COLUMNS = [
+  ["Platform", [
+    ["AI Platform", "platform"],
+    ["InsiteX LMS", "insitex"],
   ]],
-  ["Services", [
-    ["Advisory","advisory"], ["Content Development","content"],
-    ["Proxa Labs","proxalab"],
+  ["Solutions", [
+    ["AI Literacy", "literacy"],
+    ["Advisory", "advisory"],
+    ["Content", "content"],
   ]],
-  ["Company", [
-    ["About","about"], ["Contact","contact"],
+  ["The Lab", [
+    ["Proxa Labs", "proxalab"],
+  ]],
+  ["Resources", [
+    ["Frameworks & Guides", "resources", "frameworks"],
+    ["Research", "resources", "research"],
+  ]],
+  ["About", [
+    ["About InsiteHub", "about"],
   ]],
 ];
 
-const QUICK_LINKS = [
-  {l:"Book a Consult", p:"contact", track:"talk"},
-  {l:"Book a Demo", p:"contact", track:"demo"},
-];
+const CREDENTIALS = ["SOC 2 Type II in progress", "NIH Partner", "University of Delaware Partner"];
 
 const Footer = ({ setPage }) => {
   const go = (p, track) => {
+    if (!p) return;
     setPage(p, track ? { hash: track } : undefined);
   };
 
   return (
-    <footer style={{ background: "#1A1D25", borderTop: "1px solid rgba(255,255,255,.06)" }}>
-      {/* Main grid */}
-      <div style={{ padding: "52px 56px 32px" }}>
-        <div style={{ maxWidth: 1200, margin: "0 auto" }}>
-          <div className="footer-grid" style={{ display: "grid", gridTemplateColumns: "2.4fr 1fr 1fr 1fr", gap: 52, marginBottom: 48 }}>
-            {/* Column 1: Brand */}
-            <div>
-              <div style={{ display: "flex", alignItems: "center", gap: 12, cursor: "pointer", marginBottom: 16 }} onClick={() => setPage("home")}>
-                <img className="footer-logo-img" src="/assets/IH_horiz_full.png" alt="InsiteHub" />
-              </div>
-              <p style={{ fontSize: 14, color: "rgba(255,255,255,.3)", lineHeight: 1.72, maxWidth: 280, marginBottom: 20 }}>The AI-native platform and implementation partner built for the organizational complexity of biopharma commercial learning — not adapted for it.</p>
-              <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 24 }}>
-                {QUICK_LINKS.map(b => (
-                  <button key={b.l} onClick={() => go(b.p, b.track)} style={{ fontSize: 12, fontWeight: 600, padding: "6px 14px", borderRadius: 8, border: "1px solid rgba(255,255,255,.1)", background: "none", color: "rgba(255,255,255,.4)", cursor: "pointer", fontFamily: "DM Sans,sans-serif" }}>{b.l}</button>
-                ))}
-              </div>
-              <div style={{ fontSize: 12, color: "rgba(255,255,255,.28)", lineHeight: 1.65 }}>
-                <div style={{ color: "rgba(255,255,255,.42)", fontWeight: 700, marginBottom: 4 }}>Newark, Delaware</div>
-                <div>591 Collaboration Way, Suite 613</div>
-              </div>
+    <footer className="site-footer">
+      <div className="site-footer-inner">
+        <div className="footer-grid">
+          <div className="footer-brand">
+            <div className="footer-logo-wrap" onClick={() => go("home")}>
+              <img className="footer-logo-img" src="/assets/IH_horiz_full.png" alt="InsiteHub" />
             </div>
-            {/* Columns 2-4: Nav links */}
-            {NAV_COLUMNS.map(([h, links]) => (
-              <div key={h}>
-                <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".09em", textTransform: "uppercase", color: "rgba(255,255,255,.28)", marginBottom: 16 }}>{h}</div>
-                {links.map(([l, p]) => (
-                  <div key={l} style={{ fontSize: 13.5, color: "rgba(255,255,255,.25)", marginBottom: 11, cursor: "pointer" }} onClick={() => go(p)}>{l}</div>
-                ))}
-              </div>
-            ))}
+            <p className="footer-tagline">The AI-native platform and implementation partner built for the organizational complexity of biopharma commercial learning — not adapted for it.</p>
+            <div className="footer-cta-row">
+              <button className="footer-cta-primary" onClick={() => go("contact", "demo")}>Book a Demo</button>
+              <button className="footer-cta-secondary" onClick={() => go("contact", "talk")}>Book a Consult</button>
+            </div>
           </div>
-          {/* Bottom bar */}
-          <div style={{ borderTop: "1px solid rgba(255,255,255,.06)", paddingTop: 26, display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 14 }}>
-            <div style={{ fontSize: 12, color: "rgba(255,255,255,.16)" }}>© 2026 InsiteHub, Inc. · Newark, DE · InsiteHub, Inc. is a Delaware S-Corp</div>
-            <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
-              {["SOC 2 Type II in progress","NIH Partner","University of Delaware Partner"].map(t => (
-                <div key={t} style={{ fontSize: 11, fontWeight: 600, padding: "4px 12px", borderRadius: 20, border: "1px solid rgba(255,255,255,.08)", color: "rgba(255,255,255,.2)" }}>{t}</div>
+          {FOOTER_COLUMNS.map(([h, links]) => (
+            <div key={h} className="footer-col">
+              <div className="footer-col-head">{h}</div>
+              {links.map(([l, p, hash], i) => (
+                <div
+                  key={typeof l === "string" ? l : i}
+                  className={"footer-col-link" + (p ? "" : " footer-col-link-disabled")}
+                  onClick={() => go(p, hash)}
+                >
+                  {l}
+                </div>
               ))}
             </div>
+          ))}
+        </div>
+
+        <div className="footer-divider" />
+
+        <div className="footer-mid">
+          <div className="footer-hq">
+            <div className="footer-col-head">Headquarters</div>
+            <div className="footer-hq-name">Newark, Delaware</div>
+            <div className="footer-hq-addr">InsiteHub, Inc. · 591 Collaboration Way, Suite 613</div>
+          </div>
+          <div className="footer-credentials">
+            <div className="footer-col-head" style={{ textAlign: "right" }}>Credentials</div>
+            <div className="footer-credentials-row">
+              {CREDENTIALS.map(t => (
+                <span key={t} className="footer-credential-pill">{t}</span>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div className="footer-divider" />
+
+        <div className="footer-bottom">
+          <div className="footer-copyright">© 2026 InsiteHub, Inc. · InsiteHub, Inc. is a Delaware S-Corp</div>
+          <div className="footer-legal">
+            <a href="/privacy" onClick={(e) => { e.preventDefault(); }}>Privacy Policy</a>
+            <a href="/terms" onClick={(e) => { e.preventDefault(); }}>Terms</a>
           </div>
         </div>
       </div>

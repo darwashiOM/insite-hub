@@ -27,38 +27,40 @@ export default function ResourcesPage({ setPage }) {
         headline={<>Tools and frameworks you can use <em>before you commit to anything.</em></>}
         subhead="25 years of practitioner biopharma commercial L&D experience distilled into practical tools. No form required for the frameworks — just thinking you can take into your next leadership conversation."
         primaryCta={{ label: "Subscribe for New Resources", onClick: () => setPage("newsletter") }}
-        secondaryLink={{ label: "Explore Proxa Labs Research", onClick: () => setPage("proxalab") }}
       />
 
-      <CardGrid
-        eyebrow="Frameworks & Guides"
-        heading="Start here if you're still figuring out where AI fits."
-        lead="Each framework distills a piece of methodology InsiteHub uses with paying clients. Free to use. No gating beyond the conversation it sparks."
-        columns={3}
-        cards={FRAMEWORKS}
-        cardStyle="feature"
-      />
+      <div id="frameworks">
+        <CardGrid
+          eyebrow="Frameworks & Guides"
+          heading="Start here if you're still figuring out where AI fits."
+          lead="Each framework distills a piece of methodology InsiteHub uses with paying clients. Free to use. No gating beyond the conversation it sparks."
+          columns={3}
+          cards={FRAMEWORKS}
+          cardStyle="feature"
+        />
+      </div>
 
-      <LongForm
-        eyebrow="From Proxa Labs"
-        heading="Active research and early findings."
-        background="tinted"
-      >
-        <p>Open research from InsiteHub's AI lab — work in progress that will shape how we advise clients and build products. We publish early because the methodology benefits from peer pressure, and because the people who would benefit from these frameworks should not have to wait for them to be polished.</p>
-      </LongForm>
+      <div id="research">
+        <LongForm
+          eyebrow="From Proxa Labs"
+          heading="Active research and early findings."
+          background="tinted"
+        >
+          <p>Open research from InsiteHub's AI lab — work in progress that will shape how we advise clients and build products. We publish early because the methodology benefits from peer pressure, and because the people who would benefit from these frameworks should not have to wait for them to be polished.</p>
+        </LongForm>
 
-      <CardGrid
-        columns={3}
-        cards={RESEARCH}
-        cardStyle="compact"
-        background="tinted"
-      />
+        <CardGrid
+          columns={3}
+          cards={RESEARCH}
+          cardStyle="compact"
+          background="tinted"
+        />
+      </div>
 
       <CTABand
         heading={<>The frameworks are free. <em>The conversations matter more.</em></>}
         body="Use the tools. When you're ready to talk through how they apply in your environment, we're here."
         primaryCta={{ label: "Start a Conversation", onClick: () => setPage("contact") }}
-        secondaryLink={{ label: "Subscribe for New Resources", onClick: () => setPage("newsletter") }}
       />
     </>
   );

@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import Icon from './Icon';
 
-const DROP_ITEMS = [
+const WHERE_ITEMS = [
   {icon:<Icon name="strategy" size={20} />,title:"I need an AI strategy",desc:"Assess your readiness and build a roadmap before any technology decision.",tag:"Advisory",p:"advisory"},
   {icon:<Icon name="pilot" size={20} />,title:"I want to run an AI pilot",desc:"Structure the experiment, define success criteria, build the business case.",tag:"Proxa Labs",p:"proxalab"},
   {icon:<Icon name="literacy" size={20} />,title:"I need AI literacy training",desc:"Build AI fluency across your commercial organization before deploying tools.",tag:"AI Literacy",p:"literacy"},
@@ -11,77 +11,128 @@ const DROP_ITEMS = [
   {icon:<Icon name="chat" size={20} />,title:"I'm not sure yet",desc:"30 minutes. No pitch. Tell us where you're stuck.",tag:"Book a Consult",p:"contact",track:"talk"},
 ];
 
-const TOP_LINKS = [
-  ["AI Platform","platform"], ["AI Literacy","literacy"], ["InsiteX LMS","insitex"],
-  ["InsiteXccelerator","https://www.insitexccelerator.com/","external"],
-  ["Advisory","advisory"], ["Content","content"], ["Proxa Labs","proxalab"], ["About","about"],
+const PLATFORM_ITEMS = [
+  ["AI Platform", "platform"],
+  ["InsiteX LMS", "insitex"],
 ];
 
+const SOLUTIONS_ITEMS = [
+  ["AI Literacy", "literacy"],
+  ["Advisory", "advisory"],
+  ["Content", "content"],
+];
+
+const FLAT_LINKS = [
+  ["The Lab", "proxalab"],
+  ["Resources", "resources"],
+  ["About", "about"],
+];
+
+const Chevron = ({ open }) => (
+  <svg width="11" height="7" viewBox="0 0 12 8" fill="none" style={{ marginLeft: 4, transform: open ? "rotate(180deg)" : "rotate(0)", transition: "transform .2s" }}>
+    <path d="M1 1.5L6 6.5L11 1.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
+
 const Nav = ({ page, setPage, scrolled }) => {
-  const [dropOpen, setDropOpen] = useState(false);
+  const [openDropdown, setOpenDropdown] = useState(null);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [mobileDropOpen, setMobileDropOpen] = useState(false);
-  const dropRef = useRef(null);
+  const [mobileAccordion, setMobileAccordion] = useState(null);
+  const navRef = useRef(null);
 
   useEffect(() => {
-    if (!dropOpen) return;
-    const handler = (e) => { if (dropRef.current && !dropRef.current.contains(e.target)) setDropOpen(false); };
-    const esc = (e) => { if (e.key === "Escape") setDropOpen(false); };
+    if (!openDropdown) return;
+    const handler = (e) => { if (navRef.current && !navRef.current.contains(e.target)) setOpenDropdown(null); };
+    const esc = (e) => { if (e.key === "Escape") setOpenDropdown(null); };
     document.addEventListener("mousedown", handler);
     document.addEventListener("keydown", esc);
     return () => { document.removeEventListener("mousedown", handler); document.removeEventListener("keydown", esc); };
-  }, [dropOpen]);
+  }, [openDropdown]);
 
   const go = (p, track) => {
-    setDropOpen(false); setMobileOpen(false); setMobileDropOpen(false);
+    setOpenDropdown(null); setMobileOpen(false); setMobileAccordion(null);
     setPage(p, track ? { hash: track } : undefined);
   };
 
+  const toggle = (k) => setOpenDropdown(o => o === k ? null : k);
+  const toggleMobile = (k) => setMobileAccordion(o => o === k ? null : k);
+  const isActive = (items) => items.some(([, p]) => p === page);
+
   return (
     <>
-      <nav className={"nav" + (scrolled ? " up" : "")}>
+      <nav ref={navRef} className={"nav" + (scrolled ? " up" : "")}>
         <div className="nav-logo" onClick={() => go("home")}>
           <img className="nav-logo-img" src="/assets/IH_horiz_full.png" alt="InsiteHub" />
         </div>
         <div className="nav-links">
-          <div ref={dropRef} style={{ position: "relative" }}>
+          {/* Where to Start (mega) */}
+          <div style={{ position: "relative" }}>
             <button
               className="nl nl-drop"
-              onClick={() => setDropOpen(o => !o)}
-              style={{ color: dropOpen ? "var(--o)" : undefined }}
+              onClick={() => toggle("where")}
+              style={{ color: openDropdown === "where" ? "var(--o)" : undefined }}
             >
               Where to Start
-              <svg width="12" height="8" viewBox="0 0 12 8" fill="none" style={{ transform: dropOpen ? "rotate(180deg)" : "rotate(0deg)", transition: "transform .2s", marginLeft: 4 }}>
-                <path d="M1 1.5L6 6.5L11 1.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
+              <Chevron open={openDropdown === "where"} />
             </button>
-            {dropOpen && (
-              <div style={{
-                position: "absolute", top: "calc(100% + 8px)", left: "50%", transform: "translateX(-50%)",
-                background: "var(--wh)", border: "1px solid var(--br)", borderRadius: 16,
-                boxShadow: "0 20px 60px rgba(0,0,0,.14),0 4px 16px rgba(0,0,0,.06)",
-                padding: 8, width: 600, zIndex: 400,
-                display: "grid", gridTemplateColumns: "1fr 1fr", gap: 4
-              }}>
-                {DROP_ITEMS.map(d => (
-                  <div key={d.title} onClick={() => go(d.p, d.track)} className="ndm-item" style={{ padding: "14px 16px", borderRadius: 10, cursor: "pointer" }}>
+            {openDropdown === "where" && (
+              <div className="nav-mega-menu">
+                {WHERE_ITEMS.map(d => (
+                  <div key={d.title} onClick={() => go(d.p, d.track)} className="ndm-item">
                     <div style={{ color: 'var(--o)', marginBottom: 5 }}>{d.icon}</div>
-                    <div style={{ fontSize: 13, fontWeight: 700, color: "var(--dk)", marginBottom: 3, fontFamily: "Manrope,sans-serif" }}>{d.title}</div>
-                    <div style={{ fontSize: 11.5, color: "var(--bd)", lineHeight: 1.45, marginBottom: 6 }}>{d.desc}</div>
-                    <span style={{ fontSize: 10, fontWeight: 700, color: "var(--o)", background: "var(--o10)", borderRadius: 20, padding: "2px 8px", display: "inline-block", letterSpacing: ".04em" }}>{d.tag}</span>
+                    <div className="ndm-title">{d.title}</div>
+                    <div className="ndm-desc">{d.desc}</div>
+                    <span className="ndm-tag">{d.tag}</span>
                   </div>
                 ))}
               </div>
             )}
           </div>
-          {TOP_LINKS.map(([l, p, type]) => (
-            type === "external" ? (
-              <a key={p} className="nl" href={p} target="_blank" rel="noopener noreferrer">{l}</a>
-            ) : (
-              <button key={p} className={"nl" + (page === p ? " on" : "")} onClick={() => go(p)}>{l}</button>
-            )
+
+          {/* Platform */}
+          <div style={{ position: "relative" }}>
+            <button
+              className={"nl nl-drop" + (isActive(PLATFORM_ITEMS) ? " on" : "")}
+              onClick={() => toggle("platform")}
+              style={{ color: openDropdown === "platform" ? "var(--o)" : undefined }}
+            >
+              Platform
+              <Chevron open={openDropdown === "platform"} />
+            </button>
+            {openDropdown === "platform" && (
+              <div className="nav-mini-menu">
+                {PLATFORM_ITEMS.map(([l, p]) => (
+                  <button key={p} className={"nav-mini-item" + (page === p ? " on" : "")} onClick={() => go(p)}>{l}</button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Solutions */}
+          <div style={{ position: "relative" }}>
+            <button
+              className={"nl nl-drop" + (isActive(SOLUTIONS_ITEMS) ? " on" : "")}
+              onClick={() => toggle("solutions")}
+              style={{ color: openDropdown === "solutions" ? "var(--o)" : undefined }}
+            >
+              Solutions
+              <Chevron open={openDropdown === "solutions"} />
+            </button>
+            {openDropdown === "solutions" && (
+              <div className="nav-mini-menu">
+                {SOLUTIONS_ITEMS.map(([l, p]) => (
+                  <button key={p} className={"nav-mini-item" + (page === p ? " on" : "")} onClick={() => go(p)}>{l}</button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Flat links */}
+          {FLAT_LINKS.map(([l, p]) => (
+            <button key={p} className={"nl" + (page === p ? " on" : "")} onClick={() => go(p)}>{l}</button>
           ))}
         </div>
+
         <div className="nav-right">
           <button className="no" onClick={() => go("contact", "demo")}>Book a Demo</button>
           <button className="nav-hamburger" onClick={() => setMobileOpen(o => !o)} aria-label="Menu">
@@ -91,26 +142,48 @@ const Nav = ({ page, setPage, scrolled }) => {
           </button>
         </div>
       </nav>
+
       <div className={"nav-mobile-menu" + (mobileOpen ? " open" : "")}>
-        <button className="mobile-accordion-head" onClick={() => setMobileDropOpen(o => !o)}>
+        <button className="mobile-accordion-head" onClick={() => toggleMobile("where")}>
           <span>Where to Start</span>
-          <span style={{ transform: mobileDropOpen ? "rotate(180deg)" : "rotate(0)", transition: "transform .2s" }}>▾</span>
+          <span style={{ transform: mobileAccordion === "where" ? "rotate(180deg)" : "rotate(0)", transition: "transform .2s" }}>▾</span>
         </button>
-        {mobileDropOpen && (
+        {mobileAccordion === "where" && (
           <div className="mobile-accordion-body">
-            {DROP_ITEMS.map(d => (
+            {WHERE_ITEMS.map(d => (
               <button key={d.title} onClick={() => go(d.p, d.track)}>
                 <span style={{ marginRight: 10 }}>{d.icon}</span>{d.title}
               </button>
             ))}
           </div>
         )}
-        {TOP_LINKS.map(([l, p, type]) => (
-          type === "external" ? (
-            <a key={p} href={p} target="_blank" rel="noopener noreferrer">{l}</a>
-          ) : (
-            <button key={p} className={page === p ? "on" : ""} onClick={() => go(p)}>{l}</button>
-          )
+
+        <button className="mobile-accordion-head" onClick={() => toggleMobile("platform")}>
+          <span>Platform</span>
+          <span style={{ transform: mobileAccordion === "platform" ? "rotate(180deg)" : "rotate(0)", transition: "transform .2s" }}>▾</span>
+        </button>
+        {mobileAccordion === "platform" && (
+          <div className="mobile-accordion-body">
+            {PLATFORM_ITEMS.map(([l, p]) => (
+              <button key={p} className={page === p ? "on" : ""} onClick={() => go(p)}>{l}</button>
+            ))}
+          </div>
+        )}
+
+        <button className="mobile-accordion-head" onClick={() => toggleMobile("solutions")}>
+          <span>Solutions</span>
+          <span style={{ transform: mobileAccordion === "solutions" ? "rotate(180deg)" : "rotate(0)", transition: "transform .2s" }}>▾</span>
+        </button>
+        {mobileAccordion === "solutions" && (
+          <div className="mobile-accordion-body">
+            {SOLUTIONS_ITEMS.map(([l, p]) => (
+              <button key={p} className={page === p ? "on" : ""} onClick={() => go(p)}>{l}</button>
+            ))}
+          </div>
+        )}
+
+        {FLAT_LINKS.map(([l, p]) => (
+          <button key={p} className={page === p ? "on" : ""} onClick={() => go(p)}>{l}</button>
         ))}
         <button className="mobile-cta" onClick={() => go("contact", "demo")}>Book a Demo</button>
       </div>
