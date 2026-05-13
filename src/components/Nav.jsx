@@ -26,6 +26,7 @@ const FLAT_LINKS = [
   ["The Lab", "proxalab"],
   ["Resources", "resources"],
   ["About", "about"],
+  ["Innovation Lab", "https://www.insitexccelerator.com/", "external"],
 ];
 
 const Chevron = ({ open }) => (
@@ -128,8 +129,12 @@ const Nav = ({ page, setPage, scrolled }) => {
           </div>
 
           {/* Flat links */}
-          {FLAT_LINKS.map(([l, p]) => (
-            <button key={p} className={"nl" + (page === p ? " on" : "")} onClick={() => go(p)}>{l}</button>
+          {FLAT_LINKS.map(([l, p, type]) => (
+            type === "external" ? (
+              <a key={p} className="nl" href={p} target="_blank" rel="noopener noreferrer">{l}</a>
+            ) : (
+              <button key={p} className={"nl" + (page === p ? " on" : "")} onClick={() => go(p)}>{l}</button>
+            )
           ))}
         </div>
 
@@ -182,8 +187,12 @@ const Nav = ({ page, setPage, scrolled }) => {
           </div>
         )}
 
-        {FLAT_LINKS.map(([l, p]) => (
-          <button key={p} className={page === p ? "on" : ""} onClick={() => go(p)}>{l}</button>
+        {FLAT_LINKS.map(([l, p, type]) => (
+          type === "external" ? (
+            <a key={p} href={p} target="_blank" rel="noopener noreferrer" onClick={() => setMobileOpen(false)}>{l}</a>
+          ) : (
+            <button key={p} className={page === p ? "on" : ""} onClick={() => go(p)}>{l}</button>
+          )
         ))}
         <button className="mobile-cta" onClick={() => go("contact", "demo")}>Book a Demo</button>
       </div>
