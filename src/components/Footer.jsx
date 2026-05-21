@@ -20,7 +20,11 @@ const FOOTER_COLUMNS = [
   ]],
 ];
 
-const CREDENTIALS = ["SOC 2 Type II in progress", "NIH Partner", "University of Delaware Partner"];
+const CREDENTIALS = [
+  { full: "SOC 2 Type II in progress", short: "SOC 2 in progress" },
+  { full: "NIH Partner",                short: "NIH Partner" },
+  { full: "University of Delaware Partner", short: "UD Partner" },
+];
 
 const Footer = ({ setPage }) => {
   const go = (p, track) => {
@@ -70,7 +74,10 @@ const Footer = ({ setPage }) => {
             <div className="footer-col-head" style={{ textAlign: "right" }}>Credentials</div>
             <div className="footer-credentials-row">
               {CREDENTIALS.map(t => (
-                <span key={t} className="footer-credential-pill">{t}</span>
+                <span key={t.full} className="footer-credential-pill">
+                  <span className="footer-credential-full">{t.full}</span>
+                  <span className="footer-credential-short">{t.short}</span>
+                </span>
               ))}
             </div>
           </div>
