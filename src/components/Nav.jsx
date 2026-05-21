@@ -26,7 +26,7 @@ const FLAT_LINKS = [
   ["The Lab", "proxalab"],
   ["Resources", "resources"],
   ["About", "about"],
-  ["Innovation Lab", "https://www.insitexccelerator.com/", "external"],
+  ["InsiteXccelerator", "https://www.insitexccelerator.com/", "external"],
 ];
 
 const Chevron = ({ open }) => (
