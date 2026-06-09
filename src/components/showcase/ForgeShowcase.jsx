@@ -22,10 +22,10 @@ export default function ForgeShowcase() {
     <div style={{ background: '#fff', borderRadius: 12, overflow: 'hidden', flex: 1, display: 'flex', flexDirection: 'column', boxShadow: '0 4px 24px rgba(0,0,0,0.04)' }}>
       <div style={{ padding: '14px 18px', borderBottom: '1px solid #E3E5EA', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div>
-          <div style={{ fontSize: 11, color: '#F4801F', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 2 }}>Forge · Content Workspace</div>
+          <div style={{ fontSize: 11, color: '#f5825f', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 2 }}>Forge · Content Workspace</div>
           <div style={{ fontFamily: 'Manrope, sans-serif', fontWeight: 800, fontSize: 14, color: '#12141A' }}>Oncology Launch Training Draft</div>
         </div>
-        <div style={{ fontSize: 10, color: '#F4801F', fontWeight: 700, padding: '5px 10px', borderRadius: 12, background: 'rgba(244,128,31,.08)' }}>MLR READY</div>
+        <div style={{ fontSize: 10, color: '#f5825f', fontWeight: 700, padding: '5px 10px', borderRadius: 12, background: 'rgba(245,130,95,.08)' }}>MLR READY</div>
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.25fr', gap: 14, padding: 16, flex: 1 }}>
@@ -36,27 +36,27 @@ export default function ForgeShowcase() {
               <div key={doc.label} style={{ paddingBottom: 10, marginBottom: 10, borderBottom: '1px solid #E8EAF0' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', gap: 8, marginBottom: 3 }}>
                   <span style={{ fontSize: 12, fontWeight: 700, color: '#12141A' }}>{doc.label}</span>
-                  <span style={{ fontSize: 9.5, color: '#059669', fontWeight: 700 }}>{doc.status}</span>
+                  <span style={{ fontSize: 9.5, color: '#9ca979', fontWeight: 700 }}>{doc.status}</span>
                 </div>
                 <div style={{ fontSize: 11, color: '#5C6370', lineHeight: 1.35 }}>{doc.detail}</div>
               </div>
             ))}
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
               <div style={{ padding: '9px 10px', background: '#fff', border: '1px solid #E3E5EA', borderRadius: 8 }}>
-                <div style={{ fontSize: 18, fontFamily: 'Manrope, sans-serif', fontWeight: 900, color: '#F4801F', lineHeight: 1 }}>87</div>
+                <div style={{ fontSize: 18, fontFamily: 'Manrope, sans-serif', fontWeight: 900, color: '#f5825f', lineHeight: 1 }}>87</div>
                 <div style={{ fontSize: 9.5, color: '#5C6370', marginTop: 3 }}>claims found</div>
               </div>
               <div style={{ padding: '9px 10px', background: '#fff', border: '1px solid #E3E5EA', borderRadius: 8 }}>
-                <div style={{ fontSize: 18, fontFamily: 'Manrope, sans-serif', fontWeight: 900, color: '#059669', lineHeight: 1 }}>100%</div>
+                <div style={{ fontSize: 18, fontFamily: 'Manrope, sans-serif', fontWeight: 900, color: '#9ca979', lineHeight: 1 }}>100%</div>
                 <div style={{ fontSize: 9.5, color: '#5C6370', marginTop: 3 }}>cited</div>
               </div>
             </div>
           </div>
 
-          <div style={{ padding: 12, background: 'rgba(244,128,31,.06)', border: '1px solid rgba(244,128,31,.22)', borderRadius: 10 }}>
-            <div style={{ fontSize: 11, color: '#9A4C13', fontWeight: 700, marginBottom: 4 }}>Draft status</div>
-            <div style={{ height: 5, background: 'rgba(244,128,31,.18)', borderRadius: 3, overflow: 'hidden', marginBottom: 8 }}>
-              <div style={{ width: '92%', height: '100%', background: '#F4801F' }} />
+          <div style={{ padding: 12, background: 'rgba(245,130,95,.06)', border: '1px solid rgba(245,130,95,.22)', borderRadius: 10 }}>
+            <div style={{ fontSize: 11, color: '#a34526', fontWeight: 700, marginBottom: 4 }}>Draft status</div>
+            <div style={{ height: 5, background: 'rgba(245,130,95,.18)', borderRadius: 3, overflow: 'hidden', marginBottom: 8 }}>
+              <div style={{ width: '92%', height: '100%', background: '#f5825f' }} />
             </div>
             <div style={{ fontSize: 11, color: '#92400E' }}>3 modules generated · reviewer handoff queued</div>
           </div>
@@ -66,15 +66,15 @@ export default function ForgeShowcase() {
           <div style={{ padding: 14, border: '1px solid #E3E5EA', borderRadius: 10 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
               <div style={{ fontSize: 10, color: '#5C6370', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Generated Training Outline</div>
-              <div style={{ fontSize: 10, color: '#059669', fontWeight: 700 }}>0 MLR flags</div>
+              <div style={{ fontSize: 10, color: '#9ca979', fontWeight: 700 }}>0 MLR flags</div>
             </div>
             {MODULE_SECTIONS.map(section => (
               <div key={section.title} style={{ padding: '10px 0', borderTop: '1px solid #EEF0F4' }}>
                 <div style={{ fontSize: 12.5, fontWeight: 700, color: '#12141A', marginBottom: 5 }}>{section.title}</div>
                 <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
                   <span style={{ fontSize: 10, color: '#5C6370', background: '#F4F6F8', padding: '4px 8px', borderRadius: 12 }}>{section.claims} claims</span>
-                  <span style={{ fontSize: 10, color: '#059669', background: 'rgba(5,150,105,.08)', padding: '4px 8px', borderRadius: 12 }}>✓ {section.citations} citations</span>
-                  <span style={{ fontSize: 10, color: '#F4801F', background: 'rgba(244,128,31,.08)', padding: '4px 8px', borderRadius: 12 }}>MLR pre-check</span>
+                  <span style={{ fontSize: 10, color: '#9ca979', background: 'rgba(156,169,121,.08)', padding: '4px 8px', borderRadius: 12 }}>✓ {section.citations} citations</span>
+                  <span style={{ fontSize: 10, color: '#f5825f', background: 'rgba(245,130,95,.08)', padding: '4px 8px', borderRadius: 12 }}>MLR pre-check</span>
                 </div>
               </div>
             ))}
@@ -84,7 +84,7 @@ export default function ForgeShowcase() {
             <div style={{ fontSize: 10, color: '#5C6370', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 9 }}>MLR Readiness</div>
             {MLR_CHECKS.map(check => (
               <div key={check} style={{ display: 'flex', gap: 8, alignItems: 'flex-start', fontSize: 11.5, color: '#12141A', marginBottom: 6 }}>
-                <span style={{ color: '#059669', fontWeight: 800 }}>✓</span>
+                <span style={{ color: '#9ca979', fontWeight: 800 }}>✓</span>
                 <span>{check}</span>
               </div>
             ))}

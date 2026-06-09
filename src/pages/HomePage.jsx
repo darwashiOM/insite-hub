@@ -14,14 +14,14 @@ const STATS = [
   { n: "80–95%", l: "of pharma AI pilots never scale or deliver measurable value", source: "Source: Saama / Forbes, 2025" },
   { n: "11 mo",  l: "average ramp to full rep productivity in biopharma", source: "Source: Salesforce State of Sales, 2024" },
   { n: "84%",    l: "of pharma reps missed quota last year", source: "Source: Salesforce State of Sales, 2024" },
-  { n: "25 yrs", l: "practitioner experience behind the InsiteHub methodology", source: "InsiteHub" },
+  { n: "25 yrs", l: "practitioner experience behind the Proxa Labs methodology", source: "Proxa Labs" },
 ];
 
 const DIFFERENTIATORS = [
   { icon: <Icon name="methodology" size={26} />, tag: "01 — Methodology", title: "We diagnose before we prescribe.", body: "Every engagement starts with the question your organization actually needs answered: what will determine whether any AI implementation succeeds or fails here? Most vendors skip this. We never do." },
-  { icon: <Icon name="compliance" size={26} />,  tag: "02 — Compliance",  title: "Their compliance story is a retrofit. Ours is not.", body: "MLR review, GxP validation, and compressed launch windows are the operating conditions InsiteHub was designed around from day one." },
-  { icon: <Icon name="award" size={26} />,        tag: "03 — Insider",     title: "We don't need you to explain pharma to us.", body: "InsiteHub's practitioners have operated inside the environments they now advise. The failure modes are already known. That's 25 years of practitioner experience, not a talking point." },
-  { icon: <Icon name="pilot" size={26} />,       tag: "04 — Experiment",  title: "You don't commit until you have evidence.", body: "InsiteHub's model inverts the typical vendor sequence. We run structured experiments to test fit in your environment before you stake your credibility on it." },
+  { icon: <Icon name="compliance" size={26} />,  tag: "02 — Compliance",  title: "Their compliance story is a retrofit. Ours is not.", body: "MLR review, GxP validation, and compressed launch windows are the operating conditions Proxa Labs was designed around from day one." },
+  { icon: <Icon name="award" size={26} />,        tag: "03 — Insider",     title: "We don't need you to explain pharma to us.", body: "Proxa Labs' practitioners have operated inside the environments they now advise. The failure modes are already known. That's 25 years of practitioner experience, not a talking point." },
+  { icon: <Icon name="pilot" size={26} />,       tag: "04 — Experiment",  title: "You don't commit until you have evidence.", body: "Proxa Labs' model inverts the typical vendor sequence. We run structured experiments to test fit in your environment before you stake your credibility on it." },
 ];
 
 const SITUATION_CARDS = [
@@ -47,7 +47,7 @@ export default function HomePage({ setPage }) {
       <EditorialHero
         eyebrow="FOR COMMERCIAL L&D LEADERS IN BIOPHARMA"
         headline={<span className="home-hero-headline">The AI commercial learning partner <em>built for biopharma</em>. Not adapted for it.</span>}
-        subhead="Most platforms were built for enterprise sales and retrofitted for pharma. InsiteHub was built for biopharma from day one: advisory methodology, AI literacy programming, and a closed-loop platform designed around the constraints you actually operate in: MLR review, launch timelines, federated commercial structures."
+        subhead="Most platforms were built for enterprise sales and retrofitted for pharma. Proxa Labs was built for biopharma from day one: advisory methodology, AI literacy programming, and a closed-loop platform designed around the constraints you actually operate in: MLR review, launch timelines, federated commercial structures."
         primaryCta={{ label: "See the Platform", onClick: () => setPage("platform") }}
         visual={<LoopVisual />}
       />
@@ -72,7 +72,7 @@ export default function HomePage({ setPage }) {
       <CardGrid
         eyebrow="Four Principles for Evaluating Any AI Partner"
         heading="How do you know if AI is actually working in your organization?"
-        lead={<>Most biopharma L&D leaders can't answer that question with confidence because the data that matters isn't in the dashboard.<br /><br />These four principles are how InsiteHub diagnoses whether AI is actually delivering, and how our practitioners have built 25 years of award-winning work around them.</>}
+        lead={<>Most biopharma L&D leaders can't answer that question with confidence because the data that matters isn't in the dashboard.<br /><br />These four principles are how Proxa Labs diagnoses whether AI is actually delivering, and how our practitioners have built 25 years of award-winning work around them.</>}
         columns={2}
         cards={DIFFERENTIATORS}
         cardStyle="feature"
@@ -87,10 +87,10 @@ export default function HomePage({ setPage }) {
         lead="Content published in Forge → delivered by Atlas → assessed by Echo → verified in Certify. Every gap automatically restarts the loop."
         columns={2}
         cards={[
-          { icon: <Icon name="agent"    size={26} color="#F4801F" />, tag: "Forge",   tagColor: "#F4801F", title: "Agentic content creation.",      body: "AI agents build MLR-compliant training from your PI, CSRs, and brand assets. Hours, not months." },
-          { icon: <Icon name="pathway"  size={26} color="#007AFF" />, tag: "Atlas",   tagColor: "#007AFF", title: "AI-powered adaptive learning.",  body: "Personalized pathways that close knowledge gaps in real time, ensuring reps are field-ready." },
-          { icon: <Icon name="roleplay" size={26} color="#7C3AED" />, tag: "Echo",    tagColor: "#7C3AED", title: "AI roleplay + compliance guard.", body: "Live HCP conversations with AI physician avatars. ComplianceGuard monitors every message in real time." },
-          { icon: <Icon name="audit"    size={26} color="#059669" />, tag: "Certify", tagColor: "#059669", title: "Demonstrated field readiness.",   body: "Certification earned through behavioral competency — not attendance. 10-year audit trail." },
+          { icon: <Icon name="agent"    size={26} color="#f5825f" />, tag: "Forge",   tagColor: "#f5825f", title: "Agentic content creation.",      body: "AI agents build MLR-compliant training from your PI, CSRs, and brand assets. Hours, not months." },
+          { icon: <Icon name="pathway"  size={26} color="#75abc0" />, tag: "Atlas",   tagColor: "#75abc0", title: "AI-powered adaptive learning.",  body: "Personalized pathways that close knowledge gaps in real time, ensuring reps are field-ready." },
+          { icon: <Icon name="roleplay" size={26} color="#5e6b7a" />, tag: "Echo",    tagColor: "#5e6b7a", title: "AI roleplay + compliance guard.", body: "Live HCP conversations with AI physician avatars. ComplianceGuard monitors every message in real time." },
+          { icon: <Icon name="audit"    size={26} color="#9ca979" />, tag: "Certify", tagColor: "#9ca979", title: "Demonstrated field readiness.",   body: "Certification earned through behavioral competency — not attendance. 10-year audit trail." },
         ]}
         cardStyle="feature"
         background="tinted"
@@ -98,7 +98,7 @@ export default function HomePage({ setPage }) {
       />
 
       <PullQuote
-        quote="We had been trying to make AI work for 18 months. Two pilots, two postmortems, and a CCO who was starting to ask whether L&D could actually lead this. What InsiteHub did differently was refuse to let us skip the hard part — defining what success actually looked like before we built anything. We walked into our budget review with evidence, not a pitch deck."
+        quote="We had been trying to make AI work for 18 months. Two pilots, two postmortems, and a CCO who was starting to ask whether L&D could actually lead this. What Proxa Labs did differently was refuse to let us skip the hard part — defining what success actually looked like before we built anything. We walked into our budget review with evidence, not a pitch deck."
         author={{ name: "Sarah Chen", title: "VP, Commercial Learning & Development", company: "Mid-Size Oncology Biopharma · Series C" }}
         stats={[
           { n: "23%", l: "improvement in manager-assessed call quality" },
@@ -132,7 +132,7 @@ export default function HomePage({ setPage }) {
 
       <CTABand
         heading={<>The mandate is clear.<br /><em>The path forward isn't always.</em></>}
-        body="InsiteHub works with commercial L&D leaders who have been told to deliver on AI but haven't found a partner who understands what that actually requires in a biopharma environment. Start with a conversation. We'll tell you what we'd look at first."
+        body="Proxa Labs works with commercial L&D leaders who have been told to deliver on AI but haven't found a partner who understands what that actually requires in a biopharma environment. Start with a conversation. We'll tell you what we'd look at first."
         primaryCta={{ label: "Book a Consult", onClick: () => setPage("contact") }}
       />
     </>

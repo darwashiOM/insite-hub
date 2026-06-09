@@ -10,7 +10,7 @@ export default function PullQuote({ quote, author, stats, background = 'tinted' 
             {author && (
               <div className="pull-quote-attribution">
                 {author.avatarInitials && (
-                  <div className="pull-quote-avatar" style={{ background: author.avatarGradient || 'linear-gradient(135deg,#F4801F,#7C3AED)' }}>
+                  <div className="pull-quote-avatar" style={{ background: author.avatarGradient || 'linear-gradient(135deg,#f5825f,#75abc0)' }}>
                     {author.avatarInitials}
                   </div>
                 )}

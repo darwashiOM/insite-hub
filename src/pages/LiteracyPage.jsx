@@ -34,8 +34,8 @@ function DeliveryInfrastructureCard() {
   return (
     <div className="delivery-card">
       <div className="delivery-lockup">
-        <div className="delivery-insite-logo" aria-label="InsiteHub">
-          <span>INSITE</span><strong>HUB</strong>
+        <div className="delivery-insite-logo" aria-label="Proxa Labs">
+          <span>PROXA</span><strong>LABS</strong>
         </div>
         <span className="delivery-lockup-x">×</span>
         <div className="delivery-umu-logo">UMU.com</div>
@@ -80,7 +80,7 @@ export default function LiteracyPage({ setPage }) {
         eyebrow="Why Literacy First"
         heading="Teams that understand AI adopt it. Teams that don't, resist it."
         pullQuote="Every failed pharma AI deployment we've diagnosed had the same root cause: the people expected to use the tools didn't have the vocabulary or judgment to use them well."
-        pullQuoteAttribution="Elena Marquez, AI Literacy Program Lead, InsiteHub"
+        pullQuoteAttribution="Elena Marquez, AI Literacy Program Lead, Proxa Labs"
       >
         <p>What looks like an AI adoption failure is usually a literacy failure. Reps don't trust AI-generated talking points because no one explained where the content comes from or how to spot when the model is wrong. Managers can't interpret AI readiness scores because they don't know what the model is measuring. Medical and Regulatory teams reject AI-generated content reviews because they have no framework for what "AI-generated" means inside their workflow.</p>
         <p>More training on the tool doesn't fix this. Foundational literacy does. Once teams have the vocabulary — what LLMs do well, what they fail at, where human judgment belongs in the loop — adoption stops being a fight. It becomes normal use of normal tools.</p>
@@ -104,7 +104,7 @@ export default function LiteracyPage({ setPage }) {
         ratio="50-50"
         eyebrow="Delivery Partnership"
         heading="Built with UMU.com. Deployed at enterprise scale."
-        body="InsiteHub's curriculum runs on UMU's enterprise learning infrastructure, giving biopharma commercial teams a scalable way to deploy AI literacy globally through InsiteX, an existing pharma LMS, or UMU's native platform."
+        body="Proxa Labs' curriculum runs on UMU's enterprise learning infrastructure, giving biopharma commercial teams a scalable way to deploy AI literacy globally through InsiteX, an existing pharma LMS, or UMU's native platform."
         visual={<DeliveryInfrastructureCard />}
       >
         <div className="delivery-proof-strip">

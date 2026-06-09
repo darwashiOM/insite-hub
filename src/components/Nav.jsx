@@ -3,7 +3,7 @@ import Icon from './Icon';
 
 const WHERE_ITEMS = [
   {icon:<Icon name="strategy" size={20} />,title:"I need an AI strategy",desc:"Assess your readiness and build a roadmap before any technology decision.",tag:"Advisory",p:"advisory"},
-  {icon:<Icon name="pilot" size={20} />,title:"I want to run an AI pilot",desc:"Structure the experiment, define success criteria, build the business case.",tag:"Proxa Labs",p:"proxalab"},
+  {icon:<Icon name="pilot" size={20} />,title:"I want to run an AI pilot",desc:"Structure the experiment, define success criteria, build the business case.",tag:"The Lab",p:"proxalab"},
   {icon:<Icon name="literacy" size={20} />,title:"I need AI literacy training",desc:"Build AI fluency across your commercial organization before deploying tools.",tag:"AI Literacy",p:"literacy"},
   {icon:<Icon name="platform" size={20} />,title:"I'm ready for a platform",desc:"See Forge, Atlas, Echo, and Certify — the only closed-loop AI platform.",tag:"AI Platform",p:"platform"},
   {icon:<Icon name="content" size={20} />,title:"I need content for a launch",desc:"AI-generated or human-led, MLR-compliant content on your timeline.",tag:"Content",p:"content"},
@@ -26,7 +26,6 @@ const FLAT_LINKS = [
   ["The Lab", "proxalab"],
   ["Resources", "resources"],
   ["About", "about"],
-  ["InsiteXccelerator", "https://www.insitexccelerator.com/", "external"],
 ];
 
 const Chevron = ({ open }) => (
@@ -63,7 +62,7 @@ const Nav = ({ page, setPage, scrolled }) => {
     <>
       <nav ref={navRef} className={"nav" + (scrolled ? " up" : "")}>
         <div className="nav-logo" onClick={() => go("home")}>
-          <img className="nav-logo-img" src="/assets/IH_horiz_full.png" alt="InsiteHub" />
+          <img className="nav-logo-img" src="/assets/proxa_horiz_dark.png" alt="Proxa Labs" />
         </div>
         <div className="nav-links">
           {/* Where to Start (mega) */}

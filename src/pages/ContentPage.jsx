@@ -83,7 +83,7 @@ export default function ContentPage({ setPage }) {
               <div className="content-scenario-phase">
                 <div className="content-scenario-months">Months 4–7</div>
                 <h4>Practitioners validate before MLR.</h4>
-                <p>InsiteHub reviewers validate accuracy, nuance, and field readiness before routing.</p>
+                <p>Proxa Labs reviewers validate accuracy, nuance, and field readiness before routing.</p>
                 <span>Tracks 01 + 02</span>
               </div>
             </div>

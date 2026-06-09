@@ -9,21 +9,19 @@ const FOOTER_COLUMNS = [
     ["Content", "content"],
   ]],
   ["The Lab", [
-    ["Proxa Labs", "proxalab"],
+    ["Overview", "proxalab"],
   ]],
   ["Resources", [
     ["Frameworks & Guides", "resources", "frameworks"],
     ["Research", "resources", "research"],
   ]],
   ["About", [
-    ["About InsiteHub", "about"],
+    ["About Proxa Labs", "about"],
   ]],
 ];
 
 const CREDENTIALS = [
   { full: "SOC 2 Type II in progress", short: "SOC 2 in progress" },
-  { full: "NIH Partner",                short: "NIH Partner" },
-  { full: "University of Delaware Partner", short: "UD Partner" },
 ];
 
 const Footer = ({ setPage }) => {
@@ -38,7 +36,7 @@ const Footer = ({ setPage }) => {
         <div className="footer-grid">
           <div className="footer-brand">
             <div className="footer-logo-wrap" onClick={() => go("home")}>
-              <img className="footer-logo-img" src="/assets/IH_horiz_full.png" alt="InsiteHub" />
+              <img className="footer-logo-img" src="/assets/proxa_horiz_dark.png" alt="Proxa Labs" />
             </div>
             <p className="footer-tagline">The AI-native platform and implementation partner built for the organizational complexity of biopharma commercial learning — not adapted for it.</p>
             <div className="footer-cta-row">
@@ -68,7 +66,7 @@ const Footer = ({ setPage }) => {
           <div className="footer-hq">
             <div className="footer-col-head">Headquarters</div>
             <div className="footer-hq-name">Newark, Delaware</div>
-            <div className="footer-hq-addr">InsiteHub, Inc. · 591 Collaboration Way, Suite 613</div>
+            <div className="footer-hq-addr">Proxa Labs LLC · 591 Collaboration Way, Suite 613</div>
           </div>
           <div className="footer-credentials">
             <div className="footer-col-head" style={{ textAlign: "right" }}>Credentials</div>
@@ -86,7 +84,7 @@ const Footer = ({ setPage }) => {
         <div className="footer-divider" />
 
         <div className="footer-bottom">
-          <div className="footer-copyright">© 2026 InsiteHub, Inc. · InsiteHub, Inc. is a Delaware S-Corp</div>
+          <div className="footer-copyright">© 2026 Proxa Labs LLC · Proxa Labs LLC is a Delaware limited liability company</div>
           <div className="footer-legal">
             <a href="/privacy" onClick={(e) => { e.preventDefault(); }}>Privacy Policy</a>
             <a href="/terms" onClick={(e) => { e.preventDefault(); }}>Terms</a>

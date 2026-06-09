@@ -1,6 +1,6 @@
 import React from 'react';
 
-export const HexMark = ({ size = 36, color = "#F4801F", strokeWidth = 1.6 }) => {
+export const HexMark = ({ size = 36, color = "#f5825f", strokeWidth = 1.6 }) => {
   // Flat-top hexagon helper: center cx,cy, radius r
   const hex = (cx, cy, r) => {
     const pts = Array.from({length:6},(_,i)=>{
@@ -29,7 +29,7 @@ export const HexMark = ({ size = 36, color = "#F4801F", strokeWidth = 1.6 }) => 
 };
 
 /* Large decorative hex mark for backgrounds */
-export const HexMarkLarge = ({ size = 480, color = "#F4801F", opacity = 0.05 }) => (
+export const HexMarkLarge = ({ size = 480, color = "#f5825f", opacity = 0.05 }) => (
   <div style={{position:"absolute",pointerEvents:"none",opacity}}>
     <HexMark size={size} color={color} strokeWidth={0.8}/>
   </div>

@@ -31,7 +31,7 @@ export default function PlatformPage({ setPage }) {
             </div>
             <div className="platform-loop-copy">
               <p>Most pharma learning platforms are one-way. Content flows from authors to learners, assessments measure completion, and that's where the loop ends. When a rep can't handle an HCP objection in the field, the platform doesn't know. The next cohort gets the same content. The same gaps appear.</p>
-              <p>InsiteHub inverts the sequence. Echo's behavioral assessments surface structured gap signals — specific competencies where reps underperform against benchmarks. Those signals flow into Forge as a content brief. Forge drafts remediation content overnight, routes it through MLR pre-checks, and publishes to Atlas before the next training cycle. The loop closes itself.</p>
+              <p>Proxa Labs inverts the sequence. Echo's behavioral assessments surface structured gap signals — specific competencies where reps underperform against benchmarks. Those signals flow into Forge as a content brief. Forge drafts remediation content overnight, routes it through MLR pre-checks, and publishes to Atlas before the next training cycle. The loop closes itself.</p>
               <p>No other platform in biopharma commercial learning does this. Not because it's hard to build, but because no one else has the methodology behind it.</p>
             </div>
           </div>
@@ -102,7 +102,7 @@ export default function PlatformPage({ setPage }) {
       <UpgradeComparison
         eyebrow="Side by Side"
         heading="How the three options compare."
-        lead="Two InsiteHub paths. One reason traditional LMS falls short."
+        lead="Two Proxa Labs paths. One reason traditional LMS falls short."
       />
 
       <CTABand

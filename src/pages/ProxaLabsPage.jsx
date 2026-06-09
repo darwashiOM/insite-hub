@@ -29,7 +29,7 @@ export default function ProxaLabsPage({ setPage }) {
       <EditorialHero
         eyebrow="Structured AI Experimentation"
         headline={<>Your AI mandate deserves <em>a properly designed experiment.</em></>}
-        subhead="Proxa Labs is the structured AI experimentation practice inside InsiteHub. We define the right use case, design the experiment against your real constraints, measure what matters, and build the business case that turns results into action. Four phases. Each time-bounded."
+        subhead="The Lab is the structured AI experimentation practice inside Proxa Labs. We define the right use case, design the experiment against your real constraints, measure what matters, and build the business case that turns results into action. Four phases. Each time-bounded."
         primaryCta={{ label: "Book a Consult", onClick: () => setPage("contact") }}
       />
 
@@ -37,7 +37,7 @@ export default function ProxaLabsPage({ setPage }) {
         eyebrow="Why Structured Experimentation"
         heading="The discipline that matches the environment."
         pullQuote="In biopharma, a failed AI pilot doesn't just cost a budget line — it costs launch momentum and CCO trust. We exist to prevent that outcome."
-        pullQuoteAttribution="Nina Patel, Proxa Labs Research Lead, InsiteHub"
+        pullQuoteAttribution="Nina Patel, The Lab Research Lead, Proxa Labs"
       >
         <p>Structured experimentation is the only discipline built for environments where you can't afford to be wrong. It's the approach Bell Labs used to test hypotheses against real constraints before committing to production. It's the approach that shaped 25 years of practitioner biopharma commercial operating decisions — where the constraints are MLR review, launch timelines, and federated commercial structures.</p>
         <p>We apply that discipline to AI pilots: define the hypothesis, design for evidence, measure honestly, decide based on data. The method is old. The application to commercial AI is new. The result is a Lab engagement that produces defensible evidence — not engagement metrics — and business cases the CCO, CFO, and CHRO will fund.</p>
@@ -78,7 +78,7 @@ export default function ProxaLabsPage({ setPage }) {
       <CardGrid
         eyebrow="Active Research"
         heading="Research that shapes how we advise."
-        lead="Open research projects that inform our engagements and the InsiteHub platform."
+        lead="Open research projects that inform our engagements and the Proxa Labs platform."
         columns={3}
         cards={RESEARCH}
         cardStyle="compact"

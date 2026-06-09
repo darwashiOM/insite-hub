@@ -1,17 +1,17 @@
 import { HexMark } from '../HexMark';
 
 const NODES = [
-  { x: 100, y: 30,  c: "#F4801F", bg: "rgba(244,128,31,.1)", name: "Forge",   sub: "Builds content",       ss: "Courses · Inserts · SOPs" },
-  { x: 448, y: 30,  c: "#007AFF", bg: "rgba(0,122,255,.1)",  name: "Atlas",   sub: "Delivers learning",    ss: "Adaptive · Gap-aware" },
-  { x: 448, y: 200, c: "#7C3AED", bg: "rgba(124,58,237,.1)", name: "Echo",    sub: "Assesses in roleplay", ss: "HCP avatars · Scoring" },
-  { x: 100, y: 200, c: "#059669", bg: "rgba(5,150,105,.1)",  name: "Certify", sub: "Confirms readiness",   ss: "Behavioral proof" },
+  { x: 100, y: 30,  c: "#f5825f", bg: "rgba(245,130,95,.1)", name: "Forge",   sub: "Builds content",       ss: "Courses · Inserts · SOPs" },
+  { x: 448, y: 30,  c: "#75abc0", bg: "rgba(117,171,192,.1)",  name: "Atlas",   sub: "Delivers learning",    ss: "Adaptive · Gap-aware" },
+  { x: 448, y: 200, c: "#5e6b7a", bg: "rgba(94,107,122,.1)", name: "Echo",    sub: "Assesses in roleplay", ss: "HCP avatars · Scoring" },
+  { x: 100, y: 200, c: "#9ca979", bg: "rgba(156,169,121,.1)",  name: "Certify", sub: "Confirms readiness",   ss: "Behavioral proof" },
 ];
 
 const ARROWS = [
-  { d: "M240 62 Q350 18 460 62",   c: "#F4801F", m: "af", lx: 350, ly: 22,  t: "content published" },
-  { d: "M548 100 Q594 150 548 200", c: "#007AFF", m: "aa", lx: 638, ly: 154, t: "readiness reached" },
-  { d: "M460 238 Q350 282 240 238", c: "#7C3AED", m: "ae", lx: 350, ly: 294, t: "competency demonstrated" },
-  { d: "M152 200 Q106 150 152 100", c: "#059669", m: "ac", lx: 56,  ly: 150, t: "gap → rebuild" },
+  { d: "M240 62 Q350 18 460 62",   c: "#f5825f", m: "af", lx: 350, ly: 22,  t: "content published" },
+  { d: "M548 100 Q594 150 548 200", c: "#75abc0", m: "aa", lx: 638, ly: 154, t: "readiness reached" },
+  { d: "M460 238 Q350 282 240 238", c: "#75abc0", m: "ae", lx: 350, ly: 294, t: "competency demonstrated" },
+  { d: "M152 200 Q106 150 152 100", c: "#9ca979", m: "ac", lx: 56,  ly: 150, t: "gap → rebuild" },
 ];
 
 export default function ClosedLoopDiagram({ eyebrow = "The Closed Loop", heading = "Build → Develop → Assess → Certify → Repeat", lead = "A continuous cycle. Content created in Forge powers learning in Atlas, assessed in Echo, drives Certify — and gaps detected restart the loop automatically." }) {
@@ -20,7 +20,7 @@ export default function ClosedLoopDiagram({ eyebrow = "The Closed Loop", heading
       <div className="mw">
         <div className="closed-loop-diagram">
           <div className="closed-loop-watermark">
-            <HexMark size={420} color="#F4801F" strokeWidth={0.7} />
+            <HexMark size={420} color="#f5825f" strokeWidth={0.7} />
           </div>
           <div style={{ position: "relative", zIndex: 1 }}>
             <div style={{ textAlign: "center", marginBottom: 32 }}>

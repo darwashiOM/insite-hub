@@ -1,7 +1,7 @@
 const COLUMNS = [
   { label: "Traditional LMS", type: "traditional" },
   { label: "InsiteX LMS", type: "insitehub" },
-  { label: "InsiteHub AI Platform", type: "insitehub" },
+  { label: "Proxa Labs AI Platform", type: "insitehub" },
 ];
 
 const ROWS = [

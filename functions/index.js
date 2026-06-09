@@ -13,7 +13,7 @@ const ALLOWED_ORIGINS = [
 ];
 
 const DEFAULT_NOTIFY_EMAILS = "sales@insitehub.com,john.royer@insitehub.com";
-const DEFAULT_FROM_NAME = "InsiteHub Website";
+const DEFAULT_FROM_NAME = "Proxa Labs Website";
 
 function parseEmails(value) {
   return (value || "")
@@ -76,7 +76,7 @@ exports.submitContact = onRequest(async (req, res) => {
   const trackLabel = { talk: "Ready to talk", learn: "Want to learn first", demo: "Ready for a demo" }[track] || track;
 
   const html = `
-    <h2>New InsiteHub Inquiry</h2>
+    <h2>New Proxa Labs Inquiry</h2>
     <table style="border-collapse:collapse;font-family:sans-serif;font-size:14px;">
       <tr><td style="padding:8px 16px 8px 0;font-weight:bold;color:#666;">Track</td><td style="padding:8px 0;">${trackLabel}</td></tr>
       <tr><td style="padding:8px 16px 8px 0;font-weight:bold;color:#666;">Name</td><td style="padding:8px 0;">${name}</td></tr>
@@ -94,7 +94,7 @@ exports.submitContact = onRequest(async (req, res) => {
       from: getFromAddress(),
       to: getNotifyEmails(email),
       replyTo: email,
-      subject: `New InsiteHub inquiry from ${name}`,
+      subject: `New Proxa Labs inquiry from ${name}`,
       html,
     });
     res.status(200).json({ success: true });

@@ -10,7 +10,7 @@ const TRACK_OPTIONS = [
     d: "Let's have a real conversation about your situation.",
     interest: "General inquiry",
     expectationTitle: "Discovery Call",
-    expectationBody: "Your environment, what you've tried, and where you're stuck. No sales pitch. No deck. Just whether InsiteHub is the right fit for where you are.",
+    expectationBody: "Your environment, what you've tried, and where you're stuck. No sales pitch. No deck. Just whether Proxa Labs is the right fit for where you are.",
   },
   {
     id: "learn",
@@ -100,9 +100,9 @@ export default function ContactPage() {
         </div>
       )}
       {justSent && (
-        <div style={{ background: "rgba(5,150,105,.07)", border: "1px solid rgba(5,150,105,.2)", borderRadius: 14, padding: "20px 24px", marginBottom: 24 }}>
+        <div style={{ background: "rgba(156,169,121,.07)", border: "1px solid rgba(156,169,121,.2)", borderRadius: 14, padding: "20px 24px", marginBottom: 24 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6 }}>
-            <Icon name="compliance" size={20} color="#059669" />
+            <Icon name="compliance" size={20} color="#9ca979" />
             <span style={{ fontSize: 16, fontWeight: 700, color: "#12141A", fontFamily: "Manrope,sans-serif" }}>
               {isConversationTrack ? "Message received." : "Frameworks on the way."}
             </span>
@@ -114,16 +114,16 @@ export default function ContactPage() {
         </div>
       )}
       {!justSent && previousTrack && !alreadySent && (
-        <div style={{ background: "rgba(244,128,31,.06)", border: "1px solid rgba(244,128,31,.18)", borderRadius: 14, padding: "16px 20px", marginBottom: 20 }}>
-          <div style={{ fontSize: 13, fontWeight: 600, color: "#F4801F", marginBottom: 4 }}>
+        <div style={{ background: "rgba(245,130,95,.06)", border: "1px solid rgba(245,130,95,.18)", borderRadius: 14, padding: "16px 20px", marginBottom: 20 }}>
+          <div style={{ fontSize: 13, fontWeight: 600, color: "#f5825f", marginBottom: 4 }}>
             {track === "demo" ? "Great — we'll route this as a demo request." : track === "talk" ? "Great — we're glad you're ready to talk." : track === "learn" ? "No rush. We'll send you frameworks first." : "Great — we'll route this to the right person."}
           </div>
           <div style={{ fontSize: 13, color: "#5C6370", lineHeight: 1.5 }}>We already have your info from before. Just hit send and we'll adjust.</div>
         </div>
       )}
       {!justSent && alreadySent && (
-        <div style={{ background: "rgba(5,150,105,.05)", border: "1px solid rgba(5,150,105,.15)", borderRadius: 14, padding: "16px 20px", marginBottom: 20 }}>
-          <div style={{ fontSize: 13, fontWeight: 600, color: "#059669" }}>You've already submitted this one. Pick a different option above, or we'll be in touch soon.</div>
+        <div style={{ background: "rgba(156,169,121,.05)", border: "1px solid rgba(156,169,121,.15)", borderRadius: 14, padding: "16px 20px", marginBottom: 20 }}>
+          <div style={{ fontSize: 13, fontWeight: 600, color: "#9ca979" }}>You've already submitted this one. Pick a different option above, or we'll be in touch soon.</div>
         </div>
       )}
       {!justSent && (
@@ -139,7 +139,7 @@ export default function ContactPage() {
           <label className="fl">I'm interested in… {selectedTrack && <span className="contact-prefill-note">Pre-filled from your track selection</span>}</label>
           <select className="fi" value={form.interest} onChange={u("interest")} style={{ appearance: "none" }}>
             <option value="">Select…</option>
-            {["AI Platform demo","InsiteX LMS demo","Advisory consult","Content Development consult","Proxa Labs consult","AI Literacy consult","AI Readiness Framework","General inquiry"].map(i => <option key={i}>{i}</option>)}
+            {["AI Platform demo","InsiteX LMS demo","Advisory consult","Content Development consult","Lab consult","AI Literacy consult","AI Readiness Framework","General inquiry"].map(i => <option key={i}>{i}</option>)}
           </select>
           <label className="fl">Tell us about your situation</label>
           <textarea className="fi" rows={4} placeholder="What are you trying to solve? Where have you been stuck?" value={form.message} onChange={u("message")} style={{ resize: "vertical" }} />
@@ -211,7 +211,7 @@ export default function ContactPage() {
             )}
             <div className="contact-diagnostic-note">
               <strong>The first conversation is always diagnostic.</strong>
-              <p>Your environment, your constraints, what you've already tried. No sales pitch. No deck. Just whether InsiteHub is the right fit for where you are.</p>
+              <p>Your environment, your constraints, what you've already tried. No sales pitch. No deck. Just whether Proxa Labs is the right fit for where you are.</p>
             </div>
           </aside>
         </div>

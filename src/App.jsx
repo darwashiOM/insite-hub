@@ -16,33 +16,33 @@ import NewsletterPage from './pages/NewsletterPage';
 import ContactPage from './pages/ContactPage';
 
 const PAGE_TITLES = {
-  home: "InsiteHub · AI-First Commercial Learning for Biopharma",
-  platform: "AI Platform · Forge, Atlas, Echo & Certify · InsiteHub",
-  advisory: "Advisory Services · AI Strategy for Biopharma L&D · InsiteHub",
-  literacy: "AI Literacy Program · Role-Targeted AI Fluency · InsiteHub",
-  insitex: "InsiteX LMS · Enterprise Learning for Biopharma · InsiteHub",
-  content: "Content Development · MLR-Compliant Biopharma Content · InsiteHub",
-  proxalab: "Proxa Labs · Structured AI Experimentation · InsiteHub",
-  about: "About InsiteHub · Innovation-Led Biopharma L&D Since 2010",
-  news: "Announcements · Latest from InsiteHub",
-  resources: "Resources · Frameworks, Guides & Templates · InsiteHub",
-  newsletter: "Newsletter · Stay Ahead of AI in Biopharma · InsiteHub",
-  contact: "Contact InsiteHub · Start a Conversation",
+  home: "Proxa Labs · AI-First Commercial Learning for Biopharma",
+  platform: "AI Platform · Forge, Atlas, Echo & Certify · Proxa Labs",
+  advisory: "Advisory Services · AI Strategy for Biopharma L&D · Proxa Labs",
+  literacy: "AI Literacy Program · Role-Targeted AI Fluency · Proxa Labs",
+  insitex: "InsiteX LMS · Enterprise Learning for Biopharma · Proxa Labs",
+  content: "Content Development · MLR-Compliant Biopharma Content · Proxa Labs",
+  proxalab: "The Lab · Structured AI Experimentation · Proxa Labs",
+  about: "About Proxa Labs · Innovation-Led Biopharma L&D",
+  news: "Announcements · Latest from Proxa Labs",
+  resources: "Resources · Frameworks, Guides & Templates · Proxa Labs",
+  newsletter: "Newsletter · Stay Ahead of AI in Biopharma · Proxa Labs",
+  contact: "Contact Proxa Labs · Start a Conversation",
 };
 
 const DESCS = {
-  home: "InsiteHub is the AI implementation partner built for biopharma commercial learning. Advisory, platform, and experimentation — methodology-first, compliance by design.",
+  home: "Proxa Labs is the AI implementation partner built for biopharma commercial learning. Advisory, platform, and experimentation — methodology-first, compliance by design.",
   platform: "The only closed-loop AI platform in biopharma: Forge builds content, Atlas delivers learning, Echo assesses readiness, Certify confirms competency.",
   advisory: "AI strategy, readiness assessments, governance frameworks, and infrastructure planning — advisory services purpose-built for biopharma commercial L&D.",
   literacy: "Role-targeted AI literacy tracks for every part of your commercial organization. Build fluency before deploying tools.",
   insitex: "Enterprise learning management built for biopharma compliance. SCORM, AICC, and PMRC compliance. The foundation the AI platform builds on.",
   content: "MLR-compliant content development — AI-powered (Forge) or traditional instructional design. Built by biopharma commercial practitioners.",
   proxalab: "Structured AI experimentation for biopharma. Define the right use case, design the experiment, measure what matters, build the business case.",
-  about: "InsiteHub has been solving biopharma commercial learning challenges for 25 years. Innovation-led, compliance by design.",
-  news: "Announcements, partnerships, product updates, and research milestones from InsiteHub and Proxa Labs.",
+  about: "Proxa Labs brings 25 years of biopharma commercial learning expertise to AI implementation. Innovation-led, compliance by design.",
+  news: "Announcements, partnerships, product updates, and research milestones from Proxa Labs and The Lab.",
   resources: "Frameworks, guides, templates, and research from 25 years of biopharma commercial L&D expertise.",
-  newsletter: "Frameworks, research, and field notes from InsiteHub's practitioners. Sent when there's something worth saying.",
-  contact: "Start a conversation with InsiteHub. Ready to talk, want to learn first, or just exploring — we'll meet you where you are.",
+  newsletter: "Frameworks, research, and field notes from Proxa Labs' practitioners. Sent when there's something worth saying.",
+  contact: "Start a conversation with Proxa Labs. Ready to talk, want to learn first, or just exploring — we'll meet you where you are.",
 };
 
 const PAGES = {
@@ -59,7 +59,7 @@ const PAGE_PATHS = {
   literacy: "/ai-literacy",
   insitex: "/insitex-lms",
   content: "/content-development",
-  proxalab: "/proxa-labs",
+  proxalab: "/the-lab",
   about: "/about",
   news: "/announcements",
   resources: "/resources",
@@ -68,6 +68,9 @@ const PAGE_PATHS = {
 };
 
 const PATH_PAGES = Object.fromEntries(Object.entries(PAGE_PATHS).map(([page, path]) => [path, page]));
+// Legacy redirect: the old "/proxa-labs" lab URL now lives at "/the-lab".
+const LEGACY_PATHS = { "/proxa-labs": "/the-lab" };
+PATH_PAGES["/proxa-labs"] = "proxalab";
 
 const pageFromLocation = () => {
   const normalized = window.location.pathname.replace(/\/+$/, "") || "/";
@@ -118,6 +121,13 @@ export default function App() {
     };
     window.addEventListener("popstate", handlePopState);
     return () => window.removeEventListener("popstate", handlePopState);
+  }, []);
+
+  useEffect(() => {
+    const normalized = window.location.pathname.replace(/\/+$/, "");
+    if (LEGACY_PATHS[normalized]) {
+      window.history.replaceState({}, "", LEGACY_PATHS[normalized] + window.location.hash);
+    }
   }, []);
 
   const setPage = (nextPage, options = {}) => {

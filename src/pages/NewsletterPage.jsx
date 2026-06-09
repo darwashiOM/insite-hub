@@ -4,13 +4,13 @@ import CTABand from '../components/sections/CTABand';
 import Icon from '../components/Icon';
 
 const ROLES = ["VP / Head of Commercial L&D","CLO","Director of Learning Technology","Head of Sales Force Effectiveness","Commercial IT / Digital","Other"];
-const INTERESTS = ["AI Platform Updates","Advisory Insights","Proxa Labs Research","AI Literacy Program","Announcements & Partnerships","New Frameworks & Guides"];
+const INTERESTS = ["AI Platform Updates","Advisory Insights","The Lab Research","AI Literacy Program","Announcements & Partnerships","New Frameworks & Guides"];
 
 const RECEIVE_CARDS = [
-  { icon: <Icon name="research" size={22} />,     title: "Proxa Labs Research Updates",         body: "Early findings, new frameworks, and research milestones from InsiteHub's AI experimentation lab — before they become full publications." },
+  { icon: <Icon name="research" size={22} />,     title: "The Lab Research Updates",         body: "Early findings, new frameworks, and research milestones from The Lab — before they become full publications." },
   { icon: <Icon name="partnership" size={22} />,  title: "Partnership & Product Announcements", body: "New partnerships (like UMU.com), platform updates, and program launches — directly from the team building them." },
-  { icon: <Icon name="framework" size={22} />,    title: "New Frameworks & Guides",             body: "Every new resource InsiteHub publishes — AI readiness tools, business case templates, vendor evaluation scorecards — sent to subscribers first." },
-  { icon: <Icon name="field-notes" size={22} />,  title: "Field Notes from Advisory Engagements", body: "Anonymized patterns and insights from InsiteHub's advisory work — what's working, what's failing, and what questions organizations are actually asking right now." },
+  { icon: <Icon name="framework" size={22} />,    title: "New Frameworks & Guides",             body: "Every new resource Proxa Labs publishes — AI readiness tools, business case templates, vendor evaluation scorecards — sent to subscribers first." },
+  { icon: <Icon name="field-notes" size={22} />,  title: "Field Notes from Advisory Engagements", body: "Anonymized patterns and insights from Proxa Labs' advisory work — what's working, what's failing, and what questions organizations are actually asking right now." },
 ];
 
 export default function NewsletterPage({ setPage }) {
@@ -103,7 +103,7 @@ export default function NewsletterPage({ setPage }) {
       <EditorialHero
         eyebrow="Newsletter"
         headline={<>Stay ahead of AI in <em>biopharma commercial learning.</em></>}
-        subhead="Frameworks, research, field notes, and announcements from InsiteHub's practitioners. Sent when there's something worth saying. No vendor noise, no weekly cadence for its own sake."
+        subhead="Frameworks, research, field notes, and announcements from Proxa Labs' practitioners. Sent when there's something worth saying. No vendor noise, no weekly cadence for its own sake."
       />
 
       <section className="section section-light">

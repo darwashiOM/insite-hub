@@ -5,9 +5,9 @@ const NODES = [
     id: 0,
     label: 'Forge',
     sub: 'Builds MLR-compliant content',
-    color: '#993C1D',
-    text: '#712B13',
-    fill: '#FAECE7',
+    color: '#c25c39',
+    text: '#9e4527',
+    fill: '#fcebe4',
     x: 40,
     y: 80,
   },
@@ -15,9 +15,9 @@ const NODES = [
     id: 1,
     label: 'Atlas',
     sub: 'Delivers adaptive learning',
-    color: '#185FA5',
-    text: '#0C447C',
-    fill: '#E6F1FB',
+    color: '#4a8aa6',
+    text: '#2f6a85',
+    fill: '#e9f2f6',
     x: 440,
     y: 80,
   },
@@ -25,9 +25,9 @@ const NODES = [
     id: 2,
     label: 'Echo',
     sub: 'Assesses in live HCP roleplay',
-    color: '#534AB7',
-    text: '#3C3489',
-    fill: '#EEEDFE',
+    color: '#5e6b7a',
+    text: '#3a4350',
+    fill: '#edeff2',
     x: 440,
     y: 320,
   },
@@ -35,9 +35,9 @@ const NODES = [
     id: 3,
     label: 'Certify',
     sub: 'Verifies behavioral competency',
-    color: '#0F6E56',
-    text: '#085041',
-    fill: '#E1F5EE',
+    color: '#7e8c57',
+    text: '#5f6e3f',
+    fill: '#eef0e6',
     x: 40,
     y: 320,
   },
@@ -47,7 +47,7 @@ const FLOWS = [
   { from: 0, label: 'content published', color: '#5F5E5A', d: 'M 240 120 Q 340 80 440 120', tx: 340, ty: 80, anchor: 'middle' },
   { from: 1, label: 'readiness reached', color: '#5F5E5A', d: 'M 540 160 Q 620 240 540 320', tx: 640, ty: 244, anchor: 'end' },
   { from: 2, label: 'competency demonstrated', color: '#5F5E5A', d: 'M 440 360 Q 340 400 240 360', tx: 340, ty: 424, anchor: 'middle' },
-  { from: 3, label: 'gap → rebuild', color: '#993C1D', d: 'M 140 320 Q 60 240 140 160', tx: 40, ty: 244, anchor: 'start', dashed: true },
+  { from: 3, label: 'gap → rebuild', color: '#c25c39', d: 'M 140 320 Q 60 240 140 160', tx: 40, ty: 244, anchor: 'start', dashed: true },
 ];
 
 const CALLOUTS = [
@@ -75,7 +75,7 @@ export default function LoopVisual() {
       `}</style>
       <div className="lc-label">The Closed Loop · Intelligent Capability Development</div>
       <svg viewBox="0 0 680 480" role="img" aria-labelledby="loop-title loop-desc" className="loop-oval-svg">
-        <title id="loop-title">InsiteHub closed-loop diagram</title>
+        <title id="loop-title">Proxa Labs closed-loop diagram</title>
         <desc id="loop-desc">Four-product oval cycle showing Forge building content, Atlas delivering learning, Echo assessing readiness, and Certify verifying competency.</desc>
         <defs>
           {FLOWS.map(flow => (

@@ -1,56 +1,35 @@
 import EditorialHero from '../components/sections/EditorialHero';
 import LongForm from '../components/sections/LongForm';
 import StatBand from '../components/sections/StatBand';
-import StepRail from '../components/sections/StepRail';
 import CTABand from '../components/sections/CTABand';
 
 const PROOF_STATS = [
   { n: "1st",  l: "Virtual world for a drug launch — Vanguard Award winner" },
   { n: "100%", l: "Gamified training participation across 600 sales managers" },
-  { n: "2nd",  l: "NIH biomedical accelerator outside a university in the US" },
   { n: "Only", l: "Closed-loop AI platform in commercial L&D" },
-];
-
-const TIMELINE = [
-  { n: "2010",        title: "InsiteHub Founded",            body: "Incorporated through the University of Delaware Spin-In Program to serve life sciences commercial organizations." },
-  { n: "2010s",       title: "Expanded Across Life Sciences", body: "Grew to 30+ organizations including AbbVie, Pfizer, Novartis, Biogen, Sanofi, and major academic medical centers." },
-  { n: "2014–2018",   title: "NIH Grant & InsiteXcelerator", body: "Awarded NIH grant. Became the 2nd NIH-partnered biomedical accelerator outside a university in the US." },
-  { n: "2018–2022",   title: "InsiteX LMS",                  body: "Enterprise learning management, built for biopharma compliance and credentialing from day one." },
-  { n: "2023–Present", title: "The AI Platform",             body: "Forge, Atlas, Echo, and Certify — the only closed-loop AI platform in biopharma commercial learning." },
 ];
 
 export default function AboutPage({ setPage }) {
   return (
     <>
       <EditorialHero
-        eyebrow="About InsiteHub"
-        headline={<>Built by practitioners. <em>For practitioners.</em></>}
-        subhead="InsiteHub was founded by people who spent 25 years inside biopharma commercial organizations — under the same launch pressure, compliance constraints, and executive scrutiny our clients navigate now. The methodology didn't come from a consulting framework. It came from watching programs succeed and fail from the inside."
+        eyebrow="About Proxa Labs"
+        headline={<>Built by someone who's <em>been in your seat.</em></>}
+        subhead={`Somewhere in the last few years, every biopharma L&D leader got the same message: "do something with AI." Most of them are still figuring out what that means.`}
         className="about-hero-section"
       />
 
       <LongForm
-        eyebrow="Our Story"
-        heading="We built what biopharma didn't have."
+        eyebrow="Why Proxa Labs"
+        heading="25 years of solving exactly this problem."
         className="about-story-section"
       >
-        <p>InsiteHub was founded because existing approaches were failing commercial organizations. Content missed launch windows. Training produced completion metrics instead of behavior change. Certification gave false confidence about field readiness. The industry had accepted these failures as the cost of doing business. We didn't.</p>
-        <p>The work that followed became the foundation of how InsiteHub operates. A Vanguard Award for the world's best corporate learning program — built as an immersive virtual world for a drug launch while competitors quoted $5M platforms. An NIH grant and one of only two biomedical accelerators outside a university in the US. Gamification in pharmaceutical training before the category had a name. And the first closed-loop AI platform in biopharma commercial learning.</p>
-        <p>Every one of these was the same move: diagnose the problem before building the solution, experiment in the real environment before committing at scale, and measure against field performance — not engagement metrics. That methodology is still how InsiteHub works today.</p>
+        <p>That message lands differently depending on where you sit. If you're the head of commercial L&D at a mid-size biopharma, it probably means you're fielding vendor solutions before you've defined the problem and launching use cases before your team knows what success looks like. The result? Poor adoption rates, wasted budget, and a leadership team that keeps asking "What's taking so long?" Every month without a clear methodology is another month your commercial team isn't performing at the level AI could enable. The pressure is real. The roadmap to get there isn't.</p>
+        <p>John Royer has spent 25 years solving exactly that problem — how to build real capability inside a commercial organization, without chasing vendor hype or skipping the foundational work that makes adoption successful. At AstraZeneca, when the standard approach to a major European drug launch was a $5 million vendor platform, he built something no one had built before — a fully immersive virtual world where 400 sales reps could train, practice, and launch inside a 3D environment — saving the company nearly $10 million while delivering engagement the industry had never seen. Sales performance held. That work won the Vanguard Award for Best Corporate Learning Program in the World. It was proof that when you define the problem before you build the solution, the results will follow.</p>
+        <p>After two decades of watching organizations buy solutions before they understood the problem, John built Proxa Labs to be the innovation partner the industry has been missing. Proxa Labs combines the experimentation and rigor of a research lab with 25 years of biopharma-specific expertise to help commercial L&D leaders move from AI pressure to a clear path forward. Every engagement starts the same way: define the problem, assess organizational readiness, and design structured experiments before a dollar is committed to a solution. The result is AI capability that their teams actually adopt and use to drive commercial performance.</p>
       </LongForm>
 
       <StatBand stats={PROOF_STATS} />
-
-      <StepRail
-        eyebrow="Our History"
-        heading="Since 2010, building from the inside."
-        lead="InsiteHub's company history began in 2010. Each stage solved a problem the industry had accepted as unfixable."
-        steps={TIMELINE}
-        background="tinted"
-        orientation="vertical"
-        sectionClassName="about-history-section"
-        className="about-history-rail"
-      />
 
       <CTABand
         heading={<>Work with a team <em>that's been in your seat.</em></>}
