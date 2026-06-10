@@ -14,6 +14,7 @@ import NewsPage from './pages/NewsPage';
 import ResourcesPage from './pages/ResourcesPage';
 import NewsletterPage from './pages/NewsletterPage';
 import ContactPage from './pages/ContactPage';
+import FutureProofPage from './pages/FutureProofPage';
 
 const PAGE_TITLES = {
   home: "Proxa Labs · AI-First Commercial Learning for Biopharma",
@@ -28,6 +29,7 @@ const PAGE_TITLES = {
   resources: "Resources · Frameworks, Guides & Templates · Proxa Labs",
   newsletter: "Newsletter · Stay Ahead of AI in Biopharma · Proxa Labs",
   contact: "Contact Proxa Labs · Start a Conversation",
+  futureproof: "Future-Proof Your Organization · Proxa Labs",
 };
 
 const DESCS = {
@@ -43,13 +45,18 @@ const DESCS = {
   resources: "Frameworks, guides, templates, and research from 25 years of biopharma commercial L&D expertise.",
   newsletter: "Frameworks, research, and field notes from Proxa Labs' practitioners. Sent when there's something worth saying.",
   contact: "Start a conversation with Proxa Labs. Ready to talk, want to learn first, or just exploring — we'll meet you where you are.",
+  futureproof: "An executive brief from Proxa Labs on building durable AI capability across biopharma commercial organizations.",
 };
+
+// Campaign / placeholder pages that should not be indexed by search engines.
+const NOINDEX_PAGES = new Set(["futureproof"]);
 
 const PAGES = {
   home: HomePage, platform: PlatformPage, advisory: AdvisoryPage,
   literacy: LiteracyPage, insitex: InsiteXPage, content: ContentPage,
   proxalab: ProxaLabsPage, about: AboutPage, news: NewsPage,
   resources: ResourcesPage, newsletter: NewsletterPage, contact: ContactPage,
+  futureproof: FutureProofPage,
 };
 
 const PAGE_PATHS = {
@@ -65,6 +72,7 @@ const PAGE_PATHS = {
   resources: "/resources",
   newsletter: "/newsletter",
   contact: "/contact",
+  futureproof: "/future-proof-your-organization",
 };
 
 const PATH_PAGES = Object.fromEntries(Object.entries(PAGE_PATHS).map(([page, path]) => [path, page]));
@@ -106,6 +114,14 @@ export default function App() {
     let meta = document.querySelector('meta[name="description"]');
     if (!meta) { meta = document.createElement('meta'); meta.name = "description"; document.head.appendChild(meta); }
     meta.content = DESCS[page] || DESCS.home;
+
+    let robots = document.querySelector('meta[name="robots"]');
+    if (NOINDEX_PAGES.has(page)) {
+      if (!robots) { robots = document.createElement('meta'); robots.name = "robots"; document.head.appendChild(robots); }
+      robots.content = "noindex, nofollow";
+    } else if (robots) {
+      robots.content = "index, follow";
+    }
 
     const hash = window.location.hash.replace(/^#/, "");
     window.setTimeout(() => {
