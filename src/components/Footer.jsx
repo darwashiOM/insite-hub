@@ -36,7 +36,7 @@ const Footer = ({ setPage }) => {
         <div className="footer-grid">
           <div className="footer-brand">
             <div className="footer-logo-wrap" onClick={() => go("home")}>
-              <img className="footer-logo-img" src="/assets/proxa_horiz_dark.png" alt="Proxa Labs" />
+              <img className="footer-logo-img" src="/assets/proxa_horiz_overdark.png" alt="Proxa Labs" />
             </div>
             <p className="footer-tagline">The AI-native platform and implementation partner built for the organizational complexity of biopharma commercial learning — not adapted for it.</p>
             <div className="footer-cta-row">

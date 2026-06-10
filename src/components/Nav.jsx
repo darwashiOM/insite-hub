@@ -62,7 +62,7 @@ const Nav = ({ page, setPage, scrolled }) => {
     <>
       <nav ref={navRef} className={"nav" + (scrolled ? " up" : "")}>
         <div className="nav-logo" onClick={() => go("home")}>
-          <img className="nav-logo-img" src="/assets/proxa_horiz_dark.png" alt="Proxa Labs" />
+          <img className="nav-logo-img" src="/assets/proxa_horiz.png" alt="Proxa Labs" />
         </div>
         <div className="nav-links">
           {/* Where to Start (mega) */}
