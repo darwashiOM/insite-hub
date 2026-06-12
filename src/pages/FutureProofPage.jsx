@@ -34,6 +34,8 @@ export default function FutureProofPage() {
       email: !emailRe.test(form.email.trim()),
     };
     setErrors(er);
+    const firstBad = er.firstName ? 'fp-fn' : er.lastName ? 'fp-ln' : er.email ? 'fp-em' : null;
+    if (firstBad) document.getElementById(firstBad)?.focus();
     return !er.firstName && !er.lastName && !er.email;
   };
 
@@ -78,8 +80,8 @@ export default function FutureProofPage() {
     <section className="fp-hero">
       <div className="fp-copy">
         <h1 className="fp-h1"><em>Future-proof</em><br />your organization</h1>
-        <p className="fp-standfirst">An in-depth perspective on AI readiness, and what you really should be getting ready for.</p>
-        <p className="fp-body">Most biopharma commercial learning teams are getting ready for the wrong thing. This perspective lays out what you're actually getting ready for, why most AI pilots die, and the order of operations for leading the shift instead of being assigned to it.</p>
+        <p className="fp-standfirst">an in-depth perspective on AI readiness, and what you really should be getting ready for.</p>
+        <p className="fp-body">Most biopharma commercial learning teams are getting ready for the wrong thing. This perspective lays out what you’re actually getting ready for, why most AI pilots die, and the order of operations for leading the shift instead of being assigned to it.</p>
         <ul className="fp-points">
           {POINTS.map((p) => <li key={p}>{p}</li>)}
         </ul>
@@ -105,7 +107,7 @@ export default function FutureProofPage() {
           <button type="button" className="fp-gbtn" onClick={() => deliver('html')}>View as HTML Page</button>
           <button type="button" className="fp-gbtn alt" onClick={() => deliver('pdf')}>Download PDF</button>
         </div>
-        <p className="fp-privacy">We'll only use your details to send the perspective and the occasional one worth your time. Unsubscribe anytime.</p>
+        <p className="fp-privacy">We’ll only use your details to send the perspective and the occasional one worth your time. Unsubscribe anytime.</p>
       </div>
     </section>
   );
