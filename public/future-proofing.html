@@ -340,7 +340,7 @@
     <div class="cta-inner">
       <h2>Ready to do something about AI?</h2>
       <p>We will show your team where its literacy, governance, and compliance stand today, and the shortest path to getting ready for what is coming.</p>
-      <a class="btn" href="#" id="ctaBtn">Start the conversation</a>
+      <a class="btn" href="/contact" id="ctaBtn">Start the conversation</a>
     </div>
   </div>
 
@@ -374,9 +374,7 @@
   window.addEventListener('resize',onScroll);onScroll();
   var panel=document.getElementById('navPanel');
   document.getElementById('navToggle').addEventListener('click',function(){panel.classList.add('open');});
-  panel.addEventListener('click',function(e){if(e.target===panel||e.target.classList.contains('nl'))panel.classList.remove('open');});
-  document.getElementById('ctaBtn').addEventListener('click',function(e){e.preventDefault();alert('Wire this button to your form, scheduler, or contact page.');});
-})();
+  panel.addEventListener('click',function(e){if(e.target===panel||e.target.classList.contains('nl'))panel.classList.remove('open');});})();
 </script>
 </body>
 </html>
