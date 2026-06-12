@@ -66,25 +66,43 @@ exports.submitContact = onRequest(async (req, res) => {
     return;
   }
 
-  const { name, email, company, role, interest, message, track } = req.body;
+  const { name, email, company, role, interest, message, track, source, asset } = req.body;
 
   if (!name || !email || !email.includes("@")) {
     res.status(400).json({ error: "Name and valid email are required." });
     return;
   }
 
+  // Lead-gen submissions (e.g. the Future-Proof gated landing page) carry a `source`
+  // and an `asset` ("html" = viewed the article, "pdf" = downloaded the PDF).
+  const isLead = source === "future-proof-landing";
+  const assetLabel = asset === "html" ? "Viewed the HTML article" : asset === "pdf" ? "Downloaded the PDF" : asset;
   const trackLabel = { talk: "Ready to talk", learn: "Want to learn first", demo: "Ready for a demo" }[track] || track;
 
+  const cell = (k, v) => `<tr><td style="padding:8px 16px 8px 0;font-weight:bold;color:#666;">${k}</td><td style="padding:8px 0;">${v}</td></tr>`;
+  const rows = [];
+  if (isLead) {
+    rows.push(cell("Source", "Future-Proof landing page"));
+    if (asset) rows.push(cell("Asset", assetLabel));
+  } else if (track) {
+    rows.push(cell("Track", trackLabel));
+  }
+  rows.push(cell("Name", name));
+  rows.push(cell("Email", `<a href="mailto:${email}">${email}</a>`));
+  if (company) rows.push(cell("Company", company));
+  if (role) rows.push(cell("Role", role));
+  if (interest) rows.push(cell("Interest", interest));
+  if (message) rows.push(cell("Message", message));
+
+  const heading = isLead ? "New Future-Proof Lead" : "New Proxa Labs Inquiry";
+  const subject = isLead
+    ? `New Future-Proof lead: ${name}${asset ? ` (${asset})` : ""}`
+    : `New Proxa Labs inquiry from ${name}`;
+
   const html = `
-    <h2>New Proxa Labs Inquiry</h2>
+    <h2>${heading}</h2>
     <table style="border-collapse:collapse;font-family:sans-serif;font-size:14px;">
-      <tr><td style="padding:8px 16px 8px 0;font-weight:bold;color:#666;">Track</td><td style="padding:8px 0;">${trackLabel}</td></tr>
-      <tr><td style="padding:8px 16px 8px 0;font-weight:bold;color:#666;">Name</td><td style="padding:8px 0;">${name}</td></tr>
-      <tr><td style="padding:8px 16px 8px 0;font-weight:bold;color:#666;">Email</td><td style="padding:8px 0;"><a href="mailto:${email}">${email}</a></td></tr>
-      ${company ? `<tr><td style="padding:8px 16px 8px 0;font-weight:bold;color:#666;">Company</td><td style="padding:8px 0;">${company}</td></tr>` : ""}
-      ${role ? `<tr><td style="padding:8px 16px 8px 0;font-weight:bold;color:#666;">Role</td><td style="padding:8px 0;">${role}</td></tr>` : ""}
-      ${interest ? `<tr><td style="padding:8px 16px 8px 0;font-weight:bold;color:#666;">Interest</td><td style="padding:8px 0;">${interest}</td></tr>` : ""}
-      ${message ? `<tr><td style="padding:8px 16px 8px 0;font-weight:bold;color:#666;">Message</td><td style="padding:8px 0;">${message}</td></tr>` : ""}
+      ${rows.join("\n      ")}
     </table>
   `;
 
@@ -94,7 +112,7 @@ exports.submitContact = onRequest(async (req, res) => {
       from: getFromAddress(),
       to: getNotifyEmails(email),
       replyTo: email,
-      subject: `New Proxa Labs inquiry from ${name}`,
+      subject,
       html,
     });
     res.status(200).json({ success: true });
