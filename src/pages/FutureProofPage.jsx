@@ -109,7 +109,7 @@ export default function FutureProofPage() {
           <button type="button" className="fp-gbtn alt" onClick={() => deliver('pdf')}>Download PDF</button>
         </div>
       </div>
-        <p className="fp-disclaimer">We’ll only use your details to send the perspective and the occasional one worth your time. Unsubscribe anytime.</p>
+        <p className="fp-disclaimer">We’ll only use your email to send you the occasional perspective on AI readiness, company update or announcement worth your time. Unsubscribe anytime.</p>
       </div>
     </section>
   );

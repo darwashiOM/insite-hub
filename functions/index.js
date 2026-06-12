@@ -2,6 +2,8 @@ const { onRequest } = require("firebase-functions/v2/https");
 const nodemailer = require("nodemailer");
 
 const ALLOWED_ORIGINS = [
+  "https://proxalabs.com",
+  "https://www.proxalabs.com",
   "https://insite-hub-web.web.app",
   "https://insite-hub-web.firebaseapp.com",
   "https://www.insitehub.com",
@@ -12,7 +14,7 @@ const ALLOWED_ORIGINS = [
   "http://localhost:5181",
 ];
 
-const DEFAULT_NOTIFY_EMAILS = "sales@insitehub.com,john.royer@insitehub.com";
+const DEFAULT_NOTIFY_EMAILS = "sales@insitehub.com,john.royer@insitehub.com,mehrler@proxalabs.com";
 const DEFAULT_FROM_NAME = "Proxa Labs Website";
 
 function parseEmails(value) {

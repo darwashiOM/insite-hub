@@ -8,6 +8,14 @@
     ],
     "rewrites": [
       {
+        "source": "/api/contact",
+        "function": { "functionId": "submitContact", "region": "us-central1" }
+      },
+      {
+        "source": "/api/newsletter",
+        "function": { "functionId": "submitNewsletter", "region": "us-central1" }
+      },
+      {
         "source": "**",
         "destination": "/index.html"
       }
