@@ -80,14 +80,15 @@ export default function FutureProofPage() {
     <section className="fp-hero">
       <div className="fp-copy">
         <h1 className="fp-h1"><em>Future-proof</em><br />your organization</h1>
-        <p className="fp-standfirst">an in-depth perspective on AI readiness, and what you really should be getting ready for.</p>
+        <p className="fp-standfirst">An in-depth perspective on AI readiness, and what you really should be getting ready for.</p>
         <p className="fp-body">Most biopharma commercial learning teams are getting ready for the wrong thing. This perspective lays out what you’re actually getting ready for, why most AI pilots die, and the order of operations for leading the shift instead of being assigned to it.</p>
         <ul className="fp-points">
           {POINTS.map((p) => <li key={p}>{p}</li>)}
         </ul>
       </div>
 
-      <div className="fp-card">
+      <div className="fp-right">
+        <div className="fp-card">
         <div className={'fp-field' + (errors.firstName ? ' err' : '')}>
           <label htmlFor="fp-fn">First Name*</label>
           <input id="fp-fn" type="text" autoComplete="given-name" placeholder="Jordan" value={form.firstName} onChange={u('firstName')} />
@@ -107,7 +108,8 @@ export default function FutureProofPage() {
           <button type="button" className="fp-gbtn" onClick={() => deliver('html')}>View as HTML Page</button>
           <button type="button" className="fp-gbtn alt" onClick={() => deliver('pdf')}>Download PDF</button>
         </div>
-        <p className="fp-privacy">We’ll only use your details to send the perspective and the occasional one worth your time. Unsubscribe anytime.</p>
+      </div>
+        <p className="fp-disclaimer">We’ll only use your details to send the perspective and the occasional one worth your time. Unsubscribe anytime.</p>
       </div>
     </section>
   );

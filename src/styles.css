@@ -2348,7 +2348,8 @@ h1,h2,h3,h4 { font-family:'Manrope',sans-serif; }
 .fp-gbtn:hover { background:#000; transform:translateY(-1px); }
 .fp-gbtn.alt { background:transparent; color:#fff; border:1.6px solid rgba(255,255,255,.6); font-weight:600; }
 .fp-gbtn.alt:hover { background:rgba(255,255,255,.14); border-color:#fff; transform:none; }
-.fp-privacy { font-size:12px; color:rgba(255,255,255,.92); margin:16px 0 0; line-height:1.4; }
+.fp-right { align-self:start; }
+.fp-disclaimer { font-size:12.5px; line-height:1.45; color:var(--bdl); margin:14px 4px 0; }
 
 @media (max-width:900px){
   .fp-hero { grid-template-columns:1fr; gap:36px; padding:108px 24px 64px; }
