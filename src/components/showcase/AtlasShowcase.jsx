@@ -10,7 +10,7 @@ export default function AtlasShowcase() {
     <div style={{ background: '#fff', borderRadius: 12, overflow: 'hidden', flex: 1, display: 'flex', flexDirection: 'column', boxShadow: '0 4px 24px rgba(0,0,0,0.04)' }}>
       <div style={{ padding: '14px 18px', borderBottom: '1px solid #E3E5EA', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div>
-          <div style={{ fontSize: 11, color: '#75abc0', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 2 }}>Cue · Rep Pathway</div>
+          <div style={{ fontSize: 11, color: '#9ca979', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 2 }}>Cue · Rep Pathway</div>
           <div style={{ fontFamily: 'Manrope, sans-serif', fontWeight: 800, fontSize: 14, color: '#12141A' }}>Sarah Chen · Oncology Onboarding</div>
         </div>
         <div style={{ fontSize: 10, color: '#5C6370' }}>Week 6 of 12</div>
@@ -33,10 +33,10 @@ export default function AtlasShowcase() {
         <div style={{ padding: 12, background: 'rgba(245,158,11,.08)', border: '1px solid rgba(245,158,11,.25)', borderRadius: 8, fontSize: 11.5, color: '#92400E', marginBottom: 12 }}>
           ⚠ Gap detected in Objection Handling. Adaptive remediation queued.
         </div>
-        <div style={{ padding: 12, background: 'rgba(117,171,192,.05)', border: '1px solid rgba(117,171,192,.2)', borderRadius: 8, fontSize: 12, fontWeight: 600, color: '#75abc0' }}>
+        <div style={{ padding: 12, background: 'rgba(156,169,121,.05)', border: '1px solid rgba(156,169,121,.2)', borderRadius: 8, fontSize: 12, fontWeight: 600, color: '#9ca979' }}>
           Predicted readiness in 2 weeks: <span style={{ fontSize: 14 }}>92%</span>
         </div>
-        <div style={{ marginTop: 12, padding: '10px 14px', background: 'rgba(117,171,192,.06)', border: '1px solid rgba(117,171,192,.2)', borderRadius: 8, fontSize: 11.5, color: '#75abc0', fontWeight: 600 }}>
+        <div style={{ marginTop: 12, padding: '10px 14px', background: 'rgba(156,169,121,.06)', border: '1px solid rgba(156,169,121,.2)', borderRadius: 8, fontSize: 11.5, color: '#9ca979', fontWeight: 600 }}>
           🎭 Stage assessment unlocked
         </div>
       </div>

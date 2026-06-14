@@ -2,9 +2,9 @@ import { HexMark } from '../HexMark';
 
 const NODES = [
   { x: 100, y: 30,  c: "#f5825f", bg: "rgba(245,130,95,.1)", name: "Forge",   sub: "Builds content",       ss: "Courses · Inserts · SOPs" },
-  { x: 448, y: 30,  c: "#75abc0", bg: "rgba(117,171,192,.1)",  name: "Cue",   sub: "Delivers learning",    ss: "Adaptive · Gap-aware" },
+  { x: 448, y: 30,  c: "#9ca979", bg: "rgba(156,169,121,.1)",  name: "Cue",   sub: "Delivers learning",    ss: "Adaptive · Gap-aware" },
   { x: 448, y: 200, c: "#5e6b7a", bg: "rgba(94,107,122,.1)", name: "Stage",    sub: "Assesses in roleplay", ss: "HCP avatars · Scoring" },
-  { x: 100, y: 200, c: "#9ca979", bg: "rgba(156,169,121,.1)",  name: "Trace", sub: "Confirms readiness",   ss: "Behavioral proof" },
+  { x: 100, y: 200, c: "#75abc0", bg: "rgba(117,171,192,.1)",  name: "Trace", sub: "Confirms readiness",   ss: "Behavioral proof" },
 ];
 
 const ARROWS = [

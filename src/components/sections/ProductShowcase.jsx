@@ -1,9 +1,9 @@
 export default function ProductShowcase({ product, eyebrow, tagline, body, bullets, mockup, reverse = false, background = 'light', id }) {
   const accents = {
     forge:   { color: '#f5825f', bg: 'rgba(245,130,95,.07)' },
-    atlas:   { color: '#75abc0', bg: 'rgba(117,171,192,.07)' },
-    echo:    { color: '#75abc0', bg: 'rgba(117,171,192,.07)' },
-    certify: { color: '#9ca979', bg: 'rgba(156,169,121,.07)' },
+    atlas:   { color: '#9ca979', bg: 'rgba(156,169,121,.07)' },
+    echo:    { color: '#5e6b7a', bg: 'rgba(94,107,122,.07)' },
+    certify: { color: '#75abc0', bg: 'rgba(117,171,192,.07)' },
   };
   const a = accents[product] || accents.forge;
   const bg = background === 'tinted' ? 'section-tinted' : background === 'dark' ? 'section-dark' : 'section-light';

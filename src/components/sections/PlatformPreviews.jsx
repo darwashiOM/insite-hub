@@ -6,7 +6,7 @@ const PREVIEWS = [
       { label: "Veeva routing queued",   pct: 62,  c: "#75abc0", bg: "rgba(117,171,192,.12)" },
     ],
     status: "3 artifacts ready for MLR review" },
-  { c: "#75abc0", name: "Proxa Labs Cue", sub: "Rep pathway dashboard",
+  { c: "#9ca979", name: "Proxa Labs Cue", sub: "Rep pathway dashboard",
     rows: [
       { label: "Sarah Chen · Oncology pathway", pct: 74,  c: "#75abc0", bg: "rgba(117,171,192,.12)" },
       { label: "Knowledge gap detected · MOA",  pct: 41,  c: "#F59E0B", bg: "rgba(245,158,11,.12)" },
@@ -20,7 +20,7 @@ const PREVIEWS = [
       { label: "Objection handling",           pct: 67,  c: "#F59E0B", bg: "rgba(245,158,11,.12)" },
     ],
     status: "Scorecard generating…" },
-  { c: "#9ca979", name: "Trace", sub: "Certification audit record",
+  { c: "#75abc0", name: "Trace", sub: "Certification audit record",
     rows: [
       { label: "Competency threshold met",   pct: 100, c: "#9ca979", bg: "rgba(156,169,121,.12)" },
       { label: "Behavioral evidence logged", pct: 100, c: "#9ca979", bg: "rgba(156,169,121,.12)" },

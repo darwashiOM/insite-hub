@@ -11,10 +11,10 @@ export default function CertifyShowcase() {
     <div style={{ background: 'linear-gradient(180deg, #FAFBFD 0%, #F2F4F8 100%)', borderRadius: 12, overflow: 'hidden', flex: 1, display: 'flex', flexDirection: 'column', boxShadow: '0 4px 24px rgba(0,0,0,0.04)' }}>
       <div style={{ padding: '20px 24px', borderBottom: '1px solid #E3E5EA', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div>
-          <div style={{ fontSize: 11, color: '#9ca979', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 2 }}>Trace · Audit Record</div>
+          <div style={{ fontSize: 11, color: '#75abc0', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 2 }}>Trace · Audit Record</div>
           <div style={{ fontFamily: 'Manrope, sans-serif', fontWeight: 800, fontSize: 14, color: '#12141A' }}>Certification of Field Readiness</div>
         </div>
-        <div style={{ width: 44, height: 44, borderRadius: 22, background: '#9ca979', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: 18 }}>✓</div>
+        <div style={{ width: 44, height: 44, borderRadius: 22, background: '#75abc0', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: 18 }}>✓</div>
       </div>
       <div style={{ padding: 24, flex: 1 }}>
         <div style={{ marginBottom: 16 }}>
@@ -26,7 +26,7 @@ export default function CertifyShowcase() {
           <div style={{ fontSize: 10, color: '#5C6370', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 6 }}>Behavioral Evidence (5 of 5 verified)</div>
           {COMPETENCIES.map((c, i) => (
             <div key={i} style={{ display: 'flex', gap: 8, fontSize: 12, color: '#12141A', marginBottom: 4 }}>
-              <span style={{ color: '#9ca979', fontWeight: 700 }}>✓</span>
+              <span style={{ color: '#75abc0', fontWeight: 700 }}>✓</span>
               <span>{c}</span>
             </div>
           ))}
@@ -42,12 +42,12 @@ export default function CertifyShowcase() {
           </div>
         </div>
         <div style={{ marginTop: 12, padding: 10, background: '#fff', border: '1px solid #E3E5EA', borderRadius: 8, fontFamily: '"JetBrains Mono", monospace', fontSize: 10, color: '#5C6370', wordBreak: 'break-all' }}>
-          <div style={{ fontSize: 9, color: '#9ca979', fontWeight: 700, fontFamily: 'DM Sans, sans-serif', marginBottom: 4, textTransform: 'uppercase', letterSpacing: '0.08em' }}>SHA-256 Audit Hash</div>
+          <div style={{ fontSize: 9, color: '#75abc0', fontWeight: 700, fontFamily: 'DM Sans, sans-serif', marginBottom: 4, textTransform: 'uppercase', letterSpacing: '0.08em' }}>SHA-256 Audit Hash</div>
           a3f9c2b8e1d47f6c5a82b9e3d1c4f7a8b2e6d9c1f4a7b3e8d2c5f9a1b4e7c3d
         </div>
         <div style={{ marginTop: 12, display: 'flex', gap: 8 }}>
-          <span style={{ fontSize: 9.5, padding: '4px 10px', borderRadius: 12, background: 'rgba(156,169,121,.08)', color: '#9ca979', fontWeight: 700, letterSpacing: '0.05em' }}>SOC 2 Type II</span>
-          <span style={{ fontSize: 9.5, padding: '4px 10px', borderRadius: 12, background: 'rgba(156,169,121,.08)', color: '#9ca979', fontWeight: 700, letterSpacing: '0.05em' }}>10-yr retention</span>
+          <span style={{ fontSize: 9.5, padding: '4px 10px', borderRadius: 12, background: 'rgba(117,171,192,.08)', color: '#75abc0', fontWeight: 700, letterSpacing: '0.05em' }}>SOC 2 Type II</span>
+          <span style={{ fontSize: 9.5, padding: '4px 10px', borderRadius: 12, background: 'rgba(117,171,192,.08)', color: '#75abc0', fontWeight: 700, letterSpacing: '0.05em' }}>10-yr retention</span>
         </div>
       </div>
     </div>
