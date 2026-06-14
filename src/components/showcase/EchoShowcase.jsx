@@ -15,7 +15,7 @@ export default function EchoShowcase() {
     <div style={{ background: '#fff', borderRadius: 12, overflow: 'hidden', flex: 1, display: 'flex', flexDirection: 'column', boxShadow: '0 4px 24px rgba(0,0,0,0.04)' }}>
       <div style={{ padding: '14px 18px', borderBottom: '1px solid #E3E5EA', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div>
-          <div style={{ fontSize: 11, color: '#5e6b7a', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 2 }}>Echo · HCP Roleplay</div>
+          <div style={{ fontSize: 11, color: '#5e6b7a', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 2 }}>Stage · HCP Roleplay</div>
           <div style={{ fontFamily: 'Manrope, sans-serif', fontWeight: 800, fontSize: 14, color: '#12141A' }}>Dr. Kim · Hematologist · Live Session</div>
         </div>
         <div style={{ fontSize: 10, color: '#5e6b7a', fontWeight: 600 }}>● RECORDING</div>

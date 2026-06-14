@@ -75,7 +75,7 @@ export default function InsiteXPage({ setPage }) {
       <EditorialHero
         eyebrow="InsiteX LMS"
         headline={<>The LMS that becomes <em>the AI foundation.</em></>}
-        subhead="InsiteX is the enterprise learning platform underneath Proxa Labs' AI. Purpose-built for biopharma — SCORM, AICC, and PMRC compliance, Veeva integration, credentialing workflows, and 10-year audit trails. When your organization is ready for AI, Forge, Atlas, and Echo layer on top. No migration. No rip-and-replace."
+        subhead="InsiteX is the enterprise learning platform underneath Proxa Labs' AI. Purpose-built for biopharma — SCORM, AICC, and PMRC compliance, Veeva integration, credentialing workflows, and 10-year audit trails. When your organization is ready for AI, Forge, Cue, and Stage layer on top. No migration. No rip-and-replace."
         primaryCta={{ label: "Book a Demo", onClick: () => setPage("contact") }}
       />
 
@@ -83,7 +83,7 @@ export default function InsiteXPage({ setPage }) {
         eyebrow="When InsiteX Is the Right Choice"
         heading="Not every team is ready for AI. InsiteX is built for where you actually are."
       >
-        <p>If your organization needs reliable enterprise learning infrastructure today — with compliance built in, Veeva integration working, and credentialing audit-ready — InsiteX is purpose-built for it. When your organization is ready for AI, Forge, Atlas, and Echo layer on top of the same system. Your learners, your content, your audit trail all carry forward.</p>
+        <p>If your organization needs reliable enterprise learning infrastructure today — with compliance built in, Veeva integration working, and credentialing audit-ready — InsiteX is purpose-built for it. When your organization is ready for AI, Forge, Cue, and Stage layer on top of the same system. Your learners, your content, your audit trail all carry forward.</p>
       </LongForm>
 
       <InsiteXProofPanel />
@@ -100,7 +100,7 @@ export default function InsiteXPage({ setPage }) {
       <UpgradeComparison
         eyebrow="Pick Your Starting Point"
         heading={<>Pick the right starting point.<br />Upgrade when you're ready.</>}
-        lead="InsiteX is the LMS foundation. The AI Platform adds Forge, Atlas, Echo, and Certify on top. Same system, different readiness — and when you're ready to bridge them, the integration is native."
+        lead="InsiteX is the LMS foundation. The AI Platform adds Forge, Cue, Stage, and Trace on top. Same system, different readiness — and when you're ready to bridge them, the integration is native."
       />
 
       <CTABand

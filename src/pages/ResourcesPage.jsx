@@ -16,7 +16,7 @@ export default function ResourcesPage({ setPage }) {
 
   const RESEARCH = [
     { icon: <Icon name="roleplay" size={22} />,  tag: "Actively recruiting", title: "Open-Source HCP Avatar Engine",         body: "Crowdsourcing a real-time, open-source conversational avatar system via hackathon. $10K prize pool. Reduces vendor lock-in for AI roleplay deployments across the industry." },
-    { icon: <Icon name="research" size={22} />,  tag: "Early results",       title: "Behavioral Analytics Correlation Study", body: "Early data shows r=0.84 correlation between AI-assessed behavioral competencies and field performance outcomes. Full study ongoing with Proxa Labs Echo cohort data." },
+    { icon: <Icon name="research" size={22} />,  tag: "Early results",       title: "Behavioral Analytics Correlation Study", body: "Early data shows r=0.84 correlation between AI-assessed behavioral competencies and field performance outcomes. Full study ongoing with Proxa Labs Stage cohort data." },
     { icon: <Icon name="readiness" size={22} />, tag: "In development",      title: "AI Readiness Predictive Model",         body: "Building a predictive model for pilot success probability based on pre-deployment organizational readiness scores. Training data drawn from 30+ biopharma advisory engagements." },
   ];
 

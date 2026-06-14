@@ -1,7 +1,7 @@
 const COMPETENCIES = [
-  'Mechanism of Action — verified Echo session #2841',
-  'Clinical Data — verified Echo session #2856',
-  'Objection Handling — verified Echo session #2879',
+  'Mechanism of Action — verified Stage session #2841',
+  'Clinical Data — verified Stage session #2856',
+  'Objection Handling — verified Stage session #2879',
   'MLR Compliance — 100% across 12 sessions',
   'Manager observation — passed (8 of 8 criteria)',
 ];
@@ -11,7 +11,7 @@ export default function CertifyShowcase() {
     <div style={{ background: 'linear-gradient(180deg, #FAFBFD 0%, #F2F4F8 100%)', borderRadius: 12, overflow: 'hidden', flex: 1, display: 'flex', flexDirection: 'column', boxShadow: '0 4px 24px rgba(0,0,0,0.04)' }}>
       <div style={{ padding: '20px 24px', borderBottom: '1px solid #E3E5EA', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div>
-          <div style={{ fontSize: 11, color: '#9ca979', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 2 }}>Certify · Audit Record</div>
+          <div style={{ fontSize: 11, color: '#9ca979', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 2 }}>Trace · Audit Record</div>
           <div style={{ fontFamily: 'Manrope, sans-serif', fontWeight: 800, fontSize: 14, color: '#12141A' }}>Certification of Field Readiness</div>
         </div>
         <div style={{ width: 44, height: 44, borderRadius: 22, background: '#9ca979', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: 18 }}>✓</div>

@@ -8,11 +8,11 @@ const LoopMobile = () => {
   const nodes=[
     {label:"Forge",sub:"Builds content",iconName:"agent",c:"#f5825f",bg:"rgba(245,130,95,.06)",
      desc:"AI agents generating MLR-compliant content from your PI, CSRs, and brand assets."},
-    {label:"Atlas",sub:"Delivers learning",iconName:"pathway",c:"#75abc0",bg:"rgba(117,171,192,.06)",
+    {label:"Cue",sub:"Delivers learning",iconName:"pathway",c:"#75abc0",bg:"rgba(117,171,192,.06)",
      desc:"Adaptive learning pathways closing knowledge gaps before reps reach the field."},
-    {label:"Echo",sub:"Assesses readiness",iconName:"roleplay",c:"#5e6b7a",bg:"rgba(94,107,122,.06)",
+    {label:"Stage",sub:"Assesses readiness",iconName:"roleplay",c:"#5e6b7a",bg:"rgba(94,107,122,.06)",
      desc:"Live HCP roleplay with AI physician avatars. Real-time ComplianceGuard monitoring."},
-    {label:"Certify",sub:"Confirms competency",iconName:"audit",c:"#9ca979",bg:"rgba(156,169,121,.06)",
+    {label:"Trace",sub:"Confirms competency",iconName:"audit",c:"#9ca979",bg:"rgba(156,169,121,.06)",
      desc:"Competency-gated certification. Gaps automatically trigger Forge to rebuild."},
   ];
   return (

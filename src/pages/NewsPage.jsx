@@ -5,7 +5,7 @@ import CTABand from '../components/sections/CTABand';
 import Icon from '../components/Icon';
 
 const SECONDARY_NEWS = [
-  { icon: <Icon name="update" size={22} />,      tag: "March 2026 · Platform Update", title: "Proxa Labs Echo — ComplianceGuard v2 Released",                 body: "Real-time compliance monitoring now includes enhanced MLR flag categorization, automated rephrasing suggestions, and expanded banned phrase detection across all six commercial verticals. Available to all Echo clients immediately." },
+  { icon: <Icon name="update" size={22} />,      tag: "March 2026 · Platform Update", title: "Proxa Labs Stage — ComplianceGuard v2 Released",                 body: "Real-time compliance monitoring now includes enhanced MLR flag categorization, automated rephrasing suggestions, and expanded banned phrase detection across all six commercial verticals. Available to all Stage clients immediately." },
   { icon: <Icon name="research" size={22} />,    tag: "February 2026 · Research",       title: "The Lab publishes AI Readiness Scoring Model beta",         body: "The Lab team has released a beta version of the AI Readiness Scoring Model — an 8-dimension maturity framework for measuring commercial L&D AI readiness. Available to advisory engagement clients as part of Phase 1 diagnostics." },
   { icon: <Icon name="launch" size={22} />,      tag: "December 2025 · Platform Launch", title: "Proxa Labs Forge v4.0 — General Availability",                  body: "Forge's agentic content creation platform reaches general availability, including the Content Gap Analyzer, MLR Package Builder, and Knowledge Session dual-track sourcing engine. Available to enterprise commercial L&D teams now." },
 ];

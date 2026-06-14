@@ -2,9 +2,9 @@ import { HexMark } from '../HexMark';
 
 const NODES = [
   { x: 100, y: 30,  c: "#f5825f", bg: "rgba(245,130,95,.1)", name: "Forge",   sub: "Builds content",       ss: "Courses · Inserts · SOPs" },
-  { x: 448, y: 30,  c: "#75abc0", bg: "rgba(117,171,192,.1)",  name: "Atlas",   sub: "Delivers learning",    ss: "Adaptive · Gap-aware" },
-  { x: 448, y: 200, c: "#5e6b7a", bg: "rgba(94,107,122,.1)", name: "Echo",    sub: "Assesses in roleplay", ss: "HCP avatars · Scoring" },
-  { x: 100, y: 200, c: "#9ca979", bg: "rgba(156,169,121,.1)",  name: "Certify", sub: "Confirms readiness",   ss: "Behavioral proof" },
+  { x: 448, y: 30,  c: "#75abc0", bg: "rgba(117,171,192,.1)",  name: "Cue",   sub: "Delivers learning",    ss: "Adaptive · Gap-aware" },
+  { x: 448, y: 200, c: "#5e6b7a", bg: "rgba(94,107,122,.1)", name: "Stage",    sub: "Assesses in roleplay", ss: "HCP avatars · Scoring" },
+  { x: 100, y: 200, c: "#9ca979", bg: "rgba(156,169,121,.1)",  name: "Trace", sub: "Confirms readiness",   ss: "Behavioral proof" },
 ];
 
 const ARROWS = [
@@ -14,7 +14,7 @@ const ARROWS = [
   { d: "M152 200 Q106 150 152 100", c: "#9ca979", m: "ac", lx: 56,  ly: 150, t: "gap → rebuild" },
 ];
 
-export default function ClosedLoopDiagram({ eyebrow = "The Closed Loop", heading = "Build → Develop → Assess → Certify → Repeat", lead = "A continuous cycle. Content created in Forge powers learning in Atlas, assessed in Echo, drives Certify — and gaps detected restart the loop automatically." }) {
+export default function ClosedLoopDiagram({ eyebrow = "The Closed Loop", heading = "Build → Deliver → Assess → Trace → Repeat", lead = "A continuous cycle. Content created in Forge powers learning in Cue, assessed in Stage, drives Trace — and gaps detected restart the loop automatically." }) {
   return (
     <section className="section section-light">
       <div className="mw">
@@ -50,7 +50,7 @@ export default function ClosedLoopDiagram({ eyebrow = "The Closed Loop", heading
                   <text x={nd.x + 74} y={nd.y + 56} textAnchor="middle" style={{ fontSize: 9.5, fill: "rgba(255,255,255,.32)", fontFamily: "DM Sans,sans-serif" }}>{nd.ss}</text>
                 </g>
               ))}
-              {["INTELLIGENT", "CAPABILITY", "DEVELOPMENT"].map((w, i) => (
+              {["INTELLIGENT", "COMMERCIAL", "READINESS"].map((w, i) => (
                 <text key={w} x="350" y={138 + i * 15} textAnchor="middle" style={{ fontSize: 9, fill: "rgba(255,255,255,.18)", letterSpacing: ".1em", fontFamily: "Manrope,sans-serif" }}>{w}</text>
               ))}
             </svg>

@@ -13,7 +13,7 @@ const NODES = [
   },
   {
     id: 1,
-    label: 'Atlas',
+    label: 'Cue',
     sub: 'Delivers adaptive learning',
     color: '#4a8aa6',
     text: '#2f6a85',
@@ -23,7 +23,7 @@ const NODES = [
   },
   {
     id: 2,
-    label: 'Echo',
+    label: 'Stage',
     sub: 'Assesses in live HCP roleplay',
     color: '#5e6b7a',
     text: '#3a4350',
@@ -33,7 +33,7 @@ const NODES = [
   },
   {
     id: 3,
-    label: 'Certify',
+    label: 'Trace',
     sub: 'Verifies behavioral competency',
     color: '#7e8c57',
     text: '#5f6e3f',
@@ -73,10 +73,10 @@ export default function LoopVisual() {
         @keyframes loopDash { to { stroke-dashoffset: -22; } }
         .loop-active-flow { animation: loopDash 0.8s linear infinite; }
       `}</style>
-      <div className="lc-label">The Closed Loop · Intelligent Capability Development</div>
+      <div className="lc-label">The Closed Loop · Intelligent Commercial Readiness</div>
       <svg viewBox="0 0 680 480" role="img" aria-labelledby="loop-title loop-desc" className="loop-oval-svg">
         <title id="loop-title">Proxa Labs closed-loop diagram</title>
-        <desc id="loop-desc">Four-product oval cycle showing Forge building content, Atlas delivering learning, Echo assessing readiness, and Certify verifying competency.</desc>
+        <desc id="loop-desc">Four-product oval cycle showing Forge building content, Cue delivering learning, Stage assessing readiness, and Trace verifying competency.</desc>
         <defs>
           {FLOWS.map(flow => (
             <marker key={flow.from} id={`loop-arrow-${flow.from}`} viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
@@ -97,8 +97,8 @@ export default function LoopVisual() {
         </defs>
 
         <ellipse cx="340" cy="240" rx="280" ry="180" fill="none" stroke="#B4B2A9" strokeWidth="0.5" strokeDasharray="3 4" />
-        <text x="340" y="228" textAnchor="middle" dominantBaseline="central" className="loop-center-text">Intelligent Capability</text>
-        <text x="340" y="252" textAnchor="middle" dominantBaseline="central" className="loop-center-text">Development</text>
+        <text x="340" y="228" textAnchor="middle" dominantBaseline="central" className="loop-center-text">Intelligent Commercial</text>
+        <text x="340" y="252" textAnchor="middle" dominantBaseline="central" className="loop-center-text">Readiness</text>
 
         {FLOWS.map(flow => {
           const isActive = active === flow.from;

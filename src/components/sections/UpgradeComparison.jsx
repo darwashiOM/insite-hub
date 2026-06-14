@@ -10,8 +10,8 @@ const ROWS = [
   { label: "Veeva integration", values: ["partial", true, true] },
   { label: "Enterprise SSO + RBAC", values: [true, true, true] },
   { label: "Agentic AI content creation (Forge)", values: [false, false, true] },
-  { label: "AI roleplay assessment (Echo)", values: [false, false, true] },
-  { label: "Behavioral certification (Certify)", values: [false, false, true] },
+  { label: "AI roleplay assessment (Stage)", values: [false, false, true] },
+  { label: "Behavioral certification (Trace)", values: [false, false, true] },
   { label: "Closed-loop gap remediation", values: [false, false, true] },
   {
     label: "Best for",
@@ -25,9 +25,9 @@ const ROWS = [
 ];
 
 const FLOWS = [
-  { from: "InsiteX", to: "Atlas", body: "Existing learner records flow from InsiteX into Atlas adaptive pathways. No data migration." },
+  { from: "InsiteX", to: "Cue", body: "Existing learner records flow from InsiteX into Cue adaptive pathways. No data migration." },
   { from: "Forge", to: "InsiteX Library", body: "Forge-generated content publishes straight into your InsiteX content library. Teams keep working in the LMS they already know." },
-  { from: "Echo", to: "InsiteX Records", body: "Echo assessment outcomes log to InsiteX as completion and competency records, audit-ready." },
+  { from: "Stage", to: "InsiteX Records", body: "Stage assessment outcomes log to InsiteX as completion and competency records, audit-ready." },
 ];
 
 function ComparisonValue({ value, columnType, emphasis }) {

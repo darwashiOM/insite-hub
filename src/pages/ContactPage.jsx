@@ -25,10 +25,10 @@ const TRACK_OPTIONS = [
     id: "demo",
     icon: <Icon name="platform" size={22} />,
     t: "Ready for a demo",
-    d: "Show me Forge, Atlas, and Echo in the context of my organization.",
+    d: "Show me Forge, Cue, and Stage in the context of my organization.",
     interest: "AI Platform demo",
     expectationTitle: "Platform Demo",
-    expectationBody: "Forge, Atlas, and Echo in the context of your commercial organization. We tailor the demo to your launch, therapeutic area, and governance environment.",
+    expectationBody: "Forge, Cue, and Stage in the context of your commercial organization. We tailor the demo to your launch, therapeutic area, and governance environment.",
   },
 ];
 

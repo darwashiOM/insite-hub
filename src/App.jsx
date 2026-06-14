@@ -18,7 +18,7 @@ import FutureProofPage from './pages/FutureProofPage';
 
 const PAGE_TITLES = {
   home: "Proxa Labs · AI-First Commercial Learning for Biopharma",
-  platform: "AI Platform · Forge, Atlas, Echo & Certify · Proxa Labs",
+  platform: "AI Platform · Forge, Cue, Stage & Trace · Proxa Labs",
   advisory: "Advisory Services · AI Strategy for Biopharma L&D · Proxa Labs",
   literacy: "AI Literacy Program · Role-Targeted AI Fluency · Proxa Labs",
   insitex: "InsiteX LMS · Enterprise Learning for Biopharma · Proxa Labs",
@@ -34,7 +34,7 @@ const PAGE_TITLES = {
 
 const DESCS = {
   home: "Proxa Labs is the AI implementation partner built for biopharma commercial learning. Advisory, platform, and experimentation — methodology-first, compliance by design.",
-  platform: "The only closed-loop AI platform in biopharma: Forge builds content, Atlas delivers learning, Echo assesses readiness, Certify confirms competency.",
+  platform: "The only closed-loop AI platform in biopharma: Forge builds content, Cue delivers learning, Stage assesses readiness, Trace confirms competency.",
   advisory: "AI strategy, readiness assessments, governance frameworks, and infrastructure planning — advisory services purpose-built for biopharma commercial L&D.",
   literacy: "Role-targeted AI literacy tracks for every part of your commercial organization. Build fluency before deploying tools.",
   insitex: "Enterprise learning management built for biopharma compliance. SCORM, AICC, and PMRC compliance. The foundation the AI platform builds on.",

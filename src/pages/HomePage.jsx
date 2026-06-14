@@ -38,7 +38,7 @@ const STEPS = [
   { n: "02", title: "Assess your AI readiness", body: "Advisory team maps your constraints before recommending anything. No technology pitch." },
   { n: "03", title: "Build AI literacy across your team", body: "Equip every role — reps, managers, medical affairs — with the fluency to adopt AI tools effectively.", highlight: true },
   { n: "04", title: "Experiment before committing", body: "Structured pilots generate evidence in your environment before you scale." },
-  { n: "05", title: "Deploy with confidence", body: "Forge, Atlas, and Echo built to survive your governance environment." },
+  { n: "05", title: "Deploy with confidence", body: "Forge, Cue, and Stage built to survive your governance environment." },
 ];
 
 export default function HomePage({ setPage }) {
@@ -84,13 +84,13 @@ export default function HomePage({ setPage }) {
       <CardGrid
         eyebrow="The AI Platform"
         heading="Four products. One closed loop."
-        lead="Content published in Forge → delivered by Atlas → assessed by Echo → verified in Certify. Every gap automatically restarts the loop."
+        lead="Content published in Forge → delivered by Cue → assessed by Stage → verified in Trace. Every gap automatically restarts the loop."
         columns={2}
         cards={[
           { icon: <Icon name="agent"    size={26} color="#f5825f" />, tag: "Forge",   tagColor: "#f5825f", title: "Agentic content creation.",      body: "AI agents build MLR-compliant training from your PI, CSRs, and brand assets. Hours, not months." },
-          { icon: <Icon name="pathway"  size={26} color="#75abc0" />, tag: "Atlas",   tagColor: "#75abc0", title: "AI-powered adaptive learning.",  body: "Personalized pathways that close knowledge gaps in real time, ensuring reps are field-ready." },
-          { icon: <Icon name="roleplay" size={26} color="#5e6b7a" />, tag: "Echo",    tagColor: "#5e6b7a", title: "AI roleplay + compliance guard.", body: "Live HCP conversations with AI physician avatars. ComplianceGuard monitors every message in real time." },
-          { icon: <Icon name="audit"    size={26} color="#9ca979" />, tag: "Certify", tagColor: "#9ca979", title: "Demonstrated field readiness.",   body: "Certification earned through behavioral competency — not attendance. 10-year audit trail." },
+          { icon: <Icon name="pathway"  size={26} color="#75abc0" />, tag: "Cue",   tagColor: "#75abc0", title: "AI-powered adaptive learning.",  body: "Personalized pathways that close knowledge gaps in real time, ensuring reps are field-ready." },
+          { icon: <Icon name="roleplay" size={26} color="#5e6b7a" />, tag: "Stage",    tagColor: "#5e6b7a", title: "AI roleplay + compliance guard.", body: "Live HCP conversations with AI physician avatars. ComplianceGuard monitors every message in real time." },
+          { icon: <Icon name="audit"    size={26} color="#9ca979" />, tag: "Trace", tagColor: "#9ca979", title: "Demonstrated field readiness.",   body: "Certification earned through behavioral competency — not attendance. 10-year audit trail." },
         ]}
         cardStyle="feature"
         background="tinted"
