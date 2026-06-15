@@ -15,7 +15,7 @@ const ALLOWED_ORIGINS = [
 ];
 
 const DEFAULT_NOTIFY_EMAILS = "sales@insitehub.com,john.royer@insitehub.com,mehrler@proxalabs.com";
-const FUTURE_PROOF_NOTIFY_EMAIL = "mehrler@proxalabs.com";
+const FUTURE_PROOF_REPLY_TO = "mehrler@proxalabs.com";
 const DEFAULT_FROM_NAME = "Proxa Labs Website";
 
 function parseEmails(value) {
@@ -113,8 +113,8 @@ exports.submitContact = onRequest(async (req, res) => {
     const transporter = getTransporter();
     await transporter.sendMail({
       from: getFromAddress(),
-      to: isLead ? [FUTURE_PROOF_NOTIFY_EMAIL] : getNotifyEmails(email),
-      replyTo: email,
+      to: getNotifyEmails(email),
+      replyTo: isLead ? FUTURE_PROOF_REPLY_TO : email,
       subject,
       html,
     });
