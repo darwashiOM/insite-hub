@@ -2,6 +2,12 @@ import EditorialHero from '../components/sections/EditorialHero';
 import LongForm from '../components/sections/LongForm';
 import PullQuote from '../components/sections/PullQuote';
 import CTABand from '../components/sections/CTABand';
+import { usePageContent } from '../lib/content';
+
+// Plain-string defaults for headings that carry inline markup: render the rich
+// (italic) JSX as the default, but a plain string when an editor overrides it.
+const HERO_HEADLINE_DEFAULT = 'Most vendors lead with a demo. We lead with a diagnosis.';
+const CTA_HEADING_DEFAULT = "Not sure where to start? That's the right conversation to have.";
 
 const ENGAGEMENTS = [
   { n: "01", title: "AI Strategy & Roadmap Workshop", body: "Executive alignment on AI priorities, use cases, and implementation roadmap. Half-day workshop with your leadership team — the lowest-risk starting point. Deliverable: prioritized 12-month AI roadmap." },
@@ -13,39 +19,49 @@ const ENGAGEMENTS = [
 ];
 
 export default function AdvisoryPage({ setPage }) {
+  const c = usePageContent('advisory');
+  // Headings keep their rich (italic) default, but render a plain string if overridden.
+  const hh = c('hero.headline');
+  const heroHeadline = hh === HERO_HEADLINE_DEFAULT
+    ? <>Most vendors lead with a demo. <em>We lead with a diagnosis.</em></>
+    : hh;
+  const ch = c('cta.heading');
+  const ctaHeading = ch === CTA_HEADING_DEFAULT
+    ? <>Not sure where to start? <em>That's the right conversation to have.</em></>
+    : ch;
   return (
     <>
       <EditorialHero
-        eyebrow="Advisory"
-        headline={<>Most vendors lead with a demo. <em>We lead with a diagnosis.</em></>}
-        subhead="Every Proxa Labs engagement starts with the question your organization actually needs answered: what will determine whether AI succeeds or fails here? Six diagnostic engagements, each time-bounded, each producing a deliverable you can act on. No open-ended retainers."
+        eyebrow={c('hero.eyebrow')}
+        headline={heroHeadline}
+        subhead={c('hero.subhead')}
       />
 
       <LongForm
-        eyebrow="Why Advisory First"
-        heading="The thing that determines whether AI works is rarely the technology."
-        pullQuote="Pharma AI pilots fail because no one defines what success looks like before the pilot runs."
-        pullQuoteAttribution="Marcus Ellison, Advisory Practice Lead, Proxa Labs"
+        eyebrow={c('why.eyebrow')}
+        heading={c('why.heading')}
+        pullQuote={c('why.pullQuote')}
+        pullQuoteAttribution={c('why.pullQuoteAttribution')}
       >
-        <p>AI implementations in biopharma commercial learning fail in predictable ways. The use case is too broad. The pilot is scoped to succeed in controlled conditions that don't match the real environment. There's no path to a defensible business case. The governance gate kills the deployment after a successful technical demo. The business sponsor moves on. These failure patterns account for 80–95% of pharma AI pilot failures.</p>
-        <p>Proxa Labs' advisory engagements are designed around them. We diagnose where you are in the AI journey, where the specific risks live in your environment, and which engagement gives you the highest-leverage starting point. We don't recommend technology before we understand the constraints it has to operate in.</p>
-        <p>Every advisory engagement is time-bounded, produces a concrete deliverable — not a slide deck — and feeds directly into either a structured Lab experiment or a focused implementation workstream.</p>
+        <p>{c('why.body1')}</p>
+        <p>{c('why.body2')}</p>
+        <p>{c('why.body3')}</p>
       </LongForm>
 
       <section className="section section-light">
         <div className="mw">
           <div className="advisory-engagements-header">
-            <div className="t-eyebrow">Six Advisory Engagements</div>
-            <h2 className="t-h2">Pick the engagement that fits where you are.</h2>
-            <p className="t-lead">Each is time-bounded with a concrete deliverable. None requires a long-term retainer.</p>
+            <div className="t-eyebrow">{c('engagements.eyebrow')}</div>
+            <h2 className="t-h2">{c('engagements.heading')}</h2>
+            <p className="t-lead">{c('engagements.lead')}</p>
           </div>
           <div className="advisory-engagements-grid">
-            {ENGAGEMENTS.map(e => (
+            {ENGAGEMENTS.map((e, i) => (
               <div key={e.n} className="advisory-engagement-card">
                 <div className="advisory-engagement-num">{e.n}</div>
                 <div>
-                  <div className="advisory-engagement-title">{e.title}</div>
-                  <div className="advisory-engagement-body">{e.body}</div>
+                  <div className="advisory-engagement-title">{c(`engagements.${i}.title`)}</div>
+                  <div className="advisory-engagement-body">{c(`engagements.${i}.body`)}</div>
                 </div>
               </div>
             ))}
@@ -54,14 +70,14 @@ export default function AdvisoryPage({ setPage }) {
       </section>
 
       <PullQuote
-        quote="The diagnostic call took 30 minutes and saved us 9 months of building the wrong thing. We had been about to issue an RFP for an AI roleplay vendor. The advisory team showed us our actual blocker was MLR throughput, not roleplay coverage. We funded a Forge pilot instead. Six months later we had measurable launch readiness gains and a CCO-approved AI roadmap."
-        author={{ name: "VP, Commercial L&D", title: "Top-10 Global Pharma", company: "Anonymized advisory client" }}
+        quote={c('testimonial.quote')}
+        author={{ name: c('testimonial.author.name'), title: c('testimonial.author.title'), company: c('testimonial.author.company') }}
       />
 
       <CTABand
-        heading={<>Not sure where to start? <em>That's the right conversation to have.</em></>}
-        body="30 minutes. No demo. Tell us about your environment, what you've tried, and where you've been stuck. We'll tell you what we'd look at first."
-        primaryCta={{ label: "Book a Consult", onClick: () => setPage("contact") }}
+        heading={ctaHeading}
+        body={c('cta.body')}
+        primaryCta={{ label: c('cta.label'), onClick: () => setPage("contact") }}
       />
     </>
   );

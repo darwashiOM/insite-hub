@@ -4,6 +4,19 @@
  * override when present, otherwise the default — so the site always works even
  * with no overrides. Add a page/fields here, then read them via usePageContent.
  */
+import platform from './pages/platform';
+import advisory from './pages/advisory';
+import literacy from './pages/literacy';
+import insitex from './pages/insitex';
+import content from './pages/content';
+import proxalab from './pages/proxalab';
+import about from './pages/about';
+import news from './pages/news';
+import resources from './pages/resources';
+import newsletter from './pages/newsletter';
+import contact from './pages/contact';
+import futureproof from './pages/futureproof';
+
 export const MANIFEST = {
   home: {
     label: 'Homepage',
@@ -22,6 +35,8 @@ export const MANIFEST = {
       { key: 'cta.ctaLabel', label: 'Closing CTA button label', type: 'text', default: 'Book a Consult' },
     ],
   },
+  platform, advisory, literacy, insitex, content, proxalab,
+  about, news, resources, newsletter, contact, futureproof,
 };
 
 // Special-case constant so the homepage can render its rich (italic) headline as

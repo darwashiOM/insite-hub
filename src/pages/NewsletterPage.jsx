@@ -2,18 +2,18 @@ import { useState } from 'react';
 import EditorialHero from '../components/sections/EditorialHero';
 import CTABand from '../components/sections/CTABand';
 import Icon from '../components/Icon';
+import { usePageContent } from '../lib/content';
 
 const ROLES = ["VP / Head of Commercial L&D","CLO","Director of Learning Technology","Head of Sales Force Effectiveness","Commercial IT / Digital","Other"];
 const INTERESTS = ["AI Platform Updates","Advisory Insights","The Lab Research","AI Literacy Program","Announcements & Partnerships","New Frameworks & Guides"];
 
-const RECEIVE_CARDS = [
-  { icon: <Icon name="research" size={22} />,     title: "The Lab Research Updates",         body: "Early findings, new frameworks, and research milestones from The Lab — before they become full publications." },
-  { icon: <Icon name="partnership" size={22} />,  title: "Partnership & Product Announcements", body: "New partnerships (like UMU.com), platform updates, and program launches — directly from the team building them." },
-  { icon: <Icon name="framework" size={22} />,    title: "New Frameworks & Guides",             body: "Every new resource Proxa Labs publishes — AI readiness tools, business case templates, vendor evaluation scorecards — sent to subscribers first." },
-  { icon: <Icon name="field-notes" size={22} />,  title: "Field Notes from Advisory Engagements", body: "Anonymized patterns and insights from Proxa Labs' advisory work — what's working, what's failing, and what questions organizations are actually asking right now." },
-];
+// Plain-text defaults for the two rich (italic) headings — when an editor
+// overrides them we render a plain string; otherwise the JSX default is kept.
+const NEWSLETTER_HERO_HEADING_DEFAULT = "Stay ahead of AI in biopharma commercial learning.";
+const NEWSLETTER_CTA_HEADING_DEFAULT = "One newsletter. Worth your time.";
 
 export default function NewsletterPage({ setPage }) {
+  const c = usePageContent('newsletter');
   const [form, setForm] = useState({ email: "", name: "", role: "", interests: [] });
   const [done, setDone] = useState(false);
   const [sending, setSending] = useState(false);
@@ -41,14 +41,31 @@ export default function NewsletterPage({ setPage }) {
     }
   };
 
+  const RECEIVE_CARDS = [
+    { icon: <Icon name="research" size={22} />,     title: c('cards.0.title'), body: c('cards.0.body') },
+    { icon: <Icon name="partnership" size={22} />,  title: c('cards.1.title'), body: c('cards.1.body') },
+    { icon: <Icon name="framework" size={22} />,    title: c('cards.2.title'), body: c('cards.2.body') },
+    { icon: <Icon name="field-notes" size={22} />,  title: c('cards.3.title'), body: c('cards.3.body') },
+  ];
+
+  const heroHeadingRaw = c('hero.heading');
+  const heroHeading = heroHeadingRaw === NEWSLETTER_HERO_HEADING_DEFAULT
+    ? <>Stay ahead of AI in <em>biopharma commercial learning.</em></>
+    : <>{heroHeadingRaw}</>;
+
+  const ctaHeadingRaw = c('cta.heading');
+  const ctaHeading = ctaHeadingRaw === NEWSLETTER_CTA_HEADING_DEFAULT
+    ? <>One newsletter. <em>Worth your time.</em></>
+    : <>{ctaHeadingRaw}</>;
+
   const FormBlock = (
     <div className="newsletter-form-card">
       {done ? (
         <div className="newsletter-success">
           <div className="newsletter-success-check">✓</div>
-          <div className="newsletter-success-title">You're subscribed.</div>
-          <div className="newsletter-success-body">First issue lands when we have something genuinely worth your time. Browse the resources page in the meantime.</div>
-          <button className="bp" onClick={() => setPage("resources")}>Browse Frameworks & Guides</button>
+          <div className="newsletter-success-title">{c('success.title')}</div>
+          <div className="newsletter-success-body">{c('success.body')}</div>
+          <button className="bp" onClick={() => setPage("resources")}>{c('success.ctaLabel')}</button>
         </div>
       ) : (
         <>
@@ -73,8 +90,8 @@ export default function NewsletterPage({ setPage }) {
             })}
           </div>
           {error && <div className="newsletter-error">{error}</div>}
-          <button className="fsub" onClick={submit} disabled={sending} style={{ opacity: sending ? .6 : 1 }}>{sending ? "Subscribing…" : "Subscribe →"}</button>
-          <div className="newsletter-disclaimer">No spam. Unsubscribe anytime. We send when there's something worth sending.</div>
+          <button className="fsub" onClick={submit} disabled={sending} style={{ opacity: sending ? .6 : 1 }}>{sending ? c('form.submittingLabel') : c('form.submitLabel')}</button>
+          <div className="newsletter-disclaimer">{c('form.disclaimer')}</div>
         </>
       )}
     </div>
@@ -82,15 +99,15 @@ export default function NewsletterPage({ setPage }) {
 
   const ReceiveBlock = (
     <div>
-      <div className="t-eyebrow" style={{ marginBottom: 12 }}>What You'll Receive</div>
-      <h3 className="newsletter-receive-title">Useful thinking. When there's something to say.</h3>
+      <div className="t-eyebrow" style={{ marginBottom: 12 }}>{c('receive.eyebrow')}</div>
+      <h3 className="newsletter-receive-title">{c('receive.heading')}</h3>
       <div className="newsletter-receive-list">
-        {RECEIVE_CARDS.map(c => (
-          <div key={c.title} className="newsletter-receive-item">
-            <div className="newsletter-receive-icon">{c.icon}</div>
+        {RECEIVE_CARDS.map(card => (
+          <div key={card.title} className="newsletter-receive-item">
+            <div className="newsletter-receive-icon">{card.icon}</div>
             <div>
-              <div className="newsletter-receive-item-title">{c.title}</div>
-              <div className="newsletter-receive-item-body">{c.body}</div>
+              <div className="newsletter-receive-item-title">{card.title}</div>
+              <div className="newsletter-receive-item-body">{card.body}</div>
             </div>
           </div>
         ))}
@@ -101,9 +118,9 @@ export default function NewsletterPage({ setPage }) {
   return (
     <>
       <EditorialHero
-        eyebrow="Newsletter"
-        headline={<>Stay ahead of AI in <em>biopharma commercial learning.</em></>}
-        subhead="Frameworks, research, field notes, and announcements from Proxa Labs' practitioners. Sent when there's something worth saying. No vendor noise, no weekly cadence for its own sake."
+        eyebrow={c('hero.eyebrow')}
+        headline={heroHeading}
+        subhead={c('hero.subhead')}
       />
 
       <section className="section section-light">
@@ -114,9 +131,9 @@ export default function NewsletterPage({ setPage }) {
       </section>
 
       <CTABand
-        heading={<>One newsletter. <em>Worth your time.</em></>}
-        body="If we ever send something you'd skip — unsubscribe in one click. We promise we'll understand."
-        primaryCta={{ label: "Browse the Resources Page", onClick: () => setPage("resources") }}
+        heading={ctaHeading}
+        body={c('cta.body')}
+        primaryCta={{ label: c('cta.ctaLabel'), onClick: () => setPage("resources") }}
       />
     </>
   );

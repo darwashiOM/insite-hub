@@ -1,30 +1,44 @@
 import EditorialHero from '../components/sections/EditorialHero';
 import CTABand from '../components/sections/CTABand';
+import { usePageContent } from '../lib/content';
 
 const THERAPY_AREAS = ["Oncology","Hematology","Immunology","Cardiology","Endocrinology","Neurology","Rare Disease","Vaccines","Anti-Infectives","Respiratory"];
 
+// Headings keep their rich (italic) defaults, but render a plain string when overridden.
+const HERO_HEADLINE_DEFAULT = 'MLR-compliant content. Built for field readiness.';
+const CTA_HEADING_DEFAULT = 'Launch on time. MLR clean.';
+
 export default function ContentPage({ setPage }) {
+  const c = usePageContent('content');
+  const hh = c('hero.headline');
+  const heroHeadline = hh === HERO_HEADLINE_DEFAULT
+    ? <>MLR-compliant content. <em>Built for field readiness.</em></>
+    : hh;
+  const ch = c('cta.heading');
+  const ctaHeading = ch === CTA_HEADING_DEFAULT
+    ? <>Launch on time. <em>MLR clean.</em></>
+    : ch;
   return (
     <>
       <EditorialHero
-        eyebrow="Content Development"
-        headline={<>MLR-compliant content. <em>Built for field readiness.</em></>}
-        subhead="Every output is MLR-compliant, built by practitioners with deep biopharma commercial backgrounds, and measured by what reps can do in the field — not completion rates. Whether your launch needs speed or nuance, there's a track built for the moment."
-        primaryCta={{ label: "Book a Consult", onClick: () => setPage("contact") }}
+        eyebrow={c('hero.eyebrow')}
+        headline={heroHeadline}
+        subhead={c('hero.subhead')}
+        primaryCta={{ label: c('hero.ctaLabel'), onClick: () => setPage("contact") }}
       />
 
       <section className="section section-light">
         <div className="mw content-tracks">
-          <div className="t-eyebrow">Two Tracks. One Standard.</div>
-          <h2 className="t-h2">AI-powered, human-led, or both.</h2>
-          <p className="t-lead">Forge is our AI-powered track. It compresses content development from months to hours when speed matters. Traditional instructional design is our human-led track. It protects the depth and nuance that complex therapeutic content requires. Most launches use both — Forge for foundational modules, human-led for high-stakes objection handling.</p>
+          <div className="t-eyebrow">{c('tracks.eyebrow')}</div>
+          <h2 className="t-h2">{c('tracks.heading')}</h2>
+          <p className="t-lead">{c('tracks.lead')}</p>
 
           <div className="content-track-system">
             <div className="content-track-cards">
               <div className="content-track-card">
                 <div className="content-track-label">Track 01</div>
-                <h3>AI-Powered Forge</h3>
-                <p>Speed for foundational modules when launch timelines compress.</p>
+                <h3>{c('track1.title')}</h3>
+                <p>{c('track1.body')}</p>
                 <ul>
                   <li>Hours to draft</li>
                   <li>Auto-citation</li>
@@ -33,8 +47,8 @@ export default function ContentPage({ setPage }) {
               </div>
               <div className="content-track-card">
                 <div className="content-track-label">Track 02</div>
-                <h3>Human-Led ID</h3>
-                <p>Practitioner depth for high-stakes, nuanced field conversations.</p>
+                <h3>{c('track2.title')}</h3>
+                <p>{c('track2.body')}</p>
                 <ul>
                   <li>Practitioner-authored</li>
                   <li>Field-validated</li>
@@ -44,19 +58,19 @@ export default function ContentPage({ setPage }) {
             </div>
 
             <div className="content-standards-strip">
-              <div className="content-standards-label">Every Output, Every Track</div>
+              <div className="content-standards-label">{c('standards.label')}</div>
               <ul>
                 <li>
-                  <strong>Compliance-first design</strong>
-                  <span>Every output MLR-routable</span>
+                  <strong>{c('standards.item1.title')}</strong>
+                  <span>{c('standards.item1.desc')}</span>
                 </li>
                 <li>
-                  <strong>Field-validated</strong>
-                  <span>Built by people who've ridden along</span>
+                  <strong>{c('standards.item2.title')}</strong>
+                  <span>{c('standards.item2.desc')}</span>
                 </li>
                 <li>
-                  <strong>Behavior-change targeted</strong>
-                  <span>Completion is not the metric</span>
+                  <strong>{c('standards.item3.title')}</strong>
+                  <span>{c('standards.item3.desc')}</span>
                 </li>
               </ul>
             </div>
@@ -64,39 +78,39 @@ export default function ContentPage({ setPage }) {
 
           <div className="content-scenario-band">
             <div className="content-scenario-header">
-              <div className="t-eyebrow">Example Scenario</div>
-              <h3>A 9-month launch window. Three therapeutic indications. One content team.</h3>
+              <div className="t-eyebrow">{c('scenario.eyebrow')}</div>
+              <h3>{c('scenario.heading')}</h3>
             </div>
             <div className="content-scenario-timeline">
               <div className="content-scenario-phase">
                 <div className="content-scenario-months">Months 1–3</div>
-                <h4>Lead indication gets human-led depth.</h4>
-                <p>Traditional ID focuses on high-stakes objection handling and HCP scenario work.</p>
+                <h4>{c('scenario.phase1.title')}</h4>
+                <p>{c('scenario.phase1.body')}</p>
                 <span>Track 02</span>
               </div>
               <div className="content-scenario-phase">
                 <div className="content-scenario-months">Months 2–6</div>
-                <h4>Forge drafts the foundational lift.</h4>
-                <p>Indications two and three are drafted from PI, CSRs, and brand assets with cited claims.</p>
+                <h4>{c('scenario.phase2.title')}</h4>
+                <p>{c('scenario.phase2.body')}</p>
                 <span>Track 01</span>
               </div>
               <div className="content-scenario-phase">
                 <div className="content-scenario-months">Months 4–7</div>
-                <h4>Practitioners validate before MLR.</h4>
-                <p>Proxa Labs reviewers validate accuracy, nuance, and field readiness before routing.</p>
+                <h4>{c('scenario.phase3.title')}</h4>
+                <p>{c('scenario.phase3.body')}</p>
                 <span>Tracks 01 + 02</span>
               </div>
             </div>
-            <div className="content-scenario-outcome">All three indications launch on time, MLR-cleared.</div>
+            <div className="content-scenario-outcome">{c('scenario.outcome')}</div>
           </div>
         </div>
       </section>
 
       <section className="section section-tinted">
         <div className="mw therapeutic-coverage">
-          <div className="t-eyebrow">Therapeutic Area Coverage</div>
-          <h2 className="t-h2">We've built launch training across the major therapeutic areas.</h2>
-          <p className="t-lead">Our content practitioners have authored launch training across ten therapeutic areas. The depth shows in the work: nuanced PI handling, accurate MOA framing, and HCP persona behaviors that match real specialty conversations.</p>
+          <div className="t-eyebrow">{c('therapeutic.eyebrow')}</div>
+          <h2 className="t-h2">{c('therapeutic.heading')}</h2>
+          <p className="t-lead">{c('therapeutic.lead')}</p>
           <div className="therapeutic-pill-row">
             {THERAPY_AREAS.map(t => (
               <span key={t} className="therapeutic-pill">{t}</span>
@@ -106,9 +120,9 @@ export default function ContentPage({ setPage }) {
       </section>
 
       <CTABand
-        heading={<>Launch on time. <em>MLR clean.</em></>}
-        body="Tell us about your launch window and content backlog. We'll show you the mix of AI-powered and human-led work that fits."
-        primaryCta={{ label: "Book a Consult", onClick: () => setPage("contact") }}
+        heading={ctaHeading}
+        body={c('cta.body')}
+        primaryCta={{ label: c('cta.ctaLabel'), onClick: () => setPage("contact") }}
       />
     </>
   );

@@ -7,32 +7,47 @@ import AtlasShowcase from '../components/showcase/AtlasShowcase';
 import EchoShowcase from '../components/showcase/EchoShowcase';
 import CertifyShowcase from '../components/showcase/CertifyShowcase';
 import LoopVisual from '../components/LoopVisual';
+import { usePageContent } from '../lib/content';
+
+// Plain-text defaults for headings that carry inline markup. When the override
+// equals the default, render the rich (italic) JSX; otherwise render the plain string.
+const HERO_HEADLINE_DEFAULT = 'One platform. Four products. A closed loop that never breaks.';
+const CTA_HEADING_DEFAULT = 'See the closed loop in action.';
 
 export default function PlatformPage({ setPage }) {
+  const c = usePageContent('platform');
+  const hh = c('hero.headline');
+  const heroHeadline = hh === HERO_HEADLINE_DEFAULT
+    ? <>One platform. Four products. <em>A closed loop that never breaks.</em></>
+    : <>{hh}</>;
+  const ch = c('cta.heading');
+  const ctaHeading = ch === CTA_HEADING_DEFAULT
+    ? <>See the closed loop <em>in action.</em></>
+    : <>{ch}</>;
   return (
     <>
       <EditorialHero
-        eyebrow="AI Platform"
-        headline={<>One platform. Four products. <em>A closed loop that never breaks.</em></>}
-        subhead="Forge builds MLR-compliant content. Cue delivers adaptive learning. Stage assesses readiness in live HCP roleplay. Trace confirms behavioral competency. When a rep falls short, the system rebuilds the content automatically — no human handoffs, no stalled remediation cycles."
-        primaryCta={{ label: "Book a Demo", onClick: () => setPage("contact") }}
+        eyebrow={c('hero.eyebrow')}
+        headline={heroHeadline}
+        subhead={c('hero.subhead')}
+        primaryCta={{ label: c('hero.ctaLabel'), onClick: () => setPage("contact") }}
       />
 
       <section className="section section-light">
         <div className="mw">
           <div className="platform-loop-header">
-            <div className="t-eyebrow">The Closed Loop</div>
-            <h2 className="t-h2">Build → Deliver → Assess → Trace → Repeat. Most learning platforms stop where ours begins.</h2>
-            <p className="t-lead">Forge builds the content. Cue delivers the learning. Stage assesses the readiness. Trace verifies the competency. When a gap appears, the loop closes itself.</p>
+            <div className="t-eyebrow">{c('loop.eyebrow')}</div>
+            <h2 className="t-h2">{c('loop.heading')}</h2>
+            <p className="t-lead">{c('loop.lead')}</p>
           </div>
           <div className="platform-loop-slice">
             <div className="platform-loop-visual">
               <LoopVisual />
             </div>
             <div className="platform-loop-copy">
-              <p>Most pharma learning platforms are one-way. Content flows from authors to learners, assessments measure completion, and that's where the loop ends. When a rep can't handle an HCP objection in the field, the platform doesn't know. The next cohort gets the same content. The same gaps appear.</p>
-              <p>Proxa Labs inverts the sequence. Stage's behavioral assessments surface structured gap signals — specific competencies where reps underperform against benchmarks. Those signals flow into Forge as a content brief. Forge drafts remediation content overnight, routes it through MLR pre-checks, and publishes to Cue before the next training cycle. The loop closes itself.</p>
-              <p>No other platform in biopharma commercial learning does this. Not because it's hard to build, but because no one else has the methodology behind it.</p>
+              <p>{c('loop.body1')}</p>
+              <p>{c('loop.body2')}</p>
+              <p>{c('loop.body3')}</p>
             </div>
           </div>
         </div>
@@ -41,9 +56,9 @@ export default function PlatformPage({ setPage }) {
       <ProductShowcase
         id="forge"
         product="forge"
-        eyebrow="Forge"
-        tagline="Agentic content creation."
-        body="AI agents build MLR-compliant training content from your PI, CSRs, and brand assets — every claim cited to source. Hours, not months. No instructional designer required to get to a first draft."
+        eyebrow={c('forge.eyebrow')}
+        tagline={c('forge.tagline')}
+        body={c('forge.body')}
         bullets={[
           "Auto-generation from clinical data and PI",
           "Every claim cited — MLR artifacts auto-built",
@@ -55,9 +70,9 @@ export default function PlatformPage({ setPage }) {
 
       <ProductShowcase
         product="atlas"
-        eyebrow="Cue"
-        tagline="AI-powered adaptive learning."
-        body="Personalized learning pathways mapped to competencies and role requirements. Real-time gap detection adjusts the path before reps reach the field."
+        eyebrow={c('cue.eyebrow')}
+        tagline={c('cue.tagline')}
+        body={c('cue.body')}
         bullets={[
           "Competency-role mapping with behavioral rubrics",
           "Adaptive pathways that respond dynamically to gaps",
@@ -71,9 +86,9 @@ export default function PlatformPage({ setPage }) {
 
       <ProductShowcase
         product="echo"
-        eyebrow="Stage"
-        tagline="AI roleplay & behavioral assessment."
-        body="Live HCP roleplay with AI physician avatars. Real-time compliance monitoring flags off-label language and unsupported claims before they reach the field."
+        eyebrow={c('stage.eyebrow')}
+        tagline={c('stage.tagline')}
+        body={c('stage.body')}
         bullets={[
           "8 HCP digital twin avatars with behavioral models",
           "ComplianceGuard: real-time compliance flagging",
@@ -85,9 +100,9 @@ export default function PlatformPage({ setPage }) {
 
       <ProductShowcase
         product="certify"
-        eyebrow="Trace"
-        tagline="Demonstrated field readiness."
-        body="Certification earned through behavioral competency, not attendance. Every record is audit-ready, tied to specific behavioral evidence, and retained for 10 years."
+        eyebrow={c('trace.eyebrow')}
+        tagline={c('trace.tagline')}
+        body={c('trace.body')}
         bullets={[
           "Competency-gated — no attendance shortcuts",
           "Behavioral evidence for every issued certification",
@@ -100,15 +115,15 @@ export default function PlatformPage({ setPage }) {
       />
 
       <UpgradeComparison
-        eyebrow="Side by Side"
-        heading="How the three options compare."
-        lead="Two Proxa Labs paths. One reason traditional LMS falls short."
+        eyebrow={c('compare.eyebrow')}
+        heading={c('compare.heading')}
+        lead={c('compare.lead')}
       />
 
       <CTABand
-        heading={<>See the closed loop <em>in action.</em></>}
-        body="We'll walk you through Forge, Cue, and Stage in the context of your commercial organization — not a generic product tour."
-        primaryCta={{ label: "Book a Demo", onClick: () => setPage("contact") }}
+        heading={ctaHeading}
+        body={c('cta.body')}
+        primaryCta={{ label: c('cta.ctaLabel'), onClick: () => setPage("contact") }}
       />
     </>
   );

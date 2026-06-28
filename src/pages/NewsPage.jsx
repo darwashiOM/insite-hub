@@ -3,6 +3,13 @@ import SplitFeature from '../components/sections/SplitFeature';
 import CardGrid from '../components/sections/CardGrid';
 import CTABand from '../components/sections/CTABand';
 import Icon from '../components/Icon';
+import { usePageContent } from '../lib/content';
+
+// Plain-string defaults for the two headings that carry inline <em> markup.
+// When the override still equals these, we render the rich JSX; otherwise the
+// editor's plain string.
+const NEWS_HERO_HEADLINE_DEFAULT = "What's new at Proxa Labs.";
+const NEWS_CTA_HEADING_DEFAULT = "Get the announcements before they're public.";
 
 const SECONDARY_NEWS = [
   { icon: <Icon name="update" size={22} />,      tag: "March 2026 · Platform Update", title: "Proxa Labs Stage — ComplianceGuard v2 Released",                 body: "Real-time compliance monitoring now includes enhanced MLR flag categorization, automated rephrasing suggestions, and expanded banned phrase detection across all six commercial verticals. Available to all Stage clients immediately." },
@@ -11,49 +18,63 @@ const SECONDARY_NEWS = [
 ];
 
 export default function NewsPage({ setPage }) {
+  const c = usePageContent('news');
+  const hh = c('hero.headline');
+  const heroHeadline = hh === NEWS_HERO_HEADLINE_DEFAULT
+    ? <>What's new at <em>Proxa Labs.</em></>
+    : hh;
+  const ch = c('cta.heading');
+  const ctaHeading = ch === NEWS_CTA_HEADING_DEFAULT
+    ? <>Get the announcements <em>before they're public.</em></>
+    : ch;
   return (
     <>
       <EditorialHero
-        eyebrow="Latest from Proxa Labs"
-        headline={<>What's new at <em>Proxa Labs.</em></>}
-        subhead="Partnerships, product launches, research milestones, and news from the team building the first closed-loop AI platform in biopharma commercial learning."
-        primaryCta={{ label: "Subscribe to Updates", onClick: () => setPage("newsletter") }}
+        eyebrow={c('hero.eyebrow')}
+        headline={heroHeadline}
+        subhead={c('hero.subhead')}
+        primaryCta={{ label: c('hero.ctaLabel'), onClick: () => setPage("newsletter") }}
       />
 
       <SplitFeature
         ratio="50-50"
-        eyebrow="April 2026 · Featured Partnership Announcement"
-        heading="Proxa Labs partners with UMU.com to power AI Literacy delivery at scale."
-        body="A strategic partnership combining Proxa Labs' biopharma domain expertise and curriculum design with UMU's enterprise learning delivery infrastructure — enabling scalable, measurable AI literacy programs that integrate with existing LMS environments."
+        eyebrow={c('featured.eyebrow')}
+        heading={c('featured.heading')}
+        body={c('featured.body')}
         bullets={[
-          "Global delivery infrastructure across NA, EU, APAC",
-          "LMS-integrated — works with InsiteX, Veeva, and existing pharma LMS environments",
-          "Pre/post assessments tracking AI literacy gains by role and cohort",
+          c('featured.bullets.0'),
+          c('featured.bullets.1'),
+          c('featured.bullets.2'),
         ]}
-        cta={{ label: "See the AI Literacy Program", onClick: () => setPage("literacy") }}
+        cta={{ label: c('featured.ctaLabel'), onClick: () => setPage("literacy") }}
         visual={
           <div style={{ background: "linear-gradient(135deg, #F8F8FF, #F0F4FF)", border: "1.5px solid rgba(117,171,192,.2)", borderRadius: 20, padding: 32 }}>
-            <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".08em", textTransform: "uppercase", color: "#75abc0", marginBottom: 16 }}>NEW PARTNERSHIP</div>
-            <div style={{ fontFamily: "Manrope,sans-serif", fontWeight: 900, fontSize: 28, color: "#75abc0", letterSpacing: "-0.03em", marginBottom: 4 }}>UMU.com</div>
-            <div style={{ fontFamily: "Manrope,sans-serif", fontWeight: 700, fontSize: 14, color: "#12141A", marginBottom: 20 }}>× Proxa Labs</div>
-            <div style={{ fontSize: 13, color: "#5C6370", lineHeight: 1.7 }}>"The biopharma domain expertise meets enterprise learning infrastructure. Together: the AI literacy backbone every pharma deployment needs."</div>
+            <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".08em", textTransform: "uppercase", color: "#75abc0", marginBottom: 16 }}>{c('featured.visual.badge')}</div>
+            <div style={{ fontFamily: "Manrope,sans-serif", fontWeight: 900, fontSize: 28, color: "#75abc0", letterSpacing: "-0.03em", marginBottom: 4 }}>{c('featured.visual.brand')}</div>
+            <div style={{ fontFamily: "Manrope,sans-serif", fontWeight: 700, fontSize: 14, color: "#12141A", marginBottom: 20 }}>{c('featured.visual.brandSub')}</div>
+            <div style={{ fontSize: 13, color: "#5C6370", lineHeight: 1.7 }}>{c('featured.visual.quote')}</div>
           </div>
         }
       />
 
       <CardGrid
-        eyebrow="Recent Announcements"
-        heading="More from Proxa Labs and The Lab."
+        eyebrow={c('recent.eyebrow')}
+        heading={c('recent.heading')}
         columns={2}
-        cards={SECONDARY_NEWS}
+        cards={SECONDARY_NEWS.map((card, i) => ({
+          ...card,
+          tag: c(`recent.cards.${i}.tag`),
+          title: c(`recent.cards.${i}.title`),
+          body: c(`recent.cards.${i}.body`),
+        }))}
         cardStyle="standard"
         background="tinted"
       />
 
       <CTABand
-        heading={<>Get the announcements <em>before they're public.</em></>}
-        body="Frameworks, research, and partnerships from Proxa Labs and The Lab. Sent when there's something genuinely worth your time."
-        primaryCta={{ label: "Subscribe", onClick: () => setPage("newsletter") }}
+        heading={ctaHeading}
+        body={c('cta.body')}
+        primaryCta={{ label: c('cta.ctaLabel'), onClick: () => setPage("newsletter") }}
       />
     </>
   );

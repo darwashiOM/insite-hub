@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { usePageContent } from '../lib/content';
 
 /*
  * Gated lead-gen landing page — /future-proof-your-organization
@@ -11,14 +12,16 @@ const ARTICLE_URL = '/future-proofing.html';
 const PDF_URL = '/future-proofing-your-organization.pdf';
 const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-const POINTS = [
-  'Why literacy, governance, and compliance are just the starting line',
-  'The four shifts that redefine the work: content, process, personalization, and self-serve creation',
-  'Why pilots die, and the single change that makes AI stick',
-  'A practical order of operations to put your function in front of the brand team and its agency',
-];
+// Plain-text version of the rich (italic) hero heading. When the override equals
+// this, render the JSX default; otherwise render the plain override string.
+const HERO_HEADING_DEFAULT = 'Future-proof your organization';
 
 export default function FutureProofPage() {
+  const c = usePageContent('futureproof');
+  const hh = c('hero.heading');
+  const heroHeading = hh === HERO_HEADING_DEFAULT
+    ? <><em>Future-proof</em><br />your organization</>
+    : hh;
   const [form, setForm] = useState({ firstName: '', lastName: '', email: '' });
   const [errors, setErrors] = useState({});
 
@@ -79,11 +82,11 @@ export default function FutureProofPage() {
   return (
     <section className="fp-hero">
       <div className="fp-copy">
-        <h1 className="fp-h1"><em>Future-proof</em><br />your organization</h1>
-        <p className="fp-standfirst">An in-depth perspective on AI readiness, and what you really should be getting ready for.</p>
-        <p className="fp-body">Most biopharma commercial learning teams are getting ready for the wrong thing. This perspective lays out what you’re actually getting ready for, why most AI pilots die, and the order of operations for leading the shift instead of being assigned to it.</p>
+        <h1 className="fp-h1">{heroHeading}</h1>
+        <p className="fp-standfirst">{c('hero.standfirst')}</p>
+        <p className="fp-body">{c('hero.body')}</p>
         <ul className="fp-points">
-          {POINTS.map((p) => <li key={p}>{p}</li>)}
+          {[c('points.0'), c('points.1'), c('points.2'), c('points.3')].map((p, i) => <li key={i}>{p}</li>)}
         </ul>
       </div>
 
@@ -105,11 +108,11 @@ export default function FutureProofPage() {
           <div className="fp-errmsg">Enter a valid business email.</div>
         </div>
         <div className="fp-btns">
-          <button type="button" className="fp-gbtn" onClick={() => deliver('html')}>View as HTML Page</button>
-          <button type="button" className="fp-gbtn alt" onClick={() => deliver('pdf')}>Download PDF</button>
+          <button type="button" className="fp-gbtn" onClick={() => deliver('html')}>{c('cta.htmlLabel')}</button>
+          <button type="button" className="fp-gbtn alt" onClick={() => deliver('pdf')}>{c('cta.pdfLabel')}</button>
         </div>
       </div>
-        <p className="fp-disclaimer">We’ll only use your email to send you the occasional perspective on AI readiness, company update or announcement worth your time. Unsubscribe anytime.</p>
+        <p className="fp-disclaimer">{c('form.disclaimer')}</p>
       </div>
     </section>
   );

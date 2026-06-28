@@ -4,6 +4,15 @@ import CardGrid from '../components/sections/CardGrid';
 import UpgradeComparison from '../components/sections/UpgradeComparison';
 import CTABand from '../components/sections/CTABand';
 import Icon from '../components/Icon';
+import { usePageContent } from '../lib/content';
+
+// Plain-text defaults for the headings that carry inline markup. While the
+// content value equals one of these, the page renders the rich JSX version;
+// once overridden in the CMS, it renders the (plain) override string. Keep these
+// in sync with the matching `default`s in src/content/pages/insitex.js.
+const HERO_HEADLINE_DEFAULT = 'The LMS that becomes the AI foundation.';
+const UPGRADE_HEADING_DEFAULT = "Pick the right starting point. Upgrade when you're ready.";
+const CTA_HEADING_DEFAULT = 'Get the LMS that becomes the AI foundation.';
 
 const PROOF_NUMBERS = [
   { n: "4+",  l: "Years serving biopharma" },
@@ -70,43 +79,67 @@ function InsiteXProofPanel() {
 }
 
 export default function InsiteXPage({ setPage }) {
+  const c = usePageContent('insitex');
+
+  // Headings with inline markup: keep the rich JSX default, render plain string
+  // when overridden.
+  const heroH = c('hero.headline');
+  const heroHeadline = heroH === HERO_HEADLINE_DEFAULT
+    ? <>The LMS that becomes <em>the AI foundation.</em></>
+    : heroH;
+  const upgradeH = c('upgrade.heading');
+  const upgradeHeading = upgradeH === UPGRADE_HEADING_DEFAULT
+    ? <>Pick the right starting point.<br />Upgrade when you're ready.</>
+    : upgradeH;
+  const ctaH = c('cta.heading');
+  const ctaHeading = ctaH === CTA_HEADING_DEFAULT
+    ? <>Get the LMS that becomes <em>the AI foundation.</em></>
+    : ctaH;
+
+  // Capability cards keep their in-code icons; title/body are CMS-overridable.
+  const capabilityCards = CAPABILITIES.map((card, i) => ({
+    ...card,
+    title: c(`capabilities.cards.${i}.title`),
+    body: c(`capabilities.cards.${i}.body`),
+  }));
+
   return (
     <>
       <EditorialHero
-        eyebrow="InsiteX LMS"
-        headline={<>The LMS that becomes <em>the AI foundation.</em></>}
-        subhead="InsiteX is the enterprise learning platform underneath Proxa Labs' AI. Purpose-built for biopharma — SCORM, AICC, and PMRC compliance, Veeva integration, credentialing workflows, and 10-year audit trails. When your organization is ready for AI, Forge, Cue, and Stage layer on top. No migration. No rip-and-replace."
-        primaryCta={{ label: "Book a Demo", onClick: () => setPage("contact") }}
+        eyebrow={c('hero.eyebrow')}
+        headline={heroHeadline}
+        subhead={c('hero.subhead')}
+        primaryCta={{ label: c('hero.ctaLabel'), onClick: () => setPage("contact") }}
       />
 
       <LongForm
-        eyebrow="When InsiteX Is the Right Choice"
-        heading="Not every team is ready for AI. InsiteX is built for where you actually are."
+        eyebrow={c('whenRight.eyebrow')}
+        heading={c('whenRight.heading')}
       >
-        <p>If your organization needs reliable enterprise learning infrastructure today — with compliance built in, Veeva integration working, and credentialing audit-ready — InsiteX is purpose-built for it. When your organization is ready for AI, Forge, Cue, and Stage layer on top of the same system. Your learners, your content, your audit trail all carry forward.</p>
+        <p>{c('whenRight.body')}</p>
       </LongForm>
 
       <InsiteXProofPanel />
 
       <CardGrid
-        eyebrow="Six Capability Areas"
-        heading="Everything biopharma L&D actually needs from an LMS."
+        eyebrow={c('capabilities.eyebrow')}
+        heading={c('capabilities.heading')}
         columns={2}
-        cards={CAPABILITIES}
+        cards={capabilityCards}
         cardStyle="standard"
         background="tinted"
       />
 
       <UpgradeComparison
-        eyebrow="Pick Your Starting Point"
-        heading={<>Pick the right starting point.<br />Upgrade when you're ready.</>}
-        lead="InsiteX is the LMS foundation. The AI Platform adds Forge, Cue, Stage, and Trace on top. Same system, different readiness — and when you're ready to bridge them, the integration is native."
+        eyebrow={c('upgrade.eyebrow')}
+        heading={upgradeHeading}
+        lead={c('upgrade.lead')}
       />
 
       <CTABand
-        heading={<>Get the LMS that becomes <em>the AI foundation.</em></>}
-        body="Bring your launch calendar to the demo. We'll show you your existing content library inside InsiteX, and map what the upgrade path to AI looks like over the next 18 months."
-        primaryCta={{ label: "Book a Demo", onClick: () => setPage("contact") }}
+        heading={ctaHeading}
+        body={c('cta.body')}
+        primaryCta={{ label: c('cta.ctaLabel'), onClick: () => setPage("contact") }}
       />
     </>
   );

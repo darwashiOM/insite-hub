@@ -1,6 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
 import EditorialHero from '../components/sections/EditorialHero';
 import Icon from '../components/Icon';
+import { usePageContent } from '../lib/content';
+
+// Plain-text version of the hero headline so the page can render its rich
+// (italic) default but a plain string when overridden in the CMS.
+const CONTACT_HERO_HEADLINE_DEFAULT = "Tell us where you are. We'll meet you there.";
 
 const TRACK_OPTIONS = [
   {
@@ -33,6 +38,12 @@ const TRACK_OPTIONS = [
 ];
 
 export default function ContactPage() {
+  const c = usePageContent('contact');
+  // Headline keeps its rich (italic) default, but renders a plain string if overridden.
+  const hd = c('hero.headline');
+  const heroHeadline = hd === CONTACT_HERO_HEADLINE_DEFAULT
+    ? <>Tell us where you are. <em>We'll meet you there.</em></>
+    : <>{hd}</>;
   const initialTrack = () => {
     const hashTrack = window.location.hash.replace("#", "");
     return TRACK_OPTIONS.some(opt => opt.id === hashTrack) ? hashTrack : "";
@@ -161,17 +172,17 @@ export default function ContactPage() {
   return (
     <>
       <EditorialHero
-        eyebrow="Start a Conversation"
-        headline={<>Tell us where you are. <em>We'll meet you there.</em></>}
-        subhead="Whether you want a demo, a diagnostic conversation, or just the frameworks — pick your track and we'll route you to the right starting point. Hear back within one business day."
+        eyebrow={c('hero.eyebrow')}
+        headline={heroHeadline}
+        subhead={c('hero.subhead')}
       />
 
       <section className="section section-light contact-track-section">
         <div className="mw">
           <div className="contact-section-header">
-            <div className="t-eyebrow">Step 1 — Pick Your Track</div>
-            <h2 className="t-h2">What's the right starting point for you?</h2>
-            <p className="t-lead">Pick the option that fits your situation. The form below will pre-fill based on your selection.</p>
+            <div className="t-eyebrow">{c('track.eyebrow')}</div>
+            <h2 className="t-h2">{c('track.heading')}</h2>
+            <p className="t-lead">{c('track.lead')}</p>
           </div>
           <div className="contact-track-grid">
             {TRACK_OPTIONS.map(opt => (
@@ -195,8 +206,8 @@ export default function ContactPage() {
         <div className="contact-form-layout">
           {FormBlock}
           <aside className="contact-expect-panel">
-            <div className="t-eyebrow">What to Expect</div>
-            <h3>We respond within one business day.</h3>
+            <div className="t-eyebrow">{c('expect.eyebrow')}</div>
+            <h3>{c('expect.heading')}</h3>
             {selectedTrack ? (
               <div className="contact-expect-card">
                 <div className="contact-expect-icon">{selectedTrack.icon}</div>
@@ -205,13 +216,13 @@ export default function ContactPage() {
               </div>
             ) : (
               <div className="contact-expect-card contact-expect-card-muted">
-                <h4>Pick a track above</h4>
-                <p>Select the starting point that fits your situation and this panel will show what happens next.</p>
+                <h4>{c('expect.mutedTitle')}</h4>
+                <p>{c('expect.mutedBody')}</p>
               </div>
             )}
             <div className="contact-diagnostic-note">
-              <strong>The first conversation is always diagnostic.</strong>
-              <p>Your environment, your constraints, what you've already tried. No sales pitch. No deck. Just whether Proxa Labs is the right fit for where you are.</p>
+              <strong>{c('diagnostic.title')}</strong>
+              <p>{c('diagnostic.body')}</p>
             </div>
           </aside>
         </div>
