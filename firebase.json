@@ -32,7 +32,7 @@
     "rules": "firestore.rules",
     "indexes": "firestore.indexes.json"
   },
-  "storage": {
-    "rules": "storage.rules"
-  }
+  "storage": [
+    { "bucket": "insite-hub-web-blog", "rules": "storage.rules" }
+  ]
 }
