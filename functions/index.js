@@ -234,7 +234,7 @@ exports.adminLogin = onRequest({ secrets: [ADMIN_PASSWORD] }, async (req, res) =
   const db = admin.firestore();
   const now = Date.now();
   const ipRef = db.collection("adminLoginAttempts").doc(clientIp(req));
-  const globalRef = db.collection("adminLoginAttempts").doc("__global__");
+  const globalRef = db.collection("adminLoginAttempts").doc("global-lockout");
 
   // Reject early if this IP OR all logins (global) are currently locked.
   const [ipSnap, gSnap] = await Promise.all([ipRef.get(), globalRef.get()]);
