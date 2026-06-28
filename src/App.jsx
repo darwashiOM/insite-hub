@@ -15,6 +15,7 @@ import ResourcesPage from './pages/ResourcesPage';
 import NewsletterPage from './pages/NewsletterPage';
 import ContactPage from './pages/ContactPage';
 import FutureProofPage from './pages/FutureProofPage';
+import ReadinessGapPage from './pages/ReadinessGapPage';
 
 const PAGE_TITLES = {
   home: "Proxa Labs · AI-First Commercial Learning for Biopharma",
@@ -30,6 +31,7 @@ const PAGE_TITLES = {
   newsletter: "Newsletter · Stay Ahead of AI in Biopharma · Proxa Labs",
   contact: "Contact Proxa Labs · Start a Conversation",
   futureproof: "Future-Proof Your Organization · Proxa Labs",
+  readinessGap: "The Readiness Gap · Proxa Labs",
 };
 
 const DESCS = {
@@ -46,6 +48,7 @@ const DESCS = {
   newsletter: "Frameworks, research, and field notes from Proxa Labs' practitioners. Sent when there's something worth saying.",
   contact: "Start a conversation with Proxa Labs. Ready to talk, want to learn first, or just exploring — we'll meet you where you are.",
   futureproof: "An executive brief from Proxa Labs on building durable AI capability across biopharma commercial organizations.",
+  readinessGap: "Biopharma teams measure training activity and assume it equals readiness. Why the two differ, why your tools can't close the gap, and what finally can.",
 };
 
 // Campaign / placeholder pages that should not be indexed by search engines.
@@ -56,7 +59,7 @@ const PAGES = {
   literacy: LiteracyPage, insitex: InsiteXPage, content: ContentPage,
   proxalab: ProxaLabsPage, about: AboutPage, news: NewsPage,
   resources: ResourcesPage, newsletter: NewsletterPage, contact: ContactPage,
-  futureproof: FutureProofPage,
+  futureproof: FutureProofPage, readinessGap: ReadinessGapPage,
 };
 
 const PAGE_PATHS = {
@@ -73,6 +76,7 @@ const PAGE_PATHS = {
   newsletter: "/newsletter",
   contact: "/contact",
   futureproof: "/future-proof-your-organization",
+  readinessGap: "/blog/the-readiness-gap",
 };
 
 const PATH_PAGES = Object.fromEntries(Object.entries(PAGE_PATHS).map(([page, path]) => [path, page]));

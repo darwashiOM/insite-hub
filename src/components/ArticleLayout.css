@@ -1,0 +1,182 @@
+/* ============================================================
+   Proxa Labs — Blog Article template
+   Ported from Mercy's handoff mock. All rules are scoped under
+   .proxa-article so the template's generic class names (.pa-hero,
+   .card, .eyebrow, .summary, .prose ...) can't affect the rest
+   of the site. Header/footer come from the site's Nav/Footer.
+   ============================================================ */
+
+.proxa-article {
+  /* Brand tokens (scoped). Coral uses the live-site coral (#f5825f);
+     the two intentionally-tuned corals from the mock are kept where
+     flagged: quote block #F3805F, hero eyebrow #EF8157. */
+  --coral: #f5825f;
+  --coral-deep: #e06a3f;
+  --blue: #70a8c0;
+  --ink: #0c1218;
+  --body: #39454e;
+  --muted: #6b7680;
+  --paper: #fbfaf8;
+  --line: #e7e4de;
+  --line-soft: #efede8;
+  --blue-tint: #eef4f6;
+  --hero-grey: #2a2f2e;
+  --display: 'Manrope', system-ui, sans-serif;
+  --text: 'DM Sans', system-ui, sans-serif;
+  --measure: 700px;
+  --shell: 1180px;
+
+  font-family: var(--text);
+  font-size: 19px;
+  line-height: 1.7;
+  color: var(--body);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+.proxa-article a { color: var(--coral-deep); text-decoration: none; }
+.proxa-article a:hover { text-decoration: underline; text-underline-offset: 3px; }
+.proxa-article ::selection { background: rgba(245, 130, 95, .18); }
+
+/* reading-progress bar */
+.proxa-article .progress {
+  position: fixed; top: 0; left: 0; height: 3px; width: 0;
+  background: var(--coral); z-index: 50; transition: width .08s linear;
+}
+
+.proxa-article .shell { max-width: var(--shell); margin: 0 auto; padding: 0 28px; }
+
+/* ---------- HERO: charcoal field + dial graphic ---------- */
+.proxa-article .pa-hero {
+  position: relative; border-radius: 16px; overflow: hidden;
+  background: var(--hero-grey) url('/assets/blog/hero-dial.png') center/cover no-repeat;
+  margin-top: 34px; aspect-ratio: 1700/897; display: flex; align-items: center;
+}
+.proxa-article .hero-content { position: relative; padding: 0 6%; max-width: 58%; }
+.proxa-article .pa-hero .eyebrow { color: #ef8157; margin-bottom: 22px; }
+.proxa-article .pa-hero h1 {
+  color: #fff; font-family: var(--display); font-weight: 800;
+  font-size: clamp(2rem, 3.4vw, 3.35rem); line-height: 1.08;
+  letter-spacing: -.022em; margin: 0 0 30px;
+}
+.proxa-article .pa-hero .byline { display: flex; flex-wrap: nowrap; white-space: nowrap; align-items: baseline; gap: 6px 20px; }
+.proxa-article .pa-hero .b-name { font-family: var(--display); font-weight: 700; color: #fff; font-size: 1.02rem; }
+.proxa-article .pa-hero .b-rest { font-family: var(--display); font-weight: 500; color: #d6dadd; font-size: .95rem; }
+.proxa-article .pa-hero .b-rest .sep { color: #7c8389; margin: 0 .45em; }
+@media (max-width: 900px) { .proxa-article .hero-content { max-width: 72%; } }
+@media (max-width: 640px) {
+  .proxa-article .pa-hero { aspect-ratio: auto; min-height: 440px; background-position: 70% 42%; background-size: auto 132%; }
+  .proxa-article .hero-content { padding: 30px 26px; max-width: 100%; }
+  .proxa-article .pa-hero h1 { font-size: clamp(1.85rem, 7vw, 2.3rem); }
+  .proxa-article .pa-hero .byline { flex-wrap: wrap; white-space: normal; gap: 4px 14px; }
+}
+
+/* eyebrow (shared) */
+.proxa-article .eyebrow {
+  font-family: var(--display); font-weight: 700; font-size: .78rem;
+  text-transform: uppercase; letter-spacing: .14em; color: var(--coral-deep);
+  display: inline-flex; align-items: center; gap: 9px; margin: 0 0 18px;
+}
+.proxa-article .eyebrow img { height: 18px; width: auto; display: block; }
+
+/* layout */
+.proxa-article .layout {
+  max-width: var(--shell); margin: 0 auto; padding: 40px 28px 0;
+  display: grid; grid-template-columns: var(--measure) 232px; gap: 72px;
+  justify-content: start; align-items: start;
+}
+.proxa-article .col-main { min-width: 0; }
+@media (max-width: 1040px) { .proxa-article .layout { grid-template-columns: 1fr; gap: 0; } .proxa-article .sidebar { display: none; } }
+
+/* summary */
+.proxa-article .summary {
+  background: var(--blue-tint); border: 1px solid #dce7eb; border-left: 4px solid var(--blue);
+  border-radius: 12px; padding: 24px 28px; margin: 0 0 6px;
+}
+.proxa-article .summary-kicker {
+  font-family: var(--display); font-weight: 700; font-size: .7rem;
+  text-transform: uppercase; letter-spacing: .13em; color: #3e7a8f; margin: 0 0 16px;
+}
+.proxa-article .summary p { margin: 0; font-size: 1.02rem; line-height: 1.62; color: #243a44; }
+.proxa-article .summary strong { color: var(--ink); font-weight: 600; }
+
+/* mobile TOC accordion */
+.proxa-article .toc-mobile { display: none; margin: 22px 0 4px; }
+@media (max-width: 1040px) { .proxa-article .toc-mobile { display: block; } }
+.proxa-article .toc-mobile details { border: 1px solid var(--line); border-radius: 12px; background: var(--paper); overflow: hidden; }
+.proxa-article .toc-mobile summary {
+  font-family: var(--display); font-weight: 700; font-size: .92rem; color: var(--ink);
+  padding: 15px 18px; cursor: pointer; list-style: none; display: flex; align-items: center; justify-content: space-between;
+}
+.proxa-article .toc-mobile summary::-webkit-details-marker { display: none; }
+.proxa-article .toc-mobile summary::after { content: "+"; font-weight: 600; color: var(--coral-deep); font-size: 1.2rem; }
+.proxa-article .toc-mobile details[open] summary::after { content: "\2212"; }
+.proxa-article .toc-mobile ol { margin: 0; padding: 0 18px 16px 38px; color: var(--body); }
+.proxa-article .toc-mobile li { margin: 7px 0; font-size: .94rem; }
+.proxa-article .toc-mobile a { color: var(--body); }
+
+/* body prose */
+.proxa-article .prose { margin-top: 30px; }
+.proxa-article .prose p { margin: 0 0 1.35em; }
+.proxa-article .prose em { font-style: italic; }
+.proxa-article .prose h2 {
+  font-family: var(--display); font-weight: 700; color: var(--ink);
+  font-size: 1.6rem; line-height: 1.24; letter-spacing: -.015em;
+  margin: 2.1em 0 .7em; scroll-margin-top: 96px;
+}
+
+/* pull quote (text clears bars on desktop; intentionally overlaps on mobile) */
+.proxa-article .pull {
+  position: relative; overflow: hidden; background: #f3805f;
+  border-radius: 22px; padding: 42px 48px 42px 22%; margin: 2.4em 0;
+}
+.proxa-article .pull .pmark { position: absolute; left: 4.5%; top: 6%; height: 88%; width: auto; display: block; opacity: 1; pointer-events: none; }
+.proxa-article .pull p { font-family: var(--text); font-weight: 500; color: #fff; font-size: 1.22rem; line-height: 1.6; letter-spacing: 0; margin: 0; }
+@media (max-width: 560px) {
+  .proxa-article .pull { padding: 28px 24px; border-radius: 18px; }
+  .proxa-article .pull .pmark { left: 5%; top: -4%; height: 108%; }
+  .proxa-article .pull p { font-size: 1.06rem; line-height: 1.55; }
+}
+
+/* end divider */
+.proxa-article .endmark { margin: 2.6em 0 0; display: flex; align-items: center; gap: 18px; color: var(--line); }
+.proxa-article .endmark::before, .proxa-article .endmark::after { content: ""; height: 1px; background: var(--line); flex: 1; }
+.proxa-article .endmark img { height: 30px; width: auto; display: block; }
+
+/* author bio card */
+.proxa-article .biocard { background: var(--paper); border: 1px solid var(--line); border-radius: 14px; padding: 26px 28px; margin-top: 34px; display: flex; gap: 20px; align-items: flex-start; }
+.proxa-article .biocard .headshot { width: 66px; height: 66px; border-radius: 50%; object-fit: cover; flex: none; }
+.proxa-article .bio-name { font-family: var(--display); font-weight: 700; color: var(--ink); font-size: 1.08rem; margin: 0 0 2px; }
+.proxa-article .bio-role { font-family: var(--display); font-weight: 500; color: var(--coral-deep); font-size: .84rem; text-transform: uppercase; letter-spacing: .07em; margin: 0 0 12px; }
+.proxa-article .bio-text { font-size: .96rem; line-height: 1.6; color: var(--body); margin: 0; }
+
+/* sidebar TOC + share */
+.proxa-article .sidebar { position: sticky; top: 96px; font-family: var(--display); }
+.proxa-article .toc { list-style: none; margin: 0; padding: 0; border-left: 2px solid var(--line); }
+.proxa-article .toc a { display: block; padding: 7px 0 7px 14px; margin-left: -2px; border-left: 2px solid transparent; color: #6a747d; font-weight: 500; font-size: .86rem; line-height: 1.35; transition: color .15s, border-color .15s; }
+.proxa-article .toc a:hover { color: var(--ink); text-decoration: none; }
+.proxa-article .toc a.active { color: var(--ink); font-weight: 600; border-left-color: var(--coral); }
+.proxa-article .share { margin-top: 26px; padding-left: 14px; }
+.proxa-article .share-label { font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .13em; color: var(--muted); margin: 0 0 11px; }
+.proxa-article .share-row { display: flex; gap: 8px; }
+.proxa-article .share-row button { width: 34px; height: 34px; border-radius: 8px; border: 1px solid var(--line); background: #fff; color: #5a646d; cursor: pointer; display: grid; place-items: center; transition: all .15s; }
+.proxa-article .share-row button:hover { border-color: var(--ink); color: var(--ink); transform: translateY(-1px); }
+.proxa-article .share-row svg { width: 16px; height: 16px; fill: currentColor; }
+
+/* related "keep reading" */
+.proxa-article .related { margin-top: 72px; padding-top: 48px; border-top: 1px solid var(--line-soft); }
+.proxa-article .related-head { font-family: var(--display); font-weight: 700; color: var(--ink); font-size: 1.3rem; letter-spacing: -.01em; margin: 0 0 26px; }
+.proxa-article .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 26px; }
+@media (max-width: 860px) { .proxa-article .cards { grid-template-columns: 1fr; gap: 22px; max-width: var(--measure); } }
+.proxa-article .card { display: block; color: inherit; }
+.proxa-article .card:hover { text-decoration: none; }
+.proxa-article .card-img { border-radius: 12px; aspect-ratio: 16/10; overflow: hidden; margin-bottom: 14px; transition: transform .25s ease; position: relative; }
+.proxa-article .card-img::after { content: ""; position: absolute; inset: 0; background-image: url('/assets/blog/card-watermark.png'); background-repeat: no-repeat; background-position: right -6px center; background-size: auto 150%; opacity: .22; }
+.proxa-article .card:hover .card-img { transform: translateY(-3px); }
+.proxa-article .card-1 .card-img { background: var(--hero-grey); }
+.proxa-article .card-2 .card-img { background: #2a2e33; }
+.proxa-article .card-3 .card-img { background: #212429; }
+.proxa-article .card-pillar { font-family: var(--display); font-weight: 700; font-size: .68rem; text-transform: uppercase; letter-spacing: .12em; color: var(--coral-deep); margin: 0 0 8px; }
+.proxa-article .card-title { font-family: var(--display); font-weight: 700; color: var(--ink); font-size: 1.06rem; line-height: 1.3; letter-spacing: -.01em; margin: 0 0 8px; }
+.proxa-article .card:hover .card-title { color: var(--coral-deep); }
+.proxa-article .card-meta { font-family: var(--display); font-weight: 500; color: var(--muted); font-size: .82rem; }
