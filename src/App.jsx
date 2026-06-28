@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, lazy, Suspense } from "react";
 import './styles.css';
 import Nav from './components/Nav';
 import Footer from './components/Footer';
@@ -15,8 +15,11 @@ import ResourcesPage from './pages/ResourcesPage';
 import NewsletterPage from './pages/NewsletterPage';
 import ContactPage from './pages/ContactPage';
 import FutureProofPage from './pages/FutureProofPage';
-import ReadinessGapPage from './pages/ReadinessGapPage';
-import BlogIndexPage from './pages/BlogIndexPage';
+// Blog + admin are code-split so the Firebase SDK loads only on /blog routes and
+// the admin (not on the homepage / marketing pages).
+const BlogIndexPage = lazy(() => import('./pages/BlogIndexPage'));
+const ArticlePage = lazy(() => import('./pages/ArticlePage'));
+const AdminPage = lazy(() => import('./admin/AdminPage'));
 
 const PAGE_TITLES = {
   home: "Proxa Labs · AI-First Commercial Learning for Biopharma",
@@ -33,7 +36,8 @@ const PAGE_TITLES = {
   contact: "Contact Proxa Labs · Start a Conversation",
   futureproof: "Future-Proof Your Organization · Proxa Labs",
   blog: "Blog · Proxa Labs",
-  readinessGap: "The Readiness Gap · Proxa Labs",
+  article: "Proxa Labs",
+  admin: "CMS · Proxa Labs",
 };
 
 const DESCS = {
@@ -51,18 +55,20 @@ const DESCS = {
   contact: "Start a conversation with Proxa Labs. Ready to talk, want to learn first, or just exploring — we'll meet you where you are.",
   futureproof: "An executive brief from Proxa Labs on building durable AI capability across biopharma commercial organizations.",
   blog: "Field notes and frameworks from Proxa Labs on commercial readiness, AI evidence, and closing the gap between training and a field that can perform.",
-  readinessGap: "Biopharma teams measure training activity and assume it equals readiness. Why the two differ, why your tools can't close the gap, and what finally can.",
+  article: "Field notes and frameworks from Proxa Labs on commercial readiness.",
+  admin: "Proxa Labs content management.",
 };
 
-// Campaign / placeholder pages that should not be indexed by search engines.
-const NOINDEX_PAGES = new Set(["futureproof"]);
+// Campaign / placeholder / private pages that should not be indexed.
+const NOINDEX_PAGES = new Set(["futureproof", "admin"]);
 
 const PAGES = {
   home: HomePage, platform: PlatformPage, advisory: AdvisoryPage,
   literacy: LiteracyPage, insitex: InsiteXPage, content: ContentPage,
   proxalab: ProxaLabsPage, about: AboutPage, news: NewsPage,
   resources: ResourcesPage, newsletter: NewsletterPage, contact: ContactPage,
-  futureproof: FutureProofPage, blog: BlogIndexPage, readinessGap: ReadinessGapPage,
+  futureproof: FutureProofPage, blog: BlogIndexPage, article: ArticlePage,
+  admin: AdminPage,
 };
 
 const PAGE_PATHS = {
@@ -80,7 +86,7 @@ const PAGE_PATHS = {
   contact: "/contact",
   futureproof: "/future-proof-your-organization",
   blog: "/blog",
-  readinessGap: "/blog/the-readiness-gap",
+  admin: "/noonewillfindthis",
 };
 
 const PATH_PAGES = Object.fromEntries(Object.entries(PAGE_PATHS).map(([page, path]) => [path, page]));
@@ -90,11 +96,13 @@ PATH_PAGES["/proxa-labs"] = "proxalab";
 
 const pageFromLocation = () => {
   const normalized = window.location.pathname.replace(/\/+$/, "") || "/";
+  // /blog/<slug> resolves to the dynamic article page (slug read from the URL).
+  if (normalized.startsWith("/blog/") && normalized !== "/blog") return "article";
   return PATH_PAGES[normalized] || "home";
 };
 
-const urlForPage = (page, hash) => {
-  const path = PAGE_PATHS[page] || PAGE_PATHS.home;
+const urlForPage = (page, hash, slug) => {
+  const path = page === "article" && slug ? `/blog/${slug}` : (PAGE_PATHS[page] || PAGE_PATHS.home);
   return hash ? `${path}#${hash.replace(/^#/, "")}` : path;
 };
 
@@ -156,7 +164,8 @@ export default function App() {
 
   const setPage = (nextPage, options = {}) => {
     const hash = typeof options === "string" ? options : options.hash;
-    const nextUrl = urlForPage(nextPage, hash);
+    const slug = typeof options === "object" ? options.slug : undefined;
+    const nextUrl = urlForPage(nextPage, hash, slug);
     if (window.location.pathname + window.location.hash !== nextUrl) {
       window.history.pushState({}, "", nextUrl);
       window.dispatchEvent(new Event("hashchange"));
@@ -166,10 +175,23 @@ export default function App() {
   };
 
   const Page = PAGES[page] || HomePage;
+  // For the dynamic article page, key by pathname so it remounts (re-fetches)
+  // when navigating between articles.
+  const pageKey = page === "article" ? window.location.pathname : page;
+
+  // The admin is a standalone full-screen app — no marketing nav/footer.
+  if (page === "admin") {
+    return <Suspense fallback={null}><Page setPage={setPage} /></Suspense>;
+  }
+
   return (
     <>
       <Nav page={page} setPage={setPage} scrolled={scrolled} />
-      <main><Page setPage={setPage} /></main>
+      <main>
+        <Suspense fallback={null}>
+          <Page key={pageKey} setPage={setPage} />
+        </Suspense>
+      </main>
       <Footer setPage={setPage} />
     </>
   );

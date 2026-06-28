@@ -1,0 +1,72 @@
+/* Proxa Labs CMS admin — scoped under .cms-admin. Uses the site fonts. */
+.cms-admin {
+  --o: #f5825f;
+  --o-deep: #e06a3f;
+  --ink: #12141a;
+  --bd: #5c6370;
+  --br: #e3e5ea;
+  --bg: #f5f6f8;
+  --wh: #fff;
+  font-family: 'DM Sans', system-ui, sans-serif;
+  color: var(--ink);
+  background: var(--bg);
+  min-height: 100vh;
+}
+.cms-admin * { box-sizing: border-box; }
+.cms-center { min-height: 100vh; display: grid; place-items: center; color: var(--bd); }
+
+/* top bar */
+.cms-bar { display: flex; align-items: center; justify-content: space-between; padding: 14px 24px; background: var(--wh); border-bottom: 1px solid var(--br); position: sticky; top: 0; z-index: 5; }
+.cms-bar h1 { font-family: 'Manrope', sans-serif; font-size: 18px; font-weight: 800; margin: 0; }
+.cms-wrap { max-width: 880px; margin: 0 auto; padding: 28px 24px 80px; }
+
+/* buttons */
+.cms-btn { font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600; border-radius: 9px; padding: 10px 18px; border: 1px solid var(--br); background: var(--wh); color: var(--ink); cursor: pointer; transition: all .15s; }
+.cms-btn:hover { border-color: var(--ink); }
+.cms-btn-primary { background: var(--o); border-color: var(--o); color: #fff; }
+.cms-btn-primary:hover { background: var(--o-deep); border-color: var(--o-deep); }
+.cms-btn-danger { color: #b42318; border-color: #f3c7c2; }
+.cms-btn-danger:hover { background: #fef3f2; border-color: #b42318; }
+.cms-btn-sm { padding: 6px 12px; font-size: 13px; }
+.cms-btn:disabled { opacity: .55; cursor: default; }
+
+/* login */
+.cms-login { min-height: 100vh; display: grid; place-items: center; padding: 24px; }
+.cms-login-card { width: 100%; max-width: 360px; background: var(--wh); border: 1px solid var(--br); border-radius: 16px; padding: 32px; box-shadow: 0 8px 40px rgba(0,0,0,.06); }
+.cms-login-card h1 { font-family: 'Manrope', sans-serif; font-size: 20px; font-weight: 800; margin: 0 0 4px; }
+.cms-login-card p { font-size: 14px; color: var(--bd); margin: 0 0 22px; }
+
+/* fields */
+.cms-field { margin-bottom: 16px; }
+.cms-field label { display: block; font-size: 12.5px; font-weight: 700; color: var(--bd); margin-bottom: 6px; text-transform: uppercase; letter-spacing: .04em; }
+.cms-input, .cms-textarea, .cms-select { width: 100%; font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--ink); padding: 11px 13px; border: 1.5px solid var(--br); border-radius: 9px; background: var(--wh); outline: none; transition: border-color .15s; }
+.cms-input:focus, .cms-textarea:focus, .cms-select:focus { border-color: var(--o); }
+.cms-textarea { resize: vertical; min-height: 90px; line-height: 1.55; }
+.cms-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.cms-err { color: #b42318; font-size: 13.5px; margin: 0 0 14px; }
+.cms-hint { font-size: 12px; color: var(--bd); margin-top: 5px; }
+
+/* article list */
+.cms-list { display: flex; flex-direction: column; gap: 10px; }
+.cms-card { display: flex; align-items: center; gap: 14px; background: var(--wh); border: 1px solid var(--br); border-radius: 12px; padding: 14px 16px; }
+.cms-card-main { flex: 1; min-width: 0; }
+.cms-card-title { font-family: 'Manrope', sans-serif; font-weight: 700; font-size: 15px; margin: 0 0 3px; }
+.cms-card-meta { font-size: 12.5px; color: var(--bd); }
+.cms-badge { font-size: 11px; font-weight: 700; padding: 3px 9px; border-radius: 20px; text-transform: uppercase; letter-spacing: .04em; }
+.cms-badge-pub { background: rgba(156,169,121,.18); color: #5f6e3f; }
+.cms-badge-draft { background: #f0f0f2; color: var(--bd); }
+
+/* editor */
+.cms-section-h { font-family: 'Manrope', sans-serif; font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; color: var(--bd); margin: 28px 0 12px; padding-top: 18px; border-top: 1px solid var(--br); }
+.cms-block { background: var(--wh); border: 1px solid var(--br); border-radius: 11px; padding: 14px; margin-bottom: 12px; }
+.cms-block-head { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+.cms-block-head .cms-select { width: auto; padding: 6px 10px; }
+.cms-block-spacer { flex: 1; }
+.cms-iconbtn { border: 1px solid var(--br); background: var(--wh); border-radius: 7px; width: 30px; height: 30px; cursor: pointer; font-size: 14px; line-height: 1; color: var(--bd); }
+.cms-iconbtn:hover { border-color: var(--ink); color: var(--ink); }
+.cms-addrow { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 6px; }
+.cms-toolbar { display: flex; gap: 10px; align-items: center; margin-top: 28px; padding-top: 18px; border-top: 1px solid var(--br); }
+.cms-toolbar-spacer { flex: 1; }
+.cms-check { display: flex; align-items: center; gap: 9px; font-size: 14px; font-weight: 600; }
+.cms-check input { width: 18px; height: 18px; accent-color: var(--o); }
+.cms-thumb-prev { width: 120px; height: 75px; object-fit: cover; border-radius: 8px; border: 1px solid var(--br); margin-top: 8px; display: block; }

@@ -1,5 +1,14 @@
 const { onRequest } = require("firebase-functions/v2/https");
+const { defineSecret } = require("firebase-functions/params");
+const admin = require("firebase-admin");
+const crypto = require("crypto");
 const nodemailer = require("nodemailer");
+
+if (!admin.apps.length) admin.initializeApp();
+
+// CMS admin password — set via `firebase functions:secrets:set ADMIN_PASSWORD`.
+// Never committed, never logged.
+const ADMIN_PASSWORD = defineSecret("ADMIN_PASSWORD");
 
 const ALLOWED_ORIGINS = [
   "https://proxalabs.com",
@@ -165,4 +174,70 @@ exports.submitNewsletter = onRequest(async (req, res) => {
     console.error("Email send failed:", err);
     res.status(500).json({ error: "Failed to send email. Please try again." });
   }
+});
+
+// ---------------------------------------------------------------------------
+// CMS admin login: verify the shared password server-side (against the secret),
+// rate-limit brute force, and on success mint a Firebase custom token carrying
+// the admin claim. The browser signs in with it; Firestore/Storage rules grant
+// writes only to that claim. The password never reaches the client.
+// ---------------------------------------------------------------------------
+const ADMIN_MAX_ATTEMPTS = 8;
+const ADMIN_WINDOW_MS = 15 * 60 * 1000;   // attempts counted within 15 min
+const ADMIN_LOCKOUT_MS = 15 * 60 * 1000;  // lock for 15 min after too many
+
+function constantTimeEqual(a, b) {
+  const ab = Buffer.from(String(a));
+  const bb = Buffer.from(String(b));
+  if (ab.length !== bb.length) {
+    crypto.timingSafeEqual(ab, ab); // keep timing ~constant, then fail
+    return false;
+  }
+  return crypto.timingSafeEqual(ab, bb);
+}
+
+exports.adminLogin = onRequest({ secrets: [ADMIN_PASSWORD] }, async (req, res) => {
+  if (setCors(req, res)) return;
+  if (req.method !== "POST") {
+    res.status(405).json({ error: "Method not allowed" });
+    return;
+  }
+
+  const ipRaw = (req.headers["x-forwarded-for"] || "").split(",")[0].trim() || req.ip || "unknown";
+  const ip = (ipRaw.replace(/[^a-zA-Z0-9_.:-]/g, "_").slice(0, 80)) || "unknown";
+  const db = admin.firestore();
+  const ref = db.collection("adminLoginAttempts").doc(ip);
+  const now = Date.now();
+
+  const snap = await ref.get();
+  const data = snap.exists ? snap.data() : { count: 0, first: now, lockedUntil: 0 };
+
+  if (data.lockedUntil && now < data.lockedUntil) {
+    res.status(429).json({ error: "Too many attempts. Try again later." });
+    return;
+  }
+
+  let count = data.count || 0;
+  let first = data.first || now;
+  if (now - first > ADMIN_WINDOW_MS) { count = 0; first = now; }
+
+  const password = (req.body && req.body.password) || "";
+  const ok = password.length > 0 && constantTimeEqual(password, ADMIN_PASSWORD.value());
+
+  if (!ok) {
+    count += 1;
+    const update = { count, first, lockedUntil: 0 };
+    if (count >= ADMIN_MAX_ATTEMPTS) {
+      update.lockedUntil = now + ADMIN_LOCKOUT_MS;
+      update.count = 0;
+      update.first = now;
+    }
+    await ref.set(update, { merge: true });
+    res.status(401).json({ error: "Invalid password." });
+    return;
+  }
+
+  await ref.set({ count: 0, first: now, lockedUntil: 0 }, { merge: true });
+  const token = await admin.auth().createCustomToken("site-admin", { admin: true });
+  res.status(200).json({ token });
 });

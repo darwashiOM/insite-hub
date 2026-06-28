@@ -153,7 +153,8 @@ export default function ArticleLayout({ article }) {
         </aside>
       </div>
 
-      {/* Related — placeholder cards until more articles exist */}
+      {/* Related — shown only when the article has related links */}
+      {article.related?.length > 0 && (
       <section className="shell related">
         <h3 className="related-head">Keep reading</h3>
         <div className="cards">
@@ -167,6 +168,7 @@ export default function ArticleLayout({ article }) {
           ))}
         </div>
       </section>
+      )}
     </div>
   );
 }

@@ -1,0 +1,27 @@
+rules_version = '2';
+
+// Proxa Labs CMS — content store.
+// Public can read PUBLISHED articles only. All writes require an authenticated
+// admin session (custom token with claim admin:true, minted by the adminLogin
+// Cloud Function after the password check). The admin SDK in Cloud Functions
+// bypasses these rules, so login-attempt tracking needs no client allowance.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isAdmin() {
+      return request.auth != null && request.auth.token.admin == true;
+    }
+
+    match /articles/{id} {
+      // get + list. Public list queries must be filtered to published == true;
+      // admins may read drafts too.
+      allow read: if resource.data.published == true || isAdmin();
+      allow create, update, delete: if isAdmin();
+    }
+
+    // Everything else (incl. server-only login-attempt records) is denied to clients.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
