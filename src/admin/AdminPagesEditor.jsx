@@ -4,99 +4,187 @@ import { adminGetPageContent, adminSavePageContent, adminUploadImage } from '../
 
 const PAGE_IDS = Object.keys(MANIFEST);
 
-// Edit per-page content overrides. Empty field = use the in-code default (shown as
-// placeholder). Saving writes only the non-empty overrides to siteContent/{page}.
-export default function AdminPagesEditor() {
+// Public path per page, for the "View this page" link.
+const PAGE_PATHS = {
+  home: '/', platform: '/platform', advisory: '/advisory', literacy: '/ai-literacy',
+  insitex: '/insitex-lms', content: '/content-development', proxalab: '/the-lab',
+  about: '/about', news: '/announcements', resources: '/resources',
+  newsletter: '/newsletter', contact: '/contact', futureproof: '/future-proof-your-organization',
+};
+
+const sectionTitle = (key) => {
+  const p = key.split('.')[0];
+  return p.charAt(0).toUpperCase() + p.slice(1).replace(/([A-Z])/g, ' $1');
+};
+
+// Edit a page's text. Each box shows the current website text; editing it overrides
+// the default. Only changed fields are saved (so "matches default" stays the default).
+export default function AdminPagesEditor({ onDirtyChange }) {
   const [pageId, setPageId] = useState(PAGE_IDS[0]);
-  const [values, setValues] = useState(null); // { key: overrideValue }
+  const [values, setValues] = useState(null);   // editable current text per field
+  const [saved, setSaved] = useState({});        // last-saved overrides (to detect changes)
   const [busy, setBusy] = useState(false);
+  const [uploadingKey, setUploadingKey] = useState('');
   const [status, setStatus] = useState('');
+  const [filter, setFilter] = useState('');
+  const [onlyCustom, setOnlyCustom] = useState(false);
+
+  const fields = MANIFEST[pageId]?.fields || [];
 
   useEffect(() => {
     let alive = true;
-    setValues(null); setStatus('');
-    adminGetPageContent(pageId)
-      .then((data) => { if (alive) setValues(data || {}); })
-      .catch(() => { if (alive) setValues({}); });
+    setValues(null); setStatus(''); setFilter(''); setOnlyCustom(false);
+    adminGetPageContent(pageId).then((data) => {
+      if (!alive) return;
+      const ov = data || {};
+      setSaved(ov);
+      setValues(Object.fromEntries(fields.map((f) =>
+        [f.key, ov[f.key] != null && ov[f.key] !== '' ? ov[f.key] : f.default])));
+    }).catch(() => {
+      if (!alive) return;
+      setSaved({});
+      setValues(Object.fromEntries(fields.map((f) => [f.key, f.default])));
+    });
     return () => { alive = false; };
-  }, [pageId]);
+  }, [pageId]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const fields = MANIFEST[pageId]?.fields || [];
-  const setField = (key, v) => setValues((m) => ({ ...m, [key]: v }));
+  const savedEff = (f) => (saved[f.key] != null && saved[f.key] !== '' ? saved[f.key] : f.default);
+  const dirty = !!values && fields.some((f) => String(values[f.key] ?? '') !== String(savedEff(f)));
+
+  useEffect(() => { onDirtyChange?.(dirty); }, [dirty, onDirtyChange]);
+  useEffect(() => {
+    const h = (e) => { if (dirty) { e.preventDefault(); e.returnValue = ''; } };
+    window.addEventListener('beforeunload', h);
+    return () => window.removeEventListener('beforeunload', h);
+  }, [dirty]);
+
+  const setField = (k, v) => setValues((m) => ({ ...m, [k]: v }));
+
+  const switchPage = (id) => {
+    if (dirty && !window.confirm('You have unsaved changes. Discard them?')) return;
+    setPageId(id);
+  };
 
   const upload = async (file, key) => {
     if (!file) return;
-    setBusy(true); setStatus('');
+    setUploadingKey(key); setStatus('');
     try { setField(key, await adminUploadImage(file)); }
     catch (e) { setStatus('Image upload failed: ' + (e.message || e)); }
-    finally { setBusy(false); }
+    finally { setUploadingKey(''); }
   };
 
   const save = async () => {
     setBusy(true); setStatus('');
-    // Persist only non-empty overrides; empty means "use the default".
     const data = {};
     fields.forEach((f) => {
-      const v = (values?.[f.key] ?? '').toString().trim();
-      if (v) data[f.key] = v;
+      const v = (values[f.key] ?? '').toString();
+      if (v.trim() && v !== f.default) data[f.key] = v; // store only real changes
     });
     try {
       await adminSavePageContent(pageId, data);
-      setStatus('Saved — live within ~1 minute.');
+      setSaved(data);
+      setStatus('saved');
     } catch (e) {
-      setStatus('Save failed: ' + (e.message || e));
+      setStatus(/permission/i.test(e.message || '')
+        ? 'timeout'
+        : 'Save failed: ' + (e.message || e));
     } finally {
       setBusy(false);
     }
   };
 
+  // visible fields after filter / only-customized, grouped by section
+  const visible = (values ? fields : []).filter((f) => {
+    if (onlyCustom && String(values[f.key] ?? '') === String(f.default)) return false;
+    if (filter) {
+      const q = filter.toLowerCase();
+      return f.label.toLowerCase().includes(q) || String(f.default).toLowerCase().includes(q);
+    }
+    return true;
+  });
+  const groups = [];
+  visible.forEach((f) => {
+    const s = sectionTitle(f.key);
+    let g = groups[groups.length - 1];
+    if (!g || g.section !== s) { g = { section: s, items: [] }; groups.push(g); }
+    g.items.push(f);
+  });
+
+  const viewHref = (PAGE_PATHS[pageId] || '/') + '?cmsbust=' + Date.now();
+
   return (
     <div>
-      {PAGE_IDS.length > 1 && (
-        <div className="cms-field" style={{ maxWidth: 260 }}>
-          <label>Page</label>
-          <select className="cms-select" value={pageId} onChange={(e) => setPageId(e.target.value)}>
+      <div className="cms-pages-head">
+        <div className="cms-field" style={{ maxWidth: 280, marginBottom: 0 }}>
+          <label>Which page</label>
+          <select className="cms-select" value={pageId} onChange={(e) => switchPage(e.target.value)}>
             {PAGE_IDS.map((id) => <option key={id} value={id}>{MANIFEST[id].label}</option>)}
           </select>
         </div>
-      )}
+        <a className="cms-btn cms-btn-sm" href={viewHref} target="_blank" rel="noopener noreferrer">View this page ↗</a>
+      </div>
+
+      <p className="cms-intro">
+        Each box shows the text that’s on the website now — just edit it. Leave a box as-is to keep it.
+        Use <em>Restore original</em> to undo a change. Saving updates the live site within about a minute.
+      </p>
 
       {values === null ? (
         <p style={{ color: '#5c6370' }}>Loading…</p>
       ) : (
         <>
-          {status && <p className="cms-hint" style={{ marginBottom: 14 }}>{status}</p>}
-          {fields.map((f) => {
-            const val = values[f.key] ?? '';
-            return (
-              <div className="cms-field" key={f.key}>
-                <label>{f.label}</label>
-                {f.type === 'textarea' ? (
-                  <textarea className="cms-textarea" value={val} placeholder={f.default}
-                    onChange={(e) => setField(f.key, e.target.value)} />
-                ) : f.type === 'image' ? (
-                  <>
-                    <input className="cms-input" value={val} placeholder="Image URL"
-                      onChange={(e) => setField(f.key, e.target.value)} />
-                    <input type="file" accept="image/*" style={{ marginTop: 8 }}
-                      onChange={(e) => upload(e.target.files[0], f.key)} />
-                    {val && <img className="cms-thumb-prev" src={val} alt="" />}
-                  </>
-                ) : (
-                  <input className="cms-input" value={val} placeholder={f.default}
-                    onChange={(e) => setField(f.key, e.target.value)} />
-                )}
-                <p className="cms-hint">
-                  Default: {String(f.default).slice(0, 90)}{String(f.default).length > 90 ? '…' : ''}
-                  {val ? <> · <button type="button" className="cms-linkbtn" onClick={() => setField(f.key, '')}>reset to default</button></> : null}
-                </p>
-              </div>
-            );
-          })}
+          <div className="cms-filters">
+            <input className="cms-input" style={{ maxWidth: 280 }} placeholder="Filter fields…"
+              value={filter} onChange={(e) => setFilter(e.target.value)} />
+            <label className="cms-check" style={{ fontSize: 13 }}>
+              <input type="checkbox" checked={onlyCustom} onChange={(e) => setOnlyCustom(e.target.checked)} />
+              Show only my changes
+            </label>
+          </div>
+
+          {groups.length === 0 && <p style={{ color: '#5c6370' }}>No fields match.</p>}
+
+          {groups.map((g) => (
+            <div key={g.section}>
+              <div className="cms-section-h">{g.section}</div>
+              {g.items.map((f) => {
+                const val = values[f.key] ?? '';
+                const changed = String(val) !== String(f.default);
+                return (
+                  <div className="cms-field" key={f.key}>
+                    <label>
+                      {f.label}{changed && <span className="cms-changed">• changed</span>}
+                    </label>
+                    {f.type === 'textarea' ? (
+                      <textarea className="cms-textarea" value={val} onChange={(e) => setField(f.key, e.target.value)} />
+                    ) : f.type === 'image' ? (
+                      <>
+                        <input className="cms-input" value={val} placeholder="Image URL" onChange={(e) => setField(f.key, e.target.value)} />
+                        <input type="file" accept="image/*" style={{ marginTop: 8 }} onChange={(e) => upload(e.target.files[0], f.key)} />
+                        {uploadingKey === f.key && <span className="cms-hint">Uploading…</span>}
+                        {val && <img className="cms-thumb-prev" src={val} alt="" />}
+                      </>
+                    ) : (
+                      <input className="cms-input" value={val} onChange={(e) => setField(f.key, e.target.value)} />
+                    )}
+                    {changed && (
+                      <p className="cms-hint">
+                        <button type="button" className="cms-linkbtn" onClick={() => setField(f.key, f.default)}>Restore original</button>
+                      </p>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          ))}
 
           <div className="cms-toolbar">
-            <div className="cms-toolbar-spacer" />
-            <button className="cms-btn cms-btn-primary" onClick={save} disabled={busy}>
+            <div className="cms-savemsg">
+              {status === 'saved' && <span className="cms-ok">✓ Saved. Refresh the page in about a minute to see it live.</span>}
+              {status === 'timeout' && <span className="cms-err-inline">Your session timed out — your text is safe. Log in again, then Save.</span>}
+              {status && status !== 'saved' && status !== 'timeout' && <span className="cms-err-inline">{status}</span>}
+            </div>
+            <button className="cms-btn cms-btn-primary" onClick={save} disabled={busy || !dirty}>
               {busy ? 'Saving…' : 'Save changes'}
             </button>
           </div>

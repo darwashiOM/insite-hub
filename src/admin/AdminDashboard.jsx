@@ -3,17 +3,23 @@ import { adminListArticles, adminDeleteArticle } from '../lib/adminBlog';
 import ArticleEditor from './ArticleEditor';
 import AdminPagesEditor from './AdminPagesEditor';
 
-// Admin shell with Blog | Pages tabs. Blog: list + create/edit/delete articles.
-// Pages: edit per-page content overrides.
+// Admin shell with Blog | Site pages tabs.
 export default function AdminDashboard({ onLogout }) {
   const [tab, setTab] = useState('blog');
   const [articles, setArticles] = useState(null);
   const [view, setView] = useState('list'); // 'list' | 'new' | <slug>
+  const [pagesDirty, setPagesDirty] = useState(false);
 
   const refresh = useCallback(async () => {
     setArticles(await adminListArticles().catch(() => []));
   }, []);
   useEffect(() => { refresh(); }, [refresh]);
+
+  const switchTab = (t) => {
+    if (t === tab) return;
+    if (tab === 'pages' && pagesDirty && !window.confirm('You have unsaved changes on this page. Discard them?')) return;
+    setTab(t);
+  };
 
   const remove = async (a) => {
     if (!window.confirm(`Delete "${a.title}"? This cannot be undone.`)) return;
@@ -36,10 +42,10 @@ export default function AdminDashboard({ onLogout }) {
   return (
     <div className="cms-admin">
       <div className="cms-bar">
-        <h1>Proxa Labs CMS</h1>
+        <h1>Proxa Labs Website Editor</h1>
         <div className="cms-tabs">
-          <button className={'cms-tab' + (tab === 'blog' ? ' on' : '')} onClick={() => setTab('blog')}>Blog</button>
-          <button className={'cms-tab' + (tab === 'pages' ? ' on' : '')} onClick={() => setTab('pages')}>Pages</button>
+          <button className={'cms-tab' + (tab === 'blog' ? ' on' : '')} onClick={() => switchTab('blog')}>Blog</button>
+          <button className={'cms-tab' + (tab === 'pages' ? ' on' : '')} onClick={() => switchTab('pages')}>Site pages</button>
         </div>
         <div style={{ display: 'flex', gap: 10 }}>
           {tab === 'blog' && <button className="cms-btn cms-btn-primary" onClick={() => setView('new')}>+ New article</button>}
@@ -49,7 +55,7 @@ export default function AdminDashboard({ onLogout }) {
 
       <div className="cms-wrap">
         {tab === 'pages' ? (
-          <AdminPagesEditor />
+          <AdminPagesEditor onDirtyChange={setPagesDirty} />
         ) : articles === null ? (
           <p style={{ color: '#5c6370' }}>Loading…</p>
         ) : articles.length === 0 ? (
@@ -61,7 +67,10 @@ export default function AdminDashboard({ onLogout }) {
                 <div className="cms-card-main">
                   <p className="cms-card-title">{a.title || '(untitled)'}</p>
                   <p className="cms-card-meta">
-                    {a.pillar ? `${a.pillar} · ` : ''}{a.date || 'no date'} · /blog/{a.slug}
+                    {a.pillar ? `${a.pillar} · ` : ''}{a.date || 'no date'} ·{' '}
+                    {a.published
+                      ? <a href={`/blog/${a.slug}`} target="_blank" rel="noopener noreferrer">View live ↗</a>
+                      : <span>not published yet</span>}
                   </p>
                 </div>
                 <span className={'cms-badge ' + (a.published ? 'cms-badge-pub' : 'cms-badge-draft')}>

@@ -10,7 +10,7 @@ export default function AdminPage() {
   const [authed, setAuthed] = useState(null); // null = still checking
 
   useEffect(() => {
-    document.title = 'CMS · Proxa Labs';
+    document.title = 'Website Editor · Proxa Labs';
     return onAdminAuth(setAuthed);
   }, []);
 

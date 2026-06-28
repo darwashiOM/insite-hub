@@ -7,6 +7,15 @@ import { defaultsFor } from '../content/manifest';
 const CONTENT_URL = import.meta.env.VITE_CONTENT_URL || '/api/content';
 let _cache;
 function fetchAllContent() {
+  // When the admin opens a page with ?cmsbust=<ts>, fetch fresh (skip the module
+  // cache and the CDN cache) so a just-saved edit is visible immediately.
+  const bust = typeof window !== 'undefined'
+    ? new URLSearchParams(window.location.search).get('cmsbust')
+    : null;
+  if (bust) {
+    return fetch(`${CONTENT_URL}?v=${encodeURIComponent(bust)}`)
+      .then((r) => (r.ok ? r.json() : {})).catch(() => ({}));
+  }
   if (!_cache) {
     _cache = fetch(CONTENT_URL).then((r) => (r.ok ? r.json() : {})).catch(() => ({}));
   }

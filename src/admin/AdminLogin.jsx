@@ -25,8 +25,8 @@ export default function AdminLogin() {
     <div className="cms-admin">
       <div className="cms-login">
         <form className="cms-login-card" onSubmit={submit}>
-          <h1>Proxa Labs CMS</h1>
-          <p>Enter the password to manage site content.</p>
+          <h1>Proxa Labs Website Editor</h1>
+          <p>Enter the password to edit the website.</p>
           {error && <p className="cms-err">{error}</p>}
           <div className="cms-field">
             <label htmlFor="cms-pw">Password</label>

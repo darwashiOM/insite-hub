@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { adminSaveArticle, adminUploadImage, slugify } from '../lib/adminBlog';
 
 const BLANK = {
@@ -31,11 +31,23 @@ function newBlock(type) {
 
 export default function ArticleEditor({ article, onDone, onCancel }) {
   const isNew = !article;
-  const [form, setForm] = useState(() => fromArticle(article));
+  const initial = useRef(null);
+  const [form, setForm] = useState(() => { const f = fromArticle(article); initial.current = JSON.stringify(f); return f; });
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
+  const [okMsg, setOkMsg] = useState('');
+  const [showAdvanced, setShowAdvanced] = useState(false);
   // Once the slug is hand-edited, stop auto-deriving it from the title.
   const [slugDirty, setSlugDirty] = useState(!isNew);
+  const titleRef = useRef(null);
+
+  const dirty = JSON.stringify(form) !== initial.current;
+  useEffect(() => {
+    const h = (e) => { if (dirty) { e.preventDefault(); e.returnValue = ''; } };
+    window.addEventListener('beforeunload', h);
+    return () => window.removeEventListener('beforeunload', h);
+  }, [dirty]);
+  const cancel = () => { if (dirty && !window.confirm('Discard your unsaved changes?')) return; onCancel(); };
 
   const set = (k, v) => setForm((f) => ({ ...f, [k]: v }));
   const setAuthor = (k, v) => setForm((f) => ({ ...f, author: { ...f.author, [k]: v } }));
@@ -47,7 +59,11 @@ export default function ArticleEditor({ article, onDone, onCancel }) {
     return { ...f, body };
   });
   const addBlock = (type) => setForm((f) => ({ ...f, body: [...f.body, newBlock(type)] }));
-  const removeBlock = (i) => setForm((f) => ({ ...f, body: f.body.filter((_, j) => j !== i) }));
+  const removeBlock = (i) => {
+    const b = form.body[i];
+    if ((b.html || b.text || '').trim() && !window.confirm('Delete this block? Its text will be lost.')) return;
+    setForm((f) => ({ ...f, body: f.body.filter((_, j) => j !== i) }));
+  };
   const moveBlock = (i, dir) => setForm((f) => {
     const j = i + dir;
     if (j < 0 || j >= f.body.length) return f;
@@ -66,11 +82,11 @@ export default function ArticleEditor({ article, onDone, onCancel }) {
   };
 
   const save = async () => {
-    setError('');
+    setError(''); setOkMsg('');
     const title = form.title.trim();
-    if (!title) { setError('Title is required.'); return; }
+    if (!title) { setError('Please add a title.'); titleRef.current?.focus(); return; }
     const slug = (form.slug.trim() || slugify(title));
-    if (!slug) { setError('A valid slug is required.'); return; }
+    if (!slug) { setError('Please add a web address.'); return; }
 
     // Normalize body + derive TOC from headings. Anchor ids are made unique
     // (so duplicate headings don't collide); empty-text headings are kept in the
@@ -96,6 +112,9 @@ export default function ArticleEditor({ article, onDone, onCancel }) {
     });
     const toc = headings.filter((h) => h.text).map((h) => ({ id: h.id, label: h.navLabel || h.text }));
 
+    const hasBody = body.some((b) => (b.type === 'p' && b.html) || (b.type === 'h2' && b.text) || (b.type === 'quote' && b.text));
+    if (form.published && !hasBody && !window.confirm('This post has no body text yet. Publish it live anyway?')) return;
+
     const article = {
       slug, pillar: form.pillar.trim(), title, description: form.description.trim(),
       author: {
@@ -111,10 +130,15 @@ export default function ArticleEditor({ article, onDone, onCancel }) {
     setBusy(true);
     try {
       await adminSaveArticle(article, isNew);
-      onDone();
-    } catch (e) {
-      setError('Save failed: ' + (e.message || e));
+      initial.current = JSON.stringify(form);
+      setOkMsg(article.published ? 'Saved ✓ — it’s live now.' : 'Saved as draft ✓');
       setBusy(false);
+      setTimeout(() => onDone(), 900);
+    } catch (e) {
+      setBusy(false);
+      setError(/permission/i.test(e.message || '')
+        ? 'Your session timed out — your text is safe. Log out and back in, then Save again.'
+        : 'Save failed: ' + (e.message || e));
     }
   };
 
@@ -123,7 +147,7 @@ export default function ArticleEditor({ article, onDone, onCancel }) {
       <div className="cms-bar">
         <h1>{isNew ? 'New article' : 'Edit article'}</h1>
         <div style={{ display: 'flex', gap: 10 }}>
-          <button className="cms-btn" onClick={onCancel} disabled={busy}>Cancel</button>
+          <button className="cms-btn" onClick={cancel} disabled={busy}>Cancel</button>
           <button className="cms-btn cms-btn-primary" onClick={save} disabled={busy}>
             {busy ? 'Saving…' : 'Save'}
           </button>
@@ -132,22 +156,23 @@ export default function ArticleEditor({ article, onDone, onCancel }) {
 
       <div className="cms-wrap">
         {error && <p className="cms-err">{error}</p>}
+        {okMsg && <p className="cms-ok-banner">{okMsg}</p>}
 
         <div className="cms-field">
           <label>Title</label>
-          <input className="cms-input" value={form.title}
+          <input ref={titleRef} className="cms-input" value={form.title}
             onChange={(e) => { const v = e.target.value; set('title', v); if (isNew && !slugDirty) set('slug', slugify(v)); }} />
         </div>
 
         <div className="cms-row">
           <div className="cms-field">
-            <label>Slug (URL)</label>
+            <label>Web address</label>
             <input className="cms-input" value={form.slug} disabled={!isNew}
               onChange={(e) => { set('slug', slugify(e.target.value)); setSlugDirty(true); }} />
-            <p className="cms-hint">/blog/{form.slug || '…'}{!isNew && ' · fixed after creation'}</p>
+            <p className="cms-hint">/blog/{form.slug || '…'}{!isNew && ' · fixed after the post is created'}</p>
           </div>
           <div className="cms-field">
-            <label>Pillar / eyebrow</label>
+            <label>Category</label>
             <input className="cms-input" value={form.pillar} onChange={(e) => set('pillar', e.target.value)} />
           </div>
         </div>
@@ -170,13 +195,14 @@ export default function ArticleEditor({ article, onDone, onCancel }) {
         </div>
 
         <div className="cms-field">
-          <label>SEO description</label>
+          <label>Search &amp; share preview text</label>
           <textarea className="cms-textarea" style={{ minHeight: 64 }} value={form.description}
             onChange={(e) => set('description', e.target.value)} />
+          <p className="cms-hint">Shown in Google results and link previews. ~1–2 sentences.</p>
         </div>
 
         <div className="cms-field">
-          <label>Summary box (HTML allowed, e.g. &lt;strong&gt;)</label>
+          <label>Summary (the highlighted intro box)</label>
           <textarea className="cms-textarea" value={form.summary} onChange={(e) => set('summary', e.target.value)} />
         </div>
 
@@ -189,33 +215,40 @@ export default function ArticleEditor({ article, onDone, onCancel }) {
         </div>
 
         {/* Body */}
-        <div className="cms-section-h">Body</div>
+        <div className="cms-section-h">
+          Body
+          <label className="cms-adv-toggle">
+            <input type="checkbox" checked={showAdvanced} onChange={(e) => setShowAdvanced(e.target.checked)} /> Advanced
+          </label>
+        </div>
         {form.body.map((b, i) => (
           <div className="cms-block" key={i}>
             <div className="cms-block-head">
               <select className="cms-select" value={b.type} onChange={(e) => changeType(i, e.target.value)}>
                 <option value="p">Paragraph</option>
                 <option value="h2">Heading</option>
-                <option value="quote">Pull quote</option>
+                <option value="quote">Quote</option>
               </select>
               <div className="cms-block-spacer" />
-              <button className="cms-iconbtn" title="Move up" onClick={() => moveBlock(i, -1)}>↑</button>
-              <button className="cms-iconbtn" title="Move down" onClick={() => moveBlock(i, 1)}>↓</button>
+              <button className="cms-iconbtn" title="Move up" onClick={() => moveBlock(i, -1)} disabled={i === 0}>↑</button>
+              <button className="cms-iconbtn" title="Move down" onClick={() => moveBlock(i, 1)} disabled={i === form.body.length - 1}>↓</button>
               <button className="cms-iconbtn" title="Delete" onClick={() => removeBlock(i)}>✕</button>
             </div>
             {b.type === 'h2' ? (
               <>
                 <input className="cms-input" placeholder="Heading text" value={b.text || ''}
                   onChange={(e) => setBlock(i, { text: e.target.value })} />
-                <div className="cms-row" style={{ marginTop: 10 }}>
-                  <input className="cms-input" placeholder="Anchor id (auto from text if blank)" value={b.id || ''}
-                    onChange={(e) => setBlock(i, { id: slugify(e.target.value) })} />
-                  <input className="cms-input" placeholder="Short nav label (optional)" value={b.navLabel || ''}
-                    onChange={(e) => setBlock(i, { navLabel: e.target.value })} />
-                </div>
+                {showAdvanced && (
+                  <div className="cms-row" style={{ marginTop: 10 }}>
+                    <input className="cms-input" placeholder="Link anchor (auto from text if blank)" value={b.id || ''}
+                      onChange={(e) => setBlock(i, { id: slugify(e.target.value) })} />
+                    <input className="cms-input" placeholder="Short label for contents list (optional)" value={b.navLabel || ''}
+                      onChange={(e) => setBlock(i, { navLabel: e.target.value })} />
+                  </div>
+                )}
               </>
             ) : (
-              <textarea className="cms-textarea" placeholder={b.type === 'quote' ? 'Quote text' : 'Paragraph (HTML allowed)'}
+              <textarea className="cms-textarea" placeholder={b.type === 'quote' ? 'Quote text' : 'Paragraph text'}
                 value={b.type === 'quote' ? (b.text || '') : (b.html || '')}
                 onChange={(e) => setBlock(i, b.type === 'quote' ? { text: e.target.value } : { html: e.target.value })} />
             )}
@@ -257,7 +290,9 @@ export default function ArticleEditor({ article, onDone, onCancel }) {
             Published (visible on the public site)
           </label>
           <div className="cms-toolbar-spacer" />
-          <button className="cms-btn" onClick={onCancel} disabled={busy}>Cancel</button>
+          {okMsg && <span className="cms-ok" style={{ marginRight: 12 }}>{okMsg}</span>}
+          {error && <span className="cms-err-inline" style={{ marginRight: 12 }}>{error}</span>}
+          <button className="cms-btn" onClick={cancel} disabled={busy}>Cancel</button>
           <button className="cms-btn cms-btn-primary" onClick={save} disabled={busy}>{busy ? 'Saving…' : 'Save'}</button>
         </div>
       </div>
