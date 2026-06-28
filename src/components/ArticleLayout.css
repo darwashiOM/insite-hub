@@ -24,7 +24,9 @@
   --display: 'Manrope', system-ui, sans-serif;
   --text: 'DM Sans', system-ui, sans-serif;
   --measure: 700px;
-  --shell: 1180px;
+  /* Match the site container: content maxes at 1200px with 56px gutters
+     (max-width 1312 - 2*56 = 1200), same as .section + .mw elsewhere. */
+  --shell: 1312px;
 
   font-family: var(--text);
   font-size: 19px;
@@ -32,6 +34,7 @@
   color: var(--body);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+  padding-top: 68px; /* clear the fixed 68px site nav */
 }
 
 .proxa-article a { color: var(--coral-deep); text-decoration: none; }
@@ -44,7 +47,7 @@
   background: var(--coral); z-index: 50; transition: width .08s linear;
 }
 
-.proxa-article .shell { max-width: var(--shell); margin: 0 auto; padding: 0 28px; }
+.proxa-article .shell { max-width: var(--shell); margin: 0 auto; padding: 0 56px; }
 
 /* ---------- HERO: charcoal field + dial graphic ---------- */
 .proxa-article .pa-hero {
@@ -81,7 +84,7 @@
 
 /* layout */
 .proxa-article .layout {
-  max-width: var(--shell); margin: 0 auto; padding: 40px 28px 0;
+  max-width: var(--shell); margin: 0 auto; padding: 40px 56px 0;
   display: grid; grid-template-columns: var(--measure) 232px; gap: 72px;
   justify-content: start; align-items: start;
 }
@@ -182,7 +185,7 @@
 .proxa-article .card-meta { font-family: var(--display); font-weight: 500; color: var(--muted); font-size: .82rem; }
 
 /* ---------- Blog index (/blog) ---------- */
-.proxa-article .blog-index { padding: 56px 28px 80px; }
+.proxa-article .blog-index { padding: 32px 56px 80px; }
 .proxa-article .blog-eyebrow { margin-bottom: 16px; }
 .proxa-article .blog-title { font-family: var(--display); font-weight: 800; color: var(--ink); font-size: clamp(2rem, 4vw, 2.8rem); line-height: 1.1; letter-spacing: -.022em; margin: 0 0 12px; }
 .proxa-article .blog-sub { color: var(--muted); font-size: 1.06rem; line-height: 1.55; max-width: var(--measure); margin: 0 0 44px; }
@@ -192,3 +195,10 @@
 .proxa-article .blog-card .blog-card-img { border-radius: 12px; aspect-ratio: 16/10; overflow: hidden; margin-bottom: 14px; background: var(--hero-grey) center/cover no-repeat; transition: transform .25s ease; }
 .proxa-article .blog-card:hover .blog-card-img { transform: translateY(-3px); }
 .proxa-article .blog-card:hover .card-title { color: var(--coral-deep); }
+
+/* Match the site's mobile gutter (.section/.nav use 20px at <=960px) */
+@media (max-width: 960px) {
+  .proxa-article .shell,
+  .proxa-article .layout,
+  .proxa-article .blog-index { padding-left: 20px; padding-right: 20px; }
+}
