@@ -8,7 +8,7 @@ const SYMBOL = '/assets/blog/proxa-symbol.png';
  * repeat visits render instantly. Cards link to the article pages via setPage.
  */
 export default function BlogIndexPage({ setPage }) {
-  const { articles, loading } = usePublishedArticles();
+  const { articles, loading, error } = usePublishedArticles();
 
   return (
     <div className="proxa-article">
@@ -21,6 +21,14 @@ export default function BlogIndexPage({ setPage }) {
 
         {loading ? (
           <p className="blog-sub">Loading…</p>
+        ) : error ? (
+          <p className="blog-sub">
+            Couldn’t load articles.{' '}
+            <button type="button" onClick={() => window.location.reload()}
+              style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', font: 'inherit', color: 'var(--coral-deep)', fontWeight: 600, textDecoration: 'underline' }}>
+              Reload
+            </button>
+          </p>
         ) : articles.length === 0 ? (
           <p className="blog-sub">No articles published yet — check back soon.</p>
         ) : (

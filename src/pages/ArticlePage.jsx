@@ -10,7 +10,7 @@ function slugFromPath() {
 // Renders a published blog article resolved from the /blog/<slug> URL. The article
 // comes from the cached published set, so navigating from the index is instant.
 export default function ArticlePage({ setPage }) {
-  const { article, loading } = useArticle(slugFromPath());
+  const { article, loading, error } = useArticle(slugFromPath());
 
   useEffect(() => {
     if (!article) return;
@@ -26,6 +26,21 @@ export default function ArticlePage({ setPage }) {
     return (
       <div className="proxa-article">
         <section className="shell blog-index"><p className="blog-sub">Loading…</p></section>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="proxa-article">
+        <section className="shell blog-index">
+          <h1 className="blog-title">Couldn’t load this article</h1>
+          <p className="blog-sub">Please check your connection and try again.</p>
+          <button onClick={() => window.location.reload()}
+            style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', font: 'inherit', color: 'var(--coral-deep)', fontWeight: 600 }}>
+            Reload
+          </button>
+        </section>
       </div>
     );
   }

@@ -77,7 +77,17 @@ export async function adminDeleteArticle(slug) {
 }
 
 // Upload an image to Storage under blog/ and return its public download URL.
+const ALLOWED_IMAGE_TYPES = ['image/png', 'image/jpeg', 'image/gif', 'image/webp'];
+const MAX_IMAGE_BYTES = 10 * 1024 * 1024;
 export async function adminUploadImage(file) {
+  // Validate up front with a plain-English message (the Storage rules enforce the
+  // same limits, but their rejection surfaces as a cryptic "permission" error).
+  if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
+    throw new Error('Please use a PNG, JPG, GIF, or WebP image. (iPhone photos are often HEIC — export or save as JPG first.)');
+  }
+  if (file.size >= MAX_IMAGE_BYTES) {
+    throw new Error('That image is too large — please use one under 10 MB.');
+  }
   const safe = (file.name || 'image').replace(/[^a-zA-Z0-9._-]/g, '_');
   const path = `blog/${Date.now()}-${safe}`;
   const r = storageRef(storage, path);

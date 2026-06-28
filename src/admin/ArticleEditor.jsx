@@ -209,7 +209,7 @@ export default function ArticleEditor({ article, onDone, onCancel }) {
         <div className="cms-field">
           <label>Hero / card thumbnail</label>
           <input className="cms-input" placeholder="Image URL" value={form.thumb} onChange={(e) => set('thumb', e.target.value)} />
-          <input type="file" accept="image/*" style={{ marginTop: 8 }}
+          <input type="file" accept="image/png,image/jpeg,image/gif,image/webp" style={{ marginTop: 8 }}
             onChange={(e) => upload(e.target.files[0], (url) => set('thumb', url))} />
           {form.thumb && <img className="cms-thumb-prev" src={form.thumb} alt="" />}
         </div>
@@ -279,7 +279,7 @@ export default function ArticleEditor({ article, onDone, onCancel }) {
         <div className="cms-field">
           <label>Headshot</label>
           <input className="cms-input" placeholder="Image URL" value={form.author.headshot} onChange={(e) => setAuthor('headshot', e.target.value)} />
-          <input type="file" accept="image/*" style={{ marginTop: 8 }}
+          <input type="file" accept="image/png,image/jpeg,image/gif,image/webp" style={{ marginTop: 8 }}
             onChange={(e) => upload(e.target.files[0], (url) => setAuthor('headshot', url))} />
         </div>
 

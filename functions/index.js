@@ -23,6 +23,8 @@ const ALLOWED_ORIGINS = [
   "http://localhost:5181",
 ];
 
+// NOTE: process.env.NOTIFY_EMAIL (functions/.env) is authoritative in production and
+// overrides this constant; this is only the fallback when that env var is unset.
 const DEFAULT_NOTIFY_EMAILS = "sales@insitehub.com,john.royer@insitehub.com,mehrler@proxalabs.com";
 const FUTURE_PROOF_REPLY_TO = "mehrler@proxalabs.com";
 const DEFAULT_FROM_NAME = "Proxa Labs Website";
@@ -50,6 +52,7 @@ function setCors(req, res) {
   const origin = req.headers.origin;
   if (ALLOWED_ORIGINS.includes(origin)) {
     res.set("Access-Control-Allow-Origin", origin);
+    res.set("Vary", "Origin"); // cache must key on origin since ACAO is reflected
   }
   res.set("Access-Control-Allow-Methods", "POST, OPTIONS");
   res.set("Access-Control-Allow-Headers", "Content-Type, sentry-trace, baggage");
@@ -231,38 +234,42 @@ exports.adminLogin = onRequest({ secrets: [ADMIN_PASSWORD] }, async (req, res) =
     return;
   }
 
-  const db = admin.firestore();
-  const now = Date.now();
-  const ipRef = db.collection("adminLoginAttempts").doc(clientIp(req));
-  const globalRef = db.collection("adminLoginAttempts").doc("global-lockout");
+  try {
+    const db = admin.firestore();
+    const now = Date.now();
+    const password = (req.body && req.body.password) || "";
+    const ok = password.length > 0 && constantTimeEqual(password, ADMIN_PASSWORD.value());
 
-  // Reject early if this IP OR all logins (global) are currently locked.
-  const [ipSnap, gSnap] = await Promise.all([ipRef.get(), globalRef.get()]);
-  if (isLocked(ipSnap.data(), now) || isLocked(gSnap.data(), now)) {
-    res.status(429).json({ error: "Too many attempts. Try again later." });
-    return;
-  }
+    // Check the password BEFORE any lockout gate: a correct password must ALWAYS
+    // succeed (the attacker never has it, so blocking a correct login during a
+    // lockout protects nothing and would let attackers DoS the real admin).
+    if (ok) {
+      const token = await admin.auth().createCustomToken("site-admin", { admin: true });
+      // Best-effort: clear this IP's failure counter (non-critical to auth).
+      db.collection("adminLoginAttempts").doc(clientIp(req))
+        .set({ count: 0, first: now, lockedUntil: 0 }, { merge: true }).catch(() => {});
+      res.status(200).json({ token });
+      return;
+    }
 
-  const password = (req.body && req.body.password) || "";
-  const ok = password.length > 0 && constantTimeEqual(password, ADMIN_PASSWORD.value());
-
-  if (!ok) {
-    // Atomically record the failure against both the per-IP and global counters.
-    // A spoofed X-Forwarded-For makes a new per-IP doc, but the global counter
-    // still trips, so distributed/spoofed guessing is also rate-limited.
+    // Wrong password: enforce the lockout (per-IP + global) and record the failure.
+    const ipRef = db.collection("adminLoginAttempts").doc(clientIp(req));
+    const globalRef = db.collection("adminLoginAttempts").doc("global-lockout");
+    const [ipSnap, gSnap] = await Promise.all([ipRef.get(), globalRef.get()]);
+    if (isLocked(ipSnap.data(), now) || isLocked(gSnap.data(), now)) {
+      res.status(429).json({ error: "Too many attempts. Try again later." });
+      return;
+    }
     await db.runTransaction(async (tx) => {
       const [is, gs] = await Promise.all([tx.get(ipRef), tx.get(globalRef)]); // reads first
       applyFailure(tx, ipRef, is, ADMIN_IP_MAX, now);                          // then writes
       applyFailure(tx, globalRef, gs, ADMIN_GLOBAL_MAX, now);
     });
     res.status(401).json({ error: "Invalid password." });
-    return;
+  } catch (err) {
+    console.error("adminLogin failed:", err);
+    res.status(500).json({ error: "Login error — please try again." });
   }
-
-  // Success: clear this IP's failures and mint the admin session.
-  await ipRef.set({ count: 0, first: now, lockedUntil: 0 }, { merge: true });
-  const token = await admin.auth().createCustomToken("site-admin", { admin: true });
-  res.status(200).json({ token });
 });
 
 // ---------------------------------------------------------------------------
@@ -280,6 +287,8 @@ exports.getContent = onRequest(async (req, res) => {
     res.status(200).json(out);
   } catch (err) {
     console.error("getContent failed:", err);
-    res.status(200).json({}); // never break the public site on content fetch failure
+    // Non-2xx so clients keep their last-good cached overrides (and fall back to
+    // in-code defaults on a cold load) instead of caching an empty {} over them.
+    res.status(500).json({ error: "content unavailable" });
   }
 });

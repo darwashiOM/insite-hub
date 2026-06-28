@@ -16,12 +16,25 @@ import NewsletterPage from './pages/NewsletterPage';
 import ContactPage from './pages/ContactPage';
 import FutureProofPage from './pages/FutureProofPage';
 import NotFoundPage from './pages/NotFoundPage';
+import ErrorBoundary from './components/ErrorBoundary';
 import { prefetchContent } from './lib/content';
 // Blog + admin are code-split so the Firebase SDK loads only on /blog routes and
 // the admin (not on the homepage / marketing pages).
-const BlogIndexPage = lazy(() => import('./pages/BlogIndexPage'));
-const ArticlePage = lazy(() => import('./pages/ArticlePage'));
-const AdminPage = lazy(() => import('./admin/AdminPage'));
+// If a hashed chunk is missing (stale tab after a redeploy), reload once to pick
+// up the fresh index.html instead of white-screening.
+function lazyWithReload(factory) {
+  return lazy(() => factory().catch((err) => {
+    if (!sessionStorage.getItem('chunkReloaded')) {
+      sessionStorage.setItem('chunkReloaded', '1');
+      window.location.reload();
+      return new Promise(() => {}); // hang until the reload happens
+    }
+    throw err;
+  }));
+}
+const BlogIndexPage = lazyWithReload(() => import('./pages/BlogIndexPage'));
+const ArticlePage = lazyWithReload(() => import('./pages/ArticlePage'));
+const AdminPage = lazyWithReload(() => import('./admin/AdminPage'));
 
 const PAGE_TITLES = {
   home: "Proxa Labs · AI-First Commercial Learning for Biopharma",
@@ -193,16 +206,22 @@ export default function App() {
 
   // The admin is a standalone full-screen app — no marketing nav/footer.
   if (page === "admin") {
-    return <Suspense fallback={null}><Page setPage={setPage} /></Suspense>;
+    return (
+      <ErrorBoundary>
+        <Suspense fallback={<div style={{ minHeight: '100vh' }} />}><Page setPage={setPage} /></Suspense>
+      </ErrorBoundary>
+    );
   }
 
   return (
     <>
       <Nav page={page} setPage={setPage} scrolled={scrolled} />
       <main>
-        <Suspense fallback={null}>
-          <Page key={pageKey} setPage={setPage} />
-        </Suspense>
+        <ErrorBoundary>
+          <Suspense fallback={<div style={{ minHeight: '60vh' }} />}>
+            <Page key={pageKey} setPage={setPage} />
+          </Suspense>
+        </ErrorBoundary>
       </main>
       <Footer setPage={setPage} />
     </>

@@ -83,6 +83,10 @@ export default function AdminPagesEditor({ onDirtyChange }) {
     try {
       await adminSavePageContent(pageId, data);
       setSaved(data);
+      // Re-sync the fields to exactly what was saved so "• changed" badges clear
+      // and any box cleared-to-empty (which can't be saved) reverts to its default.
+      setValues(Object.fromEntries(fields.map((f) =>
+        [f.key, data[f.key] != null && data[f.key] !== '' ? data[f.key] : f.default])));
       setStatus('saved');
     } catch (e) {
       setStatus(/permission/i.test(e.message || '')
@@ -160,7 +164,7 @@ export default function AdminPagesEditor({ onDirtyChange }) {
                     ) : f.type === 'image' ? (
                       <>
                         <input className="cms-input" value={val} placeholder="Image URL" onChange={(e) => setField(f.key, e.target.value)} />
-                        <input type="file" accept="image/*" style={{ marginTop: 8 }} onChange={(e) => upload(e.target.files[0], f.key)} />
+                        <input type="file" accept="image/png,image/jpeg,image/gif,image/webp" style={{ marginTop: 8 }} onChange={(e) => upload(e.target.files[0], f.key)} />
                         {uploadingKey === f.key && <span className="cms-hint">Uploading…</span>}
                         {val && <img className="cms-thumb-prev" src={val} alt="" />}
                       </>
