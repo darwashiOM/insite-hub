@@ -34,6 +34,8 @@ export default function ArticleEditor({ article, onDone, onCancel }) {
   const [form, setForm] = useState(() => fromArticle(article));
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
+  // Once the slug is hand-edited, stop auto-deriving it from the title.
+  const [slugDirty, setSlugDirty] = useState(!isNew);
 
   const set = (k, v) => setForm((f) => ({ ...f, [k]: v }));
   const setAuthor = (k, v) => setForm((f) => ({ ...f, author: { ...f.author, [k]: v } }));
@@ -70,21 +72,29 @@ export default function ArticleEditor({ article, onDone, onCancel }) {
     const slug = (form.slug.trim() || slugify(title));
     if (!slug) { setError('A valid slug is required.'); return; }
 
-    // Normalize body + derive TOC from headings.
+    // Normalize body + derive TOC from headings. Anchor ids are made unique
+    // (so duplicate headings don't collide); empty-text headings are kept in the
+    // body but excluded from the TOC.
+    const usedIds = new Set();
+    const uniqueId = (raw) => {
+      const base = (raw || '').trim() || 'section';
+      let id = base, n = 2;
+      while (usedIds.has(id)) id = `${base}-${n++}`;
+      usedIds.add(id);
+      return id;
+    };
+    const headings = [];
     const body = form.body.map((b) => {
       if (b.type === 'h2') {
-        const id = (b.id || '').trim() || slugify(b.text || '');
-        return { type: 'h2', id, text: (b.text || '').trim() };
+        const text = (b.text || '').trim();
+        const id = uniqueId((b.id || '').trim() || slugify(text));
+        headings.push({ id, text, navLabel: (b.navLabel || '').trim() });
+        return { type: 'h2', id, text };
       }
       if (b.type === 'quote') return { type: 'quote', text: (b.text || '').trim() };
       return { type: 'p', html: (b.html || '').trim() };
     });
-    const toc = form.body
-      .filter((b) => b.type === 'h2')
-      .map((b) => {
-        const id = (b.id || '').trim() || slugify(b.text || '');
-        return { id, label: (b.navLabel || '').trim() || (b.text || '').trim() };
-      });
+    const toc = headings.filter((h) => h.text).map((h) => ({ id: h.id, label: h.navLabel || h.text }));
 
     const article = {
       slug, pillar: form.pillar.trim(), title, description: form.description.trim(),
@@ -100,7 +110,7 @@ export default function ArticleEditor({ article, onDone, onCancel }) {
 
     setBusy(true);
     try {
-      await adminSaveArticle(article);
+      await adminSaveArticle(article, isNew);
       onDone();
     } catch (e) {
       setError('Save failed: ' + (e.message || e));
@@ -126,14 +136,14 @@ export default function ArticleEditor({ article, onDone, onCancel }) {
         <div className="cms-field">
           <label>Title</label>
           <input className="cms-input" value={form.title}
-            onChange={(e) => { const v = e.target.value; set('title', v); if (isNew) set('slug', slugify(v)); }} />
+            onChange={(e) => { const v = e.target.value; set('title', v); if (isNew && !slugDirty) set('slug', slugify(v)); }} />
         </div>
 
         <div className="cms-row">
           <div className="cms-field">
             <label>Slug (URL)</label>
             <input className="cms-input" value={form.slug} disabled={!isNew}
-              onChange={(e) => set('slug', slugify(e.target.value))} />
+              onChange={(e) => { set('slug', slugify(e.target.value)); setSlugDirty(true); }} />
             <p className="cms-hint">/blog/{form.slug || '…'}{!isNew && ' · fixed after creation'}</p>
           </div>
           <div className="cms-field">
@@ -151,6 +161,12 @@ export default function ArticleEditor({ article, onDone, onCancel }) {
             <label>Read time (e.g. 7 min read)</label>
             <input className="cms-input" value={form.readTime} onChange={(e) => set('readTime', e.target.value)} />
           </div>
+        </div>
+
+        <div className="cms-field">
+          <label>Sort order (lower shows first on the blog; ties break by date)</label>
+          <input className="cms-input" type="number" style={{ maxWidth: 160 }} value={form.order}
+            onChange={(e) => set('order', e.target.value)} />
         </div>
 
         <div className="cms-field">

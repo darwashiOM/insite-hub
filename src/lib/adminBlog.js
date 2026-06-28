@@ -1,4 +1,5 @@
 import { db } from './firebase';
+import { dateTs } from './blog';
 import { auth, storage } from './firebaseAuth';
 import { signInWithCustomToken, signOut, onAuthStateChanged } from 'firebase/auth';
 import {
@@ -45,11 +46,7 @@ export function onAdminAuth(cb) {
 export async function adminListArticles() {
   const snap = await getDocs(collection(db, 'articles'));
   const items = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
-  items.sort(
-    (a, b) =>
-      (a.order ?? 9999) - (b.order ?? 9999) ||
-      String(b.date || '').localeCompare(String(a.date || ''))
-  );
+  items.sort((a, b) => (a.order ?? 9999) - (b.order ?? 9999) || dateTs(b.date) - dateTs(a.date));
   return items;
 }
 
@@ -58,12 +55,20 @@ export async function adminGetArticle(slug) {
   return snap.exists() ? { id: snap.id, ...snap.data() } : null;
 }
 
-// Save (create or overwrite) an article. The slug is the document id.
-export async function adminSaveArticle(article) {
+// Save an article. The slug is the document id. On create (isNew), refuse to
+// overwrite an existing article at the same slug (prevents silent data loss).
+export async function adminSaveArticle(article, isNew = false) {
   const { id, ...data } = article;
   const slug = data.slug;
   if (!slug) throw new Error('A slug is required.');
-  await setDoc(doc(db, 'articles', slug), { ...data, updatedAt: serverTimestamp() }, { merge: false });
+  const ref = doc(db, 'articles', slug);
+  if (isNew) {
+    const existing = await getDoc(ref);
+    if (existing.exists()) {
+      throw new Error(`An article already exists at /blog/${slug}. Pick a different title or slug.`);
+    }
+  }
+  await setDoc(ref, { ...data, updatedAt: serverTimestamp() }, { merge: false });
   return slug;
 }
 

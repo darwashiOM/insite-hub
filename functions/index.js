@@ -182,9 +182,10 @@ exports.submitNewsletter = onRequest(async (req, res) => {
 // the admin claim. The browser signs in with it; Firestore/Storage rules grant
 // writes only to that claim. The password never reaches the client.
 // ---------------------------------------------------------------------------
-const ADMIN_MAX_ATTEMPTS = 8;
-const ADMIN_WINDOW_MS = 15 * 60 * 1000;   // attempts counted within 15 min
-const ADMIN_LOCKOUT_MS = 15 * 60 * 1000;  // lock for 15 min after too many
+const ADMIN_IP_MAX = 8;          // per-IP failures before that IP is locked
+const ADMIN_GLOBAL_MAX = 40;     // total failures (any source) before all logins lock
+const ADMIN_WINDOW_MS = 15 * 60 * 1000;   // rolling window
+const ADMIN_LOCKOUT_MS = 15 * 60 * 1000;  // lockout duration
 
 function constantTimeEqual(a, b) {
   const ab = Buffer.from(String(a));
@@ -196,6 +197,33 @@ function constantTimeEqual(a, b) {
   return crypto.timingSafeEqual(ab, bb);
 }
 
+// Behind Firebase Hosting -> Cloud Functions, Google appends the REAL client IP as
+// the rightmost X-Forwarded-For entry; everything left of it is client-supplied and
+// untrustworthy. Use the rightmost token so the key can't be spoofed per-request.
+function clientIp(req) {
+  const parts = String(req.headers["x-forwarded-for"] || "")
+    .split(",").map((s) => s.trim()).filter(Boolean);
+  const ip = parts.length ? parts[parts.length - 1] : (req.ip || "unknown");
+  return ip.replace(/[^a-zA-Z0-9_.:-]/g, "_").slice(0, 80) || "unknown";
+}
+
+function isLocked(d, now) {
+  return !!(d && d.lockedUntil && now < d.lockedUntil);
+}
+
+// Compute the next failure state from a snapshot and write it (transaction-safe:
+// the caller does all reads before any of these writes).
+function applyFailure(tx, ref, snap, max, now) {
+  const d = snap.exists ? snap.data() : { count: 0, first: now, lockedUntil: 0 };
+  let count = d.count || 0;
+  let first = d.first || now;
+  if (now - first > ADMIN_WINDOW_MS) { count = 0; first = now; }
+  count += 1;
+  const upd = { count, first, lockedUntil: d.lockedUntil || 0 };
+  if (count >= max) { upd.lockedUntil = now + ADMIN_LOCKOUT_MS; upd.count = 0; upd.first = now; }
+  tx.set(ref, upd, { merge: true });
+}
+
 exports.adminLogin = onRequest({ secrets: [ADMIN_PASSWORD] }, async (req, res) => {
   if (setCors(req, res)) return;
   if (req.method !== "POST") {
@@ -203,41 +231,36 @@ exports.adminLogin = onRequest({ secrets: [ADMIN_PASSWORD] }, async (req, res) =
     return;
   }
 
-  const ipRaw = (req.headers["x-forwarded-for"] || "").split(",")[0].trim() || req.ip || "unknown";
-  const ip = (ipRaw.replace(/[^a-zA-Z0-9_.:-]/g, "_").slice(0, 80)) || "unknown";
   const db = admin.firestore();
-  const ref = db.collection("adminLoginAttempts").doc(ip);
   const now = Date.now();
+  const ipRef = db.collection("adminLoginAttempts").doc(clientIp(req));
+  const globalRef = db.collection("adminLoginAttempts").doc("__global__");
 
-  const snap = await ref.get();
-  const data = snap.exists ? snap.data() : { count: 0, first: now, lockedUntil: 0 };
-
-  if (data.lockedUntil && now < data.lockedUntil) {
+  // Reject early if this IP OR all logins (global) are currently locked.
+  const [ipSnap, gSnap] = await Promise.all([ipRef.get(), globalRef.get()]);
+  if (isLocked(ipSnap.data(), now) || isLocked(gSnap.data(), now)) {
     res.status(429).json({ error: "Too many attempts. Try again later." });
     return;
   }
-
-  let count = data.count || 0;
-  let first = data.first || now;
-  if (now - first > ADMIN_WINDOW_MS) { count = 0; first = now; }
 
   const password = (req.body && req.body.password) || "";
   const ok = password.length > 0 && constantTimeEqual(password, ADMIN_PASSWORD.value());
 
   if (!ok) {
-    count += 1;
-    const update = { count, first, lockedUntil: 0 };
-    if (count >= ADMIN_MAX_ATTEMPTS) {
-      update.lockedUntil = now + ADMIN_LOCKOUT_MS;
-      update.count = 0;
-      update.first = now;
-    }
-    await ref.set(update, { merge: true });
+    // Atomically record the failure against both the per-IP and global counters.
+    // A spoofed X-Forwarded-For makes a new per-IP doc, but the global counter
+    // still trips, so distributed/spoofed guessing is also rate-limited.
+    await db.runTransaction(async (tx) => {
+      const [is, gs] = await Promise.all([tx.get(ipRef), tx.get(globalRef)]); // reads first
+      applyFailure(tx, ipRef, is, ADMIN_IP_MAX, now);                          // then writes
+      applyFailure(tx, globalRef, gs, ADMIN_GLOBAL_MAX, now);
+    });
     res.status(401).json({ error: "Invalid password." });
     return;
   }
 
-  await ref.set({ count: 0, first: now, lockedUntil: 0 }, { merge: true });
+  // Success: clear this IP's failures and mint the admin session.
+  await ipRef.set({ count: 0, first: now, lockedUntil: 0 }, { merge: true });
   const token = await admin.auth().createCustomToken("site-admin", { admin: true });
   res.status(200).json({ token });
 });

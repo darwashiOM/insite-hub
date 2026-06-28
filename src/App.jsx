@@ -15,6 +15,7 @@ import ResourcesPage from './pages/ResourcesPage';
 import NewsletterPage from './pages/NewsletterPage';
 import ContactPage from './pages/ContactPage';
 import FutureProofPage from './pages/FutureProofPage';
+import NotFoundPage from './pages/NotFoundPage';
 // Blog + admin are code-split so the Firebase SDK loads only on /blog routes and
 // the admin (not on the homepage / marketing pages).
 const BlogIndexPage = lazy(() => import('./pages/BlogIndexPage'));
@@ -38,6 +39,7 @@ const PAGE_TITLES = {
   blog: "Blog · Proxa Labs",
   article: "Proxa Labs",
   admin: "CMS · Proxa Labs",
+  notfound: "Page not found · Proxa Labs",
 };
 
 const DESCS = {
@@ -57,10 +59,11 @@ const DESCS = {
   blog: "Field notes and frameworks from Proxa Labs on commercial readiness, AI evidence, and closing the gap between training and a field that can perform.",
   article: "Field notes and frameworks from Proxa Labs on commercial readiness.",
   admin: "Proxa Labs content management.",
+  notfound: "The page you're looking for doesn't exist or has moved.",
 };
 
 // Campaign / placeholder / private pages that should not be indexed.
-const NOINDEX_PAGES = new Set(["futureproof", "admin"]);
+const NOINDEX_PAGES = new Set(["futureproof", "admin", "notfound"]);
 
 const PAGES = {
   home: HomePage, platform: PlatformPage, advisory: AdvisoryPage,
@@ -68,7 +71,7 @@ const PAGES = {
   proxalab: ProxaLabsPage, about: AboutPage, news: NewsPage,
   resources: ResourcesPage, newsletter: NewsletterPage, contact: ContactPage,
   futureproof: FutureProofPage, blog: BlogIndexPage, article: ArticlePage,
-  admin: AdminPage,
+  admin: AdminPage, notfound: NotFoundPage,
 };
 
 const PAGE_PATHS = {
@@ -98,7 +101,7 @@ const pageFromLocation = () => {
   const normalized = window.location.pathname.replace(/\/+$/, "") || "/";
   // /blog/<slug> resolves to the dynamic article page (slug read from the URL).
   if (normalized.startsWith("/blog/") && normalized !== "/blog") return "article";
-  return PATH_PAGES[normalized] || "home";
+  return PATH_PAGES[normalized] || "notfound";
 };
 
 const urlForPage = (page, hash, slug) => {
@@ -118,6 +121,9 @@ const scrollToHash = (hash) => {
 export default function App() {
   const [page, setCurrentPage] = useState(pageFromLocation);
   const [scrolled, setScrolled] = useState(false);
+  // Bumped on every navigation to force a re-render even when the page key is
+  // unchanged (e.g. article -> article), so the pathname-keyed page remounts.
+  const [, setNavTick] = useState(0);
 
   useEffect(() => {
     const fn = () => setScrolled(window.scrollY > 40);
@@ -148,6 +154,7 @@ export default function App() {
   useEffect(() => {
     const handlePopState = () => {
       setCurrentPage(pageFromLocation());
+      setNavTick((t) => t + 1);
       window.dispatchEvent(new Event("hashchange"));
       window.setTimeout(() => scrollToHash(window.location.hash), 0);
     };
@@ -170,7 +177,8 @@ export default function App() {
       window.history.pushState({}, "", nextUrl);
       window.dispatchEvent(new Event("hashchange"));
     }
-    setCurrentPage(PAGES[nextPage] ? nextPage : "home");
+    setCurrentPage(PAGES[nextPage] ? nextPage : "notfound");
+    setNavTick((t) => t + 1);
     window.setTimeout(() => scrollToHash(hash), 0);
   };
 

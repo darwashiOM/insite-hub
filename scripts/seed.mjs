@@ -21,7 +21,9 @@ function toFields(obj) {
   return f;
 }
 
-const doc = { ...readinessGap, thumb: '/assets/blog/hero-dial.png', published: true, order: 0 };
+// Drop the placeholder related links (they pointed at '#'); real related wiring
+// comes once there are more articles.
+const doc = { ...readinessGap, related: [], thumb: '/assets/blog/hero-dial.png', published: true, order: 0 };
 const slug = doc.slug;
 const url = `https://firestore.googleapis.com/v1/projects/${PROJECT}/databases/(default)/documents/articles/${slug}`;
 

@@ -21,6 +21,9 @@ export default function ArticlePage({ setPage }) {
         document.title = `${article.title} · Proxa Labs`;
         const meta = document.querySelector('meta[name="description"]');
         if (meta && article.description) meta.content = article.description;
+        // Deep-link: scroll to a #section once the body has rendered.
+        const hash = window.location.hash.replace(/^#/, '');
+        if (hash) window.setTimeout(() => document.getElementById(hash)?.scrollIntoView({ block: 'start' }), 60);
       }
     });
     return () => { alive = false; };

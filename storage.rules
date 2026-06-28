@@ -12,9 +12,12 @@ service firebase.storage {
 
     match /blog/{allPaths=**} {
       allow read: if true;
+      // create/update require admin + size + raster image type (SVG excluded, it can
+      // carry script). On delete request.resource is null, so allow admin deletes too.
       allow write: if isAdmin()
-                   && request.resource.size < 10 * 1024 * 1024
-                   && request.resource.contentType.matches('image/.*');
+                   && (request.resource == null
+                       || (request.resource.size < 10 * 1024 * 1024
+                           && request.resource.contentType.matches('image/(png|jpe?g|gif|webp)')));
     }
 
     match /{allPaths=**} {

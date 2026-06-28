@@ -1,8 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
+import DOMPurify from 'dompurify';
 import './ArticleLayout.css';
 
 const SYMBOL = '/assets/blog/proxa-symbol.png';
 const QUOTE_BARS = '/assets/blog/quote-bars.png';
+
+// Sanitize admin-authored HTML before it hits dangerouslySetInnerHTML (defense in
+// depth — strips <script>, event handlers, javascript: URLs, etc.).
+const clean = (html) => ({ __html: DOMPurify.sanitize(html || '') });
 
 /*
  * Reusable Proxa Labs blog article page. Renders from an `article` data object
@@ -67,6 +72,8 @@ export default function ArticleLayout({ article }) {
   };
 
   const { author } = article;
+  const bylineMeta = [author.role, article.date, article.readTime].filter(Boolean);
+  const related = (article.related || []).filter((c) => c.href && c.href !== '#');
 
   return (
     <div className="proxa-article" ref={rootRef}>
@@ -81,7 +88,9 @@ export default function ArticleLayout({ article }) {
             <div className="byline">
               <span className="b-name">{author.name}</span>
               <span className="b-rest">
-                {author.role} <span className="sep">&bull;</span> {article.date} <span className="sep">&bull;</span> {article.readTime}
+                {bylineMeta.map((part, i) => (
+                  <span key={i}>{i > 0 && <span className="sep">&bull;</span>}{part}</span>
+                ))}
               </span>
             </div>
           </div>
@@ -92,7 +101,7 @@ export default function ArticleLayout({ article }) {
         <article className="col-main">
           <div className="summary">
             <p className="summary-kicker">Article summary</p>
-            <p dangerouslySetInnerHTML={{ __html: article.summary }} />
+            <p dangerouslySetInnerHTML={clean(article.summary)} />
           </div>
 
           <div className="toc-mobile">
@@ -117,7 +126,7 @@ export default function ArticleLayout({ article }) {
                   </blockquote>
                 );
               }
-              return <p key={i} dangerouslySetInnerHTML={{ __html: b.html }} />;
+              return <p key={i} dangerouslySetInnerHTML={clean(b.html)} />;
             })}
           </div>
 
@@ -154,15 +163,15 @@ export default function ArticleLayout({ article }) {
       </div>
 
       {/* Related — shown only when the article has related links */}
-      {article.related?.length > 0 && (
+      {related.length > 0 && (
       <section className="shell related">
         <h3 className="related-head">Keep reading</h3>
         <div className="cards">
-          {article.related.map((c) => (
+          {related.map((c) => (
             <a key={c.title} className={'card card-' + c.variant} href={c.href}>
               <div className="card-img" />
               <p className="card-pillar">{c.pillar}</p>
-              <p className="card-title" dangerouslySetInnerHTML={{ __html: c.title }} />
+              <p className="card-title" dangerouslySetInnerHTML={clean(c.title)} />
               <p className="card-meta">{c.meta}</p>
             </a>
           ))}

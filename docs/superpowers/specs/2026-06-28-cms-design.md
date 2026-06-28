@@ -94,3 +94,23 @@ A password-protected CMS, built on the site's existing Firebase, that lets non-t
 ## Open items
 - Block editor richness (start minimal: paragraph/heading/quote, matching the current model).
 - Whether to keep `src/data/articles.js` as a fallback during cutover (lean: remove after seed verified).
+
+## Deploy runbook (important)
+
+GitHub Actions (`.github/workflows/deploy.yml`) deploys **Hosting only** on push to `main`.
+The CMS's Cloud Function + security rules are **not** deployed by CI, so deploy them
+**manually before** pushing/merging to main (order matters — the function and rules must
+exist before the Hosting deploy ships the `/api/admin-login` rewrite and the Firestore-backed blog):
+
+```
+# 1. one-time: set the admin password secret (interactive; never in code)
+firebase functions:secrets:set ADMIN_PASSWORD --project insite-hub-web
+
+# 2. deploy backend (functions + rules) BEFORE hosting
+firebase deploy --only functions,firestore:rules,storage --project insite-hub-web
+
+# 3. then hosting (or let the push-to-main CI do it)
+```
+
+A future improvement is to add a `firebase deploy --only functions,firestore:rules,storage`
+step to deploy.yml (before the hosting step) using the existing service-account secret.
