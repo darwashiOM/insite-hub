@@ -1,35 +1,28 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import ArticleLayout from '../components/ArticleLayout';
-import { getArticleBySlug } from '../lib/blog';
+import { useArticle } from '../lib/blog';
 
 function slugFromPath() {
   const parts = window.location.pathname.replace(/\/+$/, '').split('/');
   return parts[parts.length - 1] || '';
 }
 
-// Renders a published blog article resolved from the /blog/<slug> URL.
+// Renders a published blog article resolved from the /blog/<slug> URL. The article
+// comes from the cached published set, so navigating from the index is instant.
 export default function ArticlePage({ setPage }) {
-  const [state, setState] = useState({ loading: true, article: null });
+  const { article, loading } = useArticle(slugFromPath());
 
   useEffect(() => {
-    let alive = true;
-    setState({ loading: true, article: null });
-    getArticleBySlug(slugFromPath()).then((article) => {
-      if (!alive) return;
-      setState({ loading: false, article });
-      if (article) {
-        document.title = `${article.title} · Proxa Labs`;
-        const meta = document.querySelector('meta[name="description"]');
-        if (meta && article.description) meta.content = article.description;
-        // Deep-link: scroll to a #section once the body has rendered.
-        const hash = window.location.hash.replace(/^#/, '');
-        if (hash) window.setTimeout(() => document.getElementById(hash)?.scrollIntoView({ block: 'start' }), 60);
-      }
-    });
-    return () => { alive = false; };
-  }, []);
+    if (!article) return;
+    document.title = `${article.title} · Proxa Labs`;
+    const meta = document.querySelector('meta[name="description"]');
+    if (meta && article.description) meta.content = article.description;
+    // Deep-link: scroll to a #section once the body has rendered.
+    const hash = window.location.hash.replace(/^#/, '');
+    if (hash) window.setTimeout(() => document.getElementById(hash)?.scrollIntoView({ block: 'start' }), 60);
+  }, [article]);
 
-  if (state.loading) {
+  if (loading) {
     return (
       <div className="proxa-article">
         <section className="shell blog-index"><p className="blog-sub">Loading…</p></section>
@@ -37,7 +30,7 @@ export default function ArticlePage({ setPage }) {
     );
   }
 
-  if (!state.article) {
+  if (!article) {
     return (
       <div className="proxa-article">
         <section className="shell blog-index">
@@ -54,5 +47,5 @@ export default function ArticlePage({ setPage }) {
     );
   }
 
-  return <ArticleLayout article={state.article} />;
+  return <ArticleLayout article={article} />;
 }

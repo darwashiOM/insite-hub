@@ -16,6 +16,7 @@ import NewsletterPage from './pages/NewsletterPage';
 import ContactPage from './pages/ContactPage';
 import FutureProofPage from './pages/FutureProofPage';
 import NotFoundPage from './pages/NotFoundPage';
+import { prefetchContent } from './lib/content';
 // Blog + admin are code-split so the Firebase SDK loads only on /blog routes and
 // the admin (not on the homepage / marketing pages).
 const BlogIndexPage = lazy(() => import('./pages/BlogIndexPage'));
@@ -130,6 +131,9 @@ export default function App() {
     window.addEventListener("scroll", fn);
     return () => window.removeEventListener("scroll", fn);
   }, []);
+
+  // Warm the page-content cache early so overrides are ready before navigation.
+  useEffect(() => { prefetchContent(); }, []);
 
   useEffect(() => {
     document.title = PAGE_TITLES[page] || PAGE_TITLES.home;
