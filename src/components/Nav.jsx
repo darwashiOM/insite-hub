@@ -22,10 +22,9 @@ const SOLUTIONS_ITEMS = [
   ["Content", "content"],
 ];
 
-const FLAT_LINKS = [
-  ["The Lab", "proxalab"],
+const RESOURCES_ITEMS = [
   ["Resources", "resources"],
-  ["About", "about"],
+  ["Blog", "blog"],
 ];
 
 const Chevron = ({ open }) => (
@@ -127,14 +126,30 @@ const Nav = ({ page, setPage, scrolled }) => {
             )}
           </div>
 
-          {/* Flat links */}
-          {FLAT_LINKS.map(([l, p, type]) => (
-            type === "external" ? (
-              <a key={p} className="nl" href={p} target="_blank" rel="noopener noreferrer">{l}</a>
-            ) : (
-              <button key={p} className={"nl" + (page === p ? " on" : "")} onClick={() => go(p)}>{l}</button>
-            )
-          ))}
+          {/* The Lab */}
+          <button className={"nl" + (page === "proxalab" ? " on" : "")} onClick={() => go("proxalab")}>The Lab</button>
+
+          {/* Resources (mini) */}
+          <div style={{ position: "relative" }}>
+            <button
+              className={"nl nl-drop" + (isActive(RESOURCES_ITEMS) ? " on" : "")}
+              onClick={() => toggle("resources")}
+              style={{ color: openDropdown === "resources" ? "var(--o)" : undefined }}
+            >
+              Resources
+              <Chevron open={openDropdown === "resources"} />
+            </button>
+            {openDropdown === "resources" && (
+              <div className="nav-mini-menu">
+                {RESOURCES_ITEMS.map(([l, p]) => (
+                  <button key={p} className={"nav-mini-item" + (page === p ? " on" : "")} onClick={() => go(p)}>{l}</button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* About */}
+          <button className={"nl" + (page === "about" ? " on" : "")} onClick={() => go("about")}>About</button>
         </div>
 
         <div className="nav-right">
@@ -186,13 +201,21 @@ const Nav = ({ page, setPage, scrolled }) => {
           </div>
         )}
 
-        {FLAT_LINKS.map(([l, p, type]) => (
-          type === "external" ? (
-            <a key={p} href={p} target="_blank" rel="noopener noreferrer" onClick={() => setMobileOpen(false)}>{l}</a>
-          ) : (
-            <button key={p} className={page === p ? "on" : ""} onClick={() => go(p)}>{l}</button>
-          )
-        ))}
+        <button className={page === "proxalab" ? "on" : ""} onClick={() => go("proxalab")}>The Lab</button>
+
+        <button className="mobile-accordion-head" onClick={() => toggleMobile("resources")}>
+          <span>Resources</span>
+          <span style={{ transform: mobileAccordion === "resources" ? "rotate(180deg)" : "rotate(0)", transition: "transform .2s" }}>▾</span>
+        </button>
+        {mobileAccordion === "resources" && (
+          <div className="mobile-accordion-body">
+            {RESOURCES_ITEMS.map(([l, p]) => (
+              <button key={p} className={page === p ? "on" : ""} onClick={() => go(p)}>{l}</button>
+            ))}
+          </div>
+        )}
+
+        <button className={page === "about" ? "on" : ""} onClick={() => go("about")}>About</button>
         <button className="mobile-cta" onClick={() => go("contact", "demo")}>Book a Demo</button>
       </div>
     </>

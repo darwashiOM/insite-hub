@@ -75,3 +75,16 @@ export const readinessGap = {
     { variant: 3, pillar: 'Evidence', title: 'Why Every Pharma AI Pilot Dies in the Same Meeting', meta: '7 min read', href: '#' },
   ],
 };
+
+// Every published article, newest first — drives the /blog index page.
+// `page` is the App.jsx route key for the article.
+export const blogArticles = [
+  {
+    page: 'readinessGap',
+    pillar: readinessGap.pillar,
+    title: readinessGap.title,
+    date: readinessGap.date,
+    readTime: readinessGap.readTime,
+    thumb: '/assets/blog/hero-dial.png',
+  },
+];

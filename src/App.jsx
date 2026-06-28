@@ -16,6 +16,7 @@ import NewsletterPage from './pages/NewsletterPage';
 import ContactPage from './pages/ContactPage';
 import FutureProofPage from './pages/FutureProofPage';
 import ReadinessGapPage from './pages/ReadinessGapPage';
+import BlogIndexPage from './pages/BlogIndexPage';
 
 const PAGE_TITLES = {
   home: "Proxa Labs · AI-First Commercial Learning for Biopharma",
@@ -31,6 +32,7 @@ const PAGE_TITLES = {
   newsletter: "Newsletter · Stay Ahead of AI in Biopharma · Proxa Labs",
   contact: "Contact Proxa Labs · Start a Conversation",
   futureproof: "Future-Proof Your Organization · Proxa Labs",
+  blog: "Blog · Proxa Labs",
   readinessGap: "The Readiness Gap · Proxa Labs",
 };
 
@@ -48,6 +50,7 @@ const DESCS = {
   newsletter: "Frameworks, research, and field notes from Proxa Labs' practitioners. Sent when there's something worth saying.",
   contact: "Start a conversation with Proxa Labs. Ready to talk, want to learn first, or just exploring — we'll meet you where you are.",
   futureproof: "An executive brief from Proxa Labs on building durable AI capability across biopharma commercial organizations.",
+  blog: "Field notes and frameworks from Proxa Labs on commercial readiness, AI evidence, and closing the gap between training and a field that can perform.",
   readinessGap: "Biopharma teams measure training activity and assume it equals readiness. Why the two differ, why your tools can't close the gap, and what finally can.",
 };
 
@@ -59,7 +62,7 @@ const PAGES = {
   literacy: LiteracyPage, insitex: InsiteXPage, content: ContentPage,
   proxalab: ProxaLabsPage, about: AboutPage, news: NewsPage,
   resources: ResourcesPage, newsletter: NewsletterPage, contact: ContactPage,
-  futureproof: FutureProofPage, readinessGap: ReadinessGapPage,
+  futureproof: FutureProofPage, blog: BlogIndexPage, readinessGap: ReadinessGapPage,
 };
 
 const PAGE_PATHS = {
@@ -76,6 +79,7 @@ const PAGE_PATHS = {
   newsletter: "/newsletter",
   contact: "/contact",
   futureproof: "/future-proof-your-organization",
+  blog: "/blog",
   readinessGap: "/blog/the-readiness-gap",
 };
 
