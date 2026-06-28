@@ -85,6 +85,17 @@ export async function adminUploadImage(file) {
   return getDownloadURL(r);
 }
 
+// --- Page content overrides (Phase 2) -------------------------------------
+
+export async function adminGetPageContent(pageId) {
+  const snap = await getDoc(doc(db, 'siteContent', pageId));
+  return snap.exists() ? snap.data() : {};
+}
+
+export async function adminSavePageContent(pageId, data) {
+  await setDoc(doc(db, 'siteContent', pageId), { ...data, updatedAt: serverTimestamp() }, { merge: false });
+}
+
 // Helper: turn a title into a url-safe slug.
 export function slugify(s) {
   return String(s)

@@ -7,6 +7,8 @@ import StepRail from '../components/sections/StepRail';
 import CTABand from '../components/sections/CTABand';
 import AnnouncementBand from '../components/AnnouncementBand';
 import Icon from '../components/Icon';
+import { usePageContent } from '../lib/content';
+import { HOME_HERO_HEADLINE_DEFAULT } from '../content/manifest';
 
 const CLIENT_LOGOS = ["AbbVie","Allergan","Amgen","AstraZeneca","Bayer","Biogen","BMS","Genentech","GSK","Janssen","Merck","Novartis","Novo Nordisk","Pfizer","Roche","Sanofi","Takeda","Teva","Gilead","Mass General","Penn Medicine","MD Anderson"];
 
@@ -42,18 +44,24 @@ const STEPS = [
 ];
 
 export default function HomePage({ setPage }) {
+  const c = usePageContent('home');
+  // Headline keeps its rich (italic) default, but renders a plain string if overridden.
+  const hh = c('hero.headline');
+  const heroHeadline = hh === HOME_HERO_HEADLINE_DEFAULT
+    ? <span className="home-hero-headline">The AI commercial learning partner <em>built for biopharma</em>. Not adapted for it.</span>
+    : <span className="home-hero-headline">{hh}</span>;
   return (
     <>
       <EditorialHero
-        eyebrow="FOR COMMERCIAL L&D LEADERS IN BIOPHARMA"
-        headline={<span className="home-hero-headline">The AI commercial learning partner <em>built for biopharma</em>. Not adapted for it.</span>}
-        subhead="Most platforms were built for enterprise sales and retrofitted for pharma. Proxa Labs was built for biopharma from day one: advisory methodology, AI literacy programming, and a closed-loop platform designed around the constraints you actually operate in: MLR review, launch timelines, federated commercial structures."
-        primaryCta={{ label: "See the Platform", onClick: () => setPage("platform") }}
+        eyebrow={c('hero.eyebrow')}
+        headline={heroHeadline}
+        subhead={c('hero.subhead')}
+        primaryCta={{ label: c('hero.ctaLabel'), onClick: () => setPage("platform") }}
         visual={<LoopVisual />}
       />
 
       <div className="logo-band">
-        <h2 className="t-h2 lb-label">Trusted across biopharma and health systems</h2>
+        <h2 className="t-h2 lb-label">{c('logoBand.label')}</h2>
         <div className="lb-row">
           {CLIENT_LOGOS.map(n => <span key={n} className="lb-co">{n}</span>)}
         </div>
@@ -132,8 +140,8 @@ export default function HomePage({ setPage }) {
 
       <CTABand
         heading={<>The mandate is clear.<br /><em>The path forward isn't always.</em></>}
-        body="Proxa Labs works with commercial L&D leaders who have been told to deliver on AI but haven't found a partner who understands what that actually requires in a biopharma environment. Start with a conversation. We'll tell you what we'd look at first."
-        primaryCta={{ label: "Book a Consult", onClick: () => setPage("contact") }}
+        body={c('cta.body')}
+        primaryCta={{ label: c('cta.ctaLabel'), onClick: () => setPage("contact") }}
       />
     </>
   );

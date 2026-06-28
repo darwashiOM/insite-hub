@@ -19,6 +19,12 @@ service cloud.firestore {
       allow create, update, delete: if isAdmin();
     }
 
+    // Page content overrides (editable marketing copy). Publicly readable; admin-only writes.
+    match /siteContent/{page} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
     // Everything else (incl. server-only login-attempt records) is denied to clients.
     match /{document=**} {
       allow read, write: if false;

@@ -264,3 +264,22 @@ exports.adminLogin = onRequest({ secrets: [ADMIN_PASSWORD] }, async (req, res) =
   const token = await admin.auth().createCustomToken("site-admin", { admin: true });
   res.status(200).json({ token });
 });
+
+// ---------------------------------------------------------------------------
+// Public page-content overrides: returns all siteContent docs as one JSON blob.
+// Marketing pages fetch this (plain fetch, no Firebase SDK) and render overrides
+// over their in-code defaults. Cached at the CDN so it's fast; updates within ~60s.
+// ---------------------------------------------------------------------------
+exports.getContent = onRequest(async (req, res) => {
+  if (setCors(req, res)) return;
+  try {
+    const snap = await admin.firestore().collection("siteContent").get();
+    const out = {};
+    snap.forEach((d) => { out[d.id] = d.data(); });
+    res.set("Cache-Control", "public, max-age=60, s-maxage=60");
+    res.status(200).json(out);
+  } catch (err) {
+    console.error("getContent failed:", err);
+    res.status(200).json({}); // never break the public site on content fetch failure
+  }
+});

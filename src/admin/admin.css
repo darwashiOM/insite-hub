@@ -70,3 +70,10 @@
 .cms-check { display: flex; align-items: center; gap: 9px; font-size: 14px; font-weight: 600; }
 .cms-check input { width: 18px; height: 18px; accent-color: var(--o); }
 .cms-thumb-prev { width: 120px; height: 75px; object-fit: cover; border-radius: 8px; border: 1px solid var(--br); margin-top: 8px; display: block; }
+
+/* top-level tabs (Blog | Pages) */
+.cms-tabs { display: flex; gap: 4px; }
+.cms-tab { font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600; padding: 8px 16px; border-radius: 9px; border: none; background: none; color: var(--bd); cursor: pointer; }
+.cms-tab:hover { color: var(--ink); }
+.cms-tab.on { background: var(--o); color: #fff; }
+.cms-linkbtn { background: none; border: none; padding: 0; color: var(--o-deep); font: inherit; font-size: 12px; cursor: pointer; text-decoration: underline; }
