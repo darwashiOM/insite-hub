@@ -18,6 +18,7 @@ import FutureProofPage from './pages/FutureProofPage';
 import NotFoundPage from './pages/NotFoundPage';
 import ErrorBoundary from './components/ErrorBoundary';
 import { prefetchContent } from './lib/content';
+import { trackPageView } from './analytics';
 // Blog + admin are code-split so the Firebase SDK loads only on /blog routes and
 // the admin (not on the homepage / marketing pages).
 // If a hashed chunk is missing (stale tab after a redeploy), reload once to pick
@@ -79,6 +80,23 @@ const DESCS = {
 // Campaign / placeholder / private pages that should not be indexed.
 const NOINDEX_PAGES = new Set(["futureproof", "admin", "notfound"]);
 
+// Production origin used for canonical + social tags. Still insitehub.com until
+// the domain flips; override with VITE_SITE_URL. OG image is a placeholder until
+// a proper 1200x630 share image is added.
+const SITE_URL = (import.meta.env.VITE_SITE_URL || "https://www.insitehub.com").replace(/\/+$/, "");
+const OG_IMAGE = import.meta.env.VITE_OG_IMAGE || `${SITE_URL}/apple-touch-icon.png`;
+
+function upsertMeta(attr, key, content) {
+  let el = document.head.querySelector(`meta[${attr}="${key}"]`);
+  if (!el) { el = document.createElement("meta"); el.setAttribute(attr, key); document.head.appendChild(el); }
+  el.setAttribute("content", content);
+}
+function upsertLink(rel, href) {
+  let el = document.head.querySelector(`link[rel="${rel}"]`);
+  if (!el) { el = document.createElement("link"); el.setAttribute("rel", rel); document.head.appendChild(el); }
+  el.setAttribute("href", href);
+}
+
 const PAGES = {
   home: HomePage, platform: PlatformPage, advisory: AdvisoryPage,
   literacy: LiteracyPage, insitex: InsiteXPage, content: ContentPage,
@@ -137,7 +155,7 @@ export default function App() {
   const [scrolled, setScrolled] = useState(false);
   // Bumped on every navigation to force a re-render even when the page key is
   // unchanged (e.g. article -> article), so the pathname-keyed page remounts.
-  const [, setNavTick] = useState(0);
+  const [navTick, setNavTick] = useState(0);
 
   useEffect(() => {
     const fn = () => setScrolled(window.scrollY > 40);
@@ -149,10 +167,25 @@ export default function App() {
   useEffect(() => { prefetchContent(); }, []);
 
   useEffect(() => {
-    document.title = PAGE_TITLES[page] || PAGE_TITLES.home;
-    let meta = document.querySelector('meta[name="description"]');
-    if (!meta) { meta = document.createElement('meta'); meta.name = "description"; document.head.appendChild(meta); }
-    meta.content = DESCS[page] || DESCS.home;
+    const title = PAGE_TITLES[page] || PAGE_TITLES.home;
+    const desc = DESCS[page] || DESCS.home;
+    const canonical = SITE_URL + (page === "article" ? window.location.pathname : (PAGE_PATHS[page] || "/"));
+
+    document.title = title;
+    upsertMeta("name", "description", desc);
+    upsertLink("canonical", canonical);
+
+    // Social / link-preview cards. Set here so the prerender snapshot captures them.
+    upsertMeta("property", "og:type", page === "article" ? "article" : "website");
+    upsertMeta("property", "og:site_name", "Proxa Labs");
+    upsertMeta("property", "og:title", title);
+    upsertMeta("property", "og:description", desc);
+    upsertMeta("property", "og:url", canonical);
+    upsertMeta("property", "og:image", OG_IMAGE);
+    upsertMeta("name", "twitter:card", "summary_large_image");
+    upsertMeta("name", "twitter:title", title);
+    upsertMeta("name", "twitter:description", desc);
+    upsertMeta("name", "twitter:image", OG_IMAGE);
 
     let robots = document.querySelector('meta[name="robots"]');
     if (NOINDEX_PAGES.has(page)) {
@@ -167,6 +200,11 @@ export default function App() {
       if (!scrollToHash(hash)) window.scrollTo(0, 0);
     }, 0);
   }, [page]);
+
+  // Fire a GA4 page_view on every navigation (SPA — no full page loads).
+  useEffect(() => {
+    trackPageView(window.location.pathname + window.location.hash, document.title);
+  }, [navTick]);
 
   useEffect(() => {
     const handlePopState = () => {
