@@ -39,6 +39,7 @@ const BlogIndexPage = lazyWithReload(() => import('./pages/BlogIndexPage'));
 const ArticlePage = lazyWithReload(() => import('./pages/ArticlePage'));
 const CaseStudiesIndexPage = lazyWithReload(() => import('./pages/CaseStudiesIndexPage'));
 const CaseStudyPage = lazyWithReload(() => import('./pages/CaseStudyPage'));
+const VideoGalleryPage = lazyWithReload(() => import('./pages/VideoGalleryPage'));
 const AdminPage = lazyWithReload(() => import('./admin/AdminPage'));
 
 const PAGE_TITLES = {
@@ -59,6 +60,7 @@ const PAGE_TITLES = {
   article: "Proxa Labs",
   caseStudies: "Case Studies · Proxa Labs",
   caseStudy: "Case Study · Proxa Labs",
+  videos: "Videos · Proxa Labs",
   admin: "CMS · Proxa Labs",
   notfound: "Page not found · Proxa Labs",
 };
@@ -81,6 +83,7 @@ const DESCS = {
   article: "Field notes and frameworks from Proxa Labs on commercial readiness.",
   caseStudies: "Real biopharma commercial teams, real results — the challenge, what Proxa Labs did, and the outcomes.",
   caseStudy: "A Proxa Labs case study — challenge, approach, and results.",
+  videos: "Short, practical videos on AI in biopharma commercial learning — strategy, evidence, and the field.",
   admin: "Proxa Labs content management.",
   notfound: "The page you're looking for doesn't exist or has moved.",
 };
@@ -106,6 +109,7 @@ const PAGES = {
   resources: ResourcesPage, newsletter: NewsletterPage, contact: ContactPage,
   futureproof: FutureProofPage, blog: BlogIndexPage, article: ArticlePage,
   caseStudies: CaseStudiesIndexPage, caseStudy: CaseStudyPage,
+  videos: VideoGalleryPage,
   admin: AdminPage, notfound: NotFoundPage,
 };
 
@@ -125,6 +129,7 @@ const PAGE_PATHS = {
   futureproof: "/future-proof-your-organization",
   blog: "/blog",
   caseStudies: "/case-studies",
+  videos: "/videos",
   admin: "/noonewillfindthis",
 };
 
