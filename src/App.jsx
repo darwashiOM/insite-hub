@@ -160,7 +160,8 @@ const urlForPage = (page, hash, slug) => {
   if (page === "article" && slug) path = `/blog/${slug}`;
   else if (page === "caseStudy" && slug) path = `/case-studies/${slug}`;
   else if (page === "form" && slug) path = `/forms/${slug}`;
-  else path = PAGE_PATHS[page] || PAGE_PATHS.home;
+  else if (PAGE_PATHS[page]) path = PAGE_PATHS[page];
+  else path = `/${page}`; // a CMS-built page — its key is its slug
   return hash ? `${path}#${hash.replace(/^#/, "")}` : path;
 };
 
@@ -258,7 +259,7 @@ export default function App() {
       window.history.pushState({}, "", nextUrl);
       window.dispatchEvent(new Event("hashchange"));
     }
-    setCurrentPage(PAGES[nextPage] ? nextPage : "notfound");
+    setCurrentPage(PAGES[nextPage] ? nextPage : "dynamicPage");
     setNavTick((t) => t + 1);
     window.setTimeout(() => scrollToHash(hash), 0);
   };

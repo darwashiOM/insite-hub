@@ -227,6 +227,44 @@ export async function adminDeleteCaseStudy(slug) {
 export const adminListCaseStudyVersions = (slug) => listVersions(doc(db, 'caseStudies', slug));
 export const adminRestoreCaseStudyVersion = (slug, vid) => restoreVersion(doc(db, 'caseStudies', slug), vid);
 
+// --- CMS-built pages (kit-of-sections landing pages) ------------------------
+
+export async function adminListPages() {
+  const snap = await getDocs(collection(db, 'pages'));
+  return snap.docs.map((d) => ({ id: d.id, ...d.data() }))
+    .sort((a, b) => (a.title || '').localeCompare(b.title || ''));
+}
+
+export async function adminGetPage(slug) {
+  const s = await getDoc(doc(db, 'pages', slug));
+  return s.exists() ? { id: s.id, ...s.data() } : null;
+}
+
+export async function adminSavePage(page, isNew = false) {
+  const { id: _id, ...data } = page;
+  const slug = data.slug;
+  if (!slug) throw new Error('A web address is required.');
+  const ref = doc(db, 'pages', slug);
+  if (isNew) {
+    const existing = await getDoc(ref);
+    if (existing.exists()) throw new Error(`A page already exists at /${slug}. Pick a different title or web address.`);
+  }
+  await saveWithHistory(ref, data);
+  return slug;
+}
+
+export async function adminDeletePage(slug) {
+  const ref = doc(db, 'pages', slug);
+  const versions = await getDocs(collection(ref, 'versions'));
+  const batch = writeBatch(db);
+  versions.docs.forEach((d) => batch.delete(d.ref));
+  batch.delete(ref);
+  await batch.commit();
+}
+
+export const adminListPageDocVersions = (slug) => listVersions(doc(db, 'pages', slug));
+export const adminRestorePageDocVersion = (slug, vid) => restoreVersion(doc(db, 'pages', slug), vid);
+
 // --- Videos -----------------------------------------------------------------
 
 export async function adminListVideos() {

@@ -5,6 +5,7 @@ import {
   adminListCaseStudies, adminDeleteCaseStudy,
   adminListVideos, adminDeleteVideo,
   adminListForms, adminDeleteForm,
+  adminListPages, adminDeletePage,
 } from '../lib/adminBlog';
 import ArticleEditor from './ArticleEditor';
 import AuthorEditor from './AuthorEditor';
@@ -12,6 +13,7 @@ import CaseStudyEditor from './CaseStudyEditor';
 import VideoEditor from './VideoEditor';
 import FormBuilder from './FormBuilder';
 import SubmissionsView from './SubmissionsView';
+import PageBuilder from './PageBuilder';
 import MediaLibrary from './MediaLibrary';
 import AdminPagesEditor from './AdminPagesEditor';
 import NavEditor from './NavEditor';
@@ -24,7 +26,9 @@ export default function AdminDashboard({ onLogout }) {
   const [caseStudies, setCaseStudies] = useState(null);
   const [videos, setVideos] = useState(null);
   const [forms, setForms] = useState(null);
+  const [pages, setPages] = useState(null);
   const [view, setView] = useState('list');
+  const [pageView, setPageView] = useState('list');
   const [authorView, setAuthorView] = useState('list');
   const [csView, setCsView] = useState('list');
   const [vidView, setVidView] = useState('list');
@@ -39,14 +43,15 @@ export default function AdminDashboard({ onLogout }) {
     adminListCaseStudies().catch(() => []),
     adminListVideos().catch(() => []),
     adminListForms().catch(() => []),
+    adminListPages().catch(() => []),
   ]), []);
   const refresh = useCallback(async () => {
-    const [arts, auths, cs, vids, fms] = await load();
-    setArticles(arts); setAuthors(auths); setCaseStudies(cs); setVideos(vids); setForms(fms);
+    const [arts, auths, cs, vids, fms, pgs] = await load();
+    setArticles(arts); setAuthors(auths); setCaseStudies(cs); setVideos(vids); setForms(fms); setPages(pgs);
   }, [load]);
   useEffect(() => {
     let alive = true;
-    load().then(([arts, auths, cs, vids, fms]) => { if (alive) { setArticles(arts); setAuthors(auths); setCaseStudies(cs); setVideos(vids); setForms(fms); } });
+    load().then(([arts, auths, cs, vids, fms, pgs]) => { if (alive) { setArticles(arts); setAuthors(auths); setCaseStudies(cs); setVideos(vids); setForms(fms); setPages(pgs); } });
     return () => { alive = false; };
   }, [load]);
 
@@ -62,6 +67,7 @@ export default function AdminDashboard({ onLogout }) {
   const removeCaseStudy = async (c) => { if (window.confirm(`Delete "${c.title}"? This cannot be undone.`)) { await adminDeleteCaseStudy(c.slug); refresh(); } };
   const removeVideo = async (v) => { if (window.confirm(`Delete "${v.title}"? This cannot be undone.`)) { await adminDeleteVideo(v.slug); refresh(); } };
   const removeForm = async (f) => { if (window.confirm(`Delete "${f.name}"? This cannot be undone.`)) { await adminDeleteForm(f.slug); refresh(); } };
+  const removePage = async (p) => { if (window.confirm(`Delete "${p.title}"? This cannot be undone.`)) { await adminDeletePage(p.slug); refresh(); } };
 
   const knownTopics = [...new Set((articles || []).map((a) => a.topic).filter(Boolean))].sort();
 
@@ -86,6 +92,10 @@ export default function AdminDashboard({ onLogout }) {
     const editing = formView === 'new' ? null : forms?.find((f) => f.slug === formView) || null;
     return <FormBuilder form={editing} onDone={() => { setFormView('list'); refresh(); }} onCancel={() => setFormView('list')} />;
   }
+  if (tab === 'landing' && pageView !== 'list') {
+    const editing = pageView === 'new' ? null : pages?.find((p) => p.slug === pageView) || null;
+    return <PageBuilder page={editing} onDone={() => { setPageView('list'); refresh(); }} onCancel={() => setPageView('list')} />;
+  }
 
   const Loading = <p style={{ color: '#5c6370' }}>Loading…</p>;
   const badge = (pub) => <span className={'cms-badge ' + (pub ? 'cms-badge-pub' : 'cms-badge-draft')}>{pub ? 'Published' : 'Draft'}</span>;
@@ -99,6 +109,7 @@ export default function AdminDashboard({ onLogout }) {
           <button className={'cms-tab' + (tab === 'cs' ? ' on' : '')} onClick={() => switchTab('cs')}>Case studies</button>
           <button className={'cms-tab' + (tab === 'videos' ? ' on' : '')} onClick={() => switchTab('videos')}>Videos</button>
           <button className={'cms-tab' + (tab === 'forms' ? ' on' : '')} onClick={() => switchTab('forms')}>Forms</button>
+          <button className={'cms-tab' + (tab === 'landing' ? ' on' : '')} onClick={() => switchTab('landing')}>Landing pages</button>
           <button className={'cms-tab' + (tab === 'authors' ? ' on' : '')} onClick={() => switchTab('authors')}>Authors</button>
           <button className={'cms-tab' + (tab === 'media' ? ' on' : '')} onClick={() => switchTab('media')}>Media</button>
           <button className={'cms-tab' + (tab === 'pages' ? ' on' : '')} onClick={() => switchTab('pages')}>Site pages</button>
@@ -108,6 +119,7 @@ export default function AdminDashboard({ onLogout }) {
           {tab === 'blog' && <button className="cms-btn cms-btn-primary" onClick={() => setView('new')}>+ New article</button>}
           {tab === 'cs' && <button className="cms-btn cms-btn-primary" onClick={() => setCsView('new')}>+ New case study</button>}
           {tab === 'videos' && <button className="cms-btn cms-btn-primary" onClick={() => setVidView('new')}>+ New video</button>}
+          {tab === 'landing' && <button className="cms-btn cms-btn-primary" onClick={() => setPageView('new')}>+ New page</button>}
           {tab === 'authors' && <button className="cms-btn cms-btn-primary" onClick={() => setAuthorView('new')}>+ New author</button>}
           {tab === 'forms' && formsSub === 'forms' && (
             <>
@@ -147,6 +159,27 @@ export default function AdminDashboard({ onLogout }) {
                   {badge(f.published)}
                   <button className="cms-btn cms-btn-sm" onClick={() => setFormView(f.slug)}>Edit</button>
                   <button className="cms-btn cms-btn-sm cms-btn-danger" onClick={() => removeForm(f)}>Delete</button>
+                </div>
+              ))}
+            </div>
+          )
+        ) : tab === 'landing' ? (
+          pages === null ? Loading
+          : pages.length === 0 ? <p style={{ color: '#5c6370' }}>No pages yet. Click “New page” to build one from sections.</p>
+          : (
+            <div className="cms-list">
+              {pages.map((p) => (
+                <div className="cms-card" key={p.id}>
+                  <div className="cms-card-main">
+                    <p className="cms-card-title">{p.title || '(untitled)'}</p>
+                    <p className="cms-card-meta">
+                      /{p.slug} · {(p.sections || []).length} section{(p.sections || []).length === 1 ? '' : 's'} ·{' '}
+                      {p.published ? <a href={`/${p.slug}`} target="_blank" rel="noopener noreferrer">View live ↗</a> : <span>not published yet</span>}
+                    </p>
+                  </div>
+                  {badge(p.published)}
+                  <button className="cms-btn cms-btn-sm" onClick={() => setPageView(p.slug)}>Edit</button>
+                  <button className="cms-btn cms-btn-sm cms-btn-danger" onClick={() => removePage(p)}>Delete</button>
                 </div>
               ))}
             </div>
