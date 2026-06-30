@@ -19,7 +19,11 @@ export const db = getFirestore(app);
 
 // Local dev against the Firebase emulators. Guarded by DEV so production builds
 // (where import.meta.env.DEV is statically false) never reach this branch.
-export const USING_EMULATOR = import.meta.env.DEV && import.meta.env.VITE_USE_EMULATOR === '1';
+// VITE_PRERENDER lets a local *prerender* build read the emulator too, so we can
+// verify dynamic pages snapshot correctly; the real deploy build omits the flag
+// and reads production Firestore.
+export const USING_EMULATOR = (import.meta.env.DEV && import.meta.env.VITE_USE_EMULATOR === '1')
+  || import.meta.env.VITE_PRERENDER === '1';
 if (USING_EMULATOR) {
   connectFirestoreEmulator(db, '127.0.0.1', 8080);
 }
