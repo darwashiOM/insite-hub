@@ -35,6 +35,8 @@ const MIME = {
 };
 
 // Published dynamic routes from Firestore (emulator locally, production at deploy).
+// Returns { path, noindex } — noindex pages are still prerendered (with their
+// robots meta) but excluded from the sitemap.
 async function dynamicRoutes() {
   try {
     const admin = require('firebase-admin');
@@ -43,10 +45,10 @@ async function dynamicRoutes() {
     const routes = [];
     for (const [col, prefix] of [['articles', '/blog/'], ['caseStudies', '/case-studies/']]) {
       const snap = await db.collection(col).where('published', '==', true).get();
-      snap.forEach((d) => routes.push(prefix + (d.data().slug || d.id)));
+      snap.forEach((d) => routes.push({ path: prefix + (d.data().slug || d.id), noindex: !!d.data().noindex }));
     }
     const pages = await db.collection('pages').where('published', '==', true).get();
-    pages.forEach((d) => routes.push('/' + (d.data().slug || d.id)));
+    pages.forEach((d) => routes.push({ path: '/' + (d.data().slug || d.id), noindex: !!d.data().noindex }));
     return routes;
   } catch (e) {
     console.warn('  ⚠ could not read dynamic routes from Firestore (' + (e.message || e) + ') — prerendering static routes only.');
@@ -104,19 +106,22 @@ function writeSitemap(routes) {
     process.exit(1);
   }
   const server = await startServer();
-  const routes = [...STATIC_ROUTES, ...(await dynamicRoutes())];
+  const routes = [...STATIC_ROUTES.map((p) => ({ path: p, noindex: false })), ...(await dynamicRoutes())];
   console.log(`Prerendering ${routes.length} routes...`);
   const browser = await chromium.launch();
-  let warned = 0;
+  let skipped = 0;
+  const sitemap = [];
   for (const route of routes) {
-    const { html, errors } = await snapshot(browser, route);
+    const { html, errors } = await snapshot(browser, route.path);
     const textLen = html.replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim().length;
-    if (errors.length || textLen < 200) warned++;
-    console.log(`  ${route} — ${textLen} chars${errors.length ? ' ⚠ ' + errors.length + ' page errors' : ''}${textLen < 200 ? ' ⚠ thin' : ''}`);
-    writeRoute(route, html);
+    const ok = !errors.length && textLen >= 200;
+    console.log(`  ${route.path} — ${textLen} chars${errors.length ? ' ⚠ ' + errors.length + ' page errors' : ''}${ok ? '' : ' ⚠ SKIPPED (thin/error — keeping the SPA fallback)'}`);
+    if (!ok) { skipped++; continue; } // never bake an error/not-found page into a 200
+    writeRoute(route.path, html);
+    if (!route.noindex) sitemap.push(route.path); // noindex pages stay out of the sitemap
   }
-  writeSitemap(routes);
+  writeSitemap(sitemap);
   await browser.close();
   await new Promise((r) => server.close(r));
-  console.log(`Done — ${routes.length} routes prerendered, sitemap regenerated${warned ? `, ${warned} need a look` : ''}.`);
+  console.log(`Done — ${routes.length - skipped} routes prerendered, ${sitemap.length} in sitemap${skipped ? `, ${skipped} skipped (left as SPA fallback)` : ''}.`);
 })();

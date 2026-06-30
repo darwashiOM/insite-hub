@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect } from 'react';
 import { usePublishedVideos, parseYouTubeId } from '../lib/videos';
-import { setJsonLd } from '../lib/jsonLd';
+import { setJsonLd, toIsoDate, absUrl } from '../lib/jsonLd';
 import '../components/ArticleLayout.css';
 import './VideoGalleryPage.css';
 
@@ -53,18 +53,22 @@ export default function VideoGalleryPage() {
   // VideoObject structured data (AEO) — transcripts help these get quoted.
   useEffect(() => {
     if (!videos.length) { setJsonLd('ld-videos', null); return; }
+    // VideoObject requires name + thumbnailUrl + uploadDate to be valid for rich
+    // results — only emit a node for videos that have them (skip the rest rather
+    // than ship an invalid object Google will reject).
     const graph = videos.map((v) => {
       const ytId = parseYouTubeId(v.videoUrl);
-      const ld = { '@type': 'VideoObject', name: v.title };
+      const thumb = absUrl(v.thumbnail || (ytId ? ytThumb(ytId) : null));
+      const uploadDate = toIsoDate(v.date);
+      if (!thumb || !uploadDate) return null;
+      const ld = { '@type': 'VideoObject', name: v.title, thumbnailUrl: thumb, uploadDate };
       if (v.description) ld.description = v.description;
-      const thumb = v.thumbnail || (ytId ? ytThumb(ytId) : null);
-      if (thumb) ld.thumbnailUrl = thumb;
       if (ytId) ld.embedUrl = `https://www.youtube.com/embed/${ytId}`;
       else if (v.videoUrl) ld.contentUrl = v.videoUrl;
       if (v.transcript) ld.transcript = v.transcript;
       return ld;
-    });
-    setJsonLd('ld-videos', { '@context': 'https://schema.org', '@graph': graph });
+    }).filter(Boolean);
+    setJsonLd('ld-videos', graph.length ? { '@context': 'https://schema.org', '@graph': graph } : null);
     return () => setJsonLd('ld-videos', null);
   }, [videos]);
 

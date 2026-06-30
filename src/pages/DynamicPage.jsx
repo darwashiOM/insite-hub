@@ -68,9 +68,15 @@ export default function DynamicPage({ setPage }) {
     );
   }
 
+  // A hero section already renders the page's <h1>. If the page has no hero,
+  // emit the title as an h1 so every indexable page has exactly one main heading.
+  const sections = page.sections || [];
+  const hasHero = sections.some((s) => s.type === 'hero');
+
   return (
     <>
-      {(page.sections || []).map((s, i) => <SectionRenderer key={i} section={s} go={setPage} />)}
+      {!hasHero && <h1 className="t-display" style={{ maxWidth: 1100, margin: '56px auto 8px', padding: '0 24px' }}>{page.metaTitle || page.title}</h1>}
+      {sections.map((s, i) => <SectionRenderer key={i} section={s} go={setPage} />)}
     </>
   );
 }

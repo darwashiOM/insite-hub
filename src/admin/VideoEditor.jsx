@@ -8,7 +8,7 @@ import VersionHistory from './VersionHistory';
 
 const BLANK = {
   slug: '', title: '', description: '', videoUrl: '', thumbnail: '',
-  length: '', topic: '', transcript: '', published: false, order: 0,
+  length: '', topic: '', date: '', transcript: '', published: false, order: 0,
 };
 
 export default function VideoEditor({ video, onDone, onCancel }) {
@@ -51,7 +51,7 @@ export default function VideoEditor({ video, onDone, onCancel }) {
       await adminSaveVideo({
         slug, title, description: form.description.trim(), videoUrl: form.videoUrl.trim(),
         thumbnail: form.thumbnail.trim(), length: form.length.trim(), topic: form.topic.trim(),
-        transcript: form.transcript.trim(), published: !!form.published, order: Number(form.order) || 0,
+        date: form.date.trim(), transcript: form.transcript.trim(), published: !!form.published, order: Number(form.order) || 0,
       }, isNew);
       initial.current = JSON.stringify(form);
       setOkMsg(form.published ? 'Saved ✓ — it’s live now.' : 'Saved as draft ✓');
@@ -126,6 +126,12 @@ export default function VideoEditor({ video, onDone, onCancel }) {
             <label>Topic (for filtering)</label>
             <input className="cms-input" value={form.topic} onChange={(e) => set('topic', e.target.value)} />
           </div>
+        </div>
+
+        <div className="cms-field">
+          <label>Publish date</label>
+          <input className="cms-input" type="date" value={form.date} onChange={(e) => set('date', e.target.value)} />
+          <p className="cms-hint">Used for video structured data (helps it appear in search/AI results).</p>
         </div>
 
         <div className="cms-field">

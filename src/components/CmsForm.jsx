@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { submitForm, readUtm } from '../lib/forms';
+import { trackLead, trackDownload } from '../analytics';
 import './CmsForm.css';
 
 // Renders a CMS-defined form and submits it to the submitForm Cloud Function.
@@ -24,7 +25,7 @@ export default function CmsForm({ form }) {
     setBusy(true);
     try {
       const out = await submitForm({ formSlug: form.slug, data: values, utm: readUtm(), consent, _hp: hp });
-      if (out && out.success) setDone(out);
+      if (out && out.success) { trackLead(form.slug, { form_name: form.name }); setDone(out); }
       else { setError('Submission failed. Please try again.'); setBusy(false); }
     } catch (err) {
       setError(err.message || 'Submission failed.');
@@ -37,7 +38,8 @@ export default function CmsForm({ form }) {
       <div className="cmsform-done">
         <p className="cmsform-success">{form.successMessage || 'Thanks — we’ve got your details.'}</p>
         {done.download && (
-          <a className="cmsform-download" href={done.download} target="_blank" rel="noopener noreferrer">
+          <a className="cmsform-download" href={done.download} target="_blank" rel="noopener noreferrer"
+            onClick={() => trackDownload(form.gatedFileLabel || form.slug, { form_id: form.slug })}>
             {form.gatedFileLabel || 'Download your file'} ↓
           </a>
         )}

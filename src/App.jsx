@@ -150,9 +150,11 @@ const pageFromLocation = () => {
   if (normalized.startsWith("/blog/") && normalized !== "/blog") return "article";
   if (normalized.startsWith("/case-studies/") && normalized !== "/case-studies") return "caseStudy";
   if (normalized.startsWith("/forms/") && normalized !== "/forms") return "form";
-  // Anything else: try to resolve a marketer-built CMS page at this slug
-  // (DynamicPage shows a not-found if there's no published page there).
-  return PATH_PAGES[normalized] || "dynamicPage";
+  if (PATH_PAGES[normalized]) return PATH_PAGES[normalized];
+  // A single clean segment (e.g. /ai-readiness-day) might be a marketer-built CMS
+  // page — try to resolve it. Anything else (multi-segment junk, scanner noise
+  // like /wp-login.php) goes straight to not-found, with no Firestore read.
+  return /^\/[a-z0-9][a-z0-9-]*$/.test(normalized) ? "dynamicPage" : "notfound";
 };
 
 const urlForPage = (page, hash, slug) => {
@@ -196,7 +198,10 @@ export default function App() {
   useEffect(() => {
     const title = PAGE_TITLES[page] || PAGE_TITLES.home;
     const desc = DESCS[page] || DESCS.home;
-    const canonical = SITE_URL + (page === "article" ? window.location.pathname : (PAGE_PATHS[page] || "/"));
+    // Slug-based routes (blog post, case study, form, built page) have no PAGE_PATHS
+    // entry — use the real pathname so canonical/og:url aren't defaulted to "/".
+    const slugRoute = page === "article" || page === "caseStudy" || page === "form" || page === "dynamicPage";
+    const canonical = SITE_URL + (slugRoute ? window.location.pathname : (PAGE_PATHS[page] || "/"));
 
     document.title = title;
     upsertMeta("name", "description", desc);
