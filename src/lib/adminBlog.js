@@ -162,6 +162,44 @@ export async function adminUploadImage(file) {
   return getDownloadURL(r);
 }
 
+// --- Case studies -----------------------------------------------------------
+
+export async function adminListCaseStudies() {
+  const snap = await getDocs(collection(db, 'caseStudies'));
+  return snap.docs.map((d) => ({ id: d.id, ...d.data() }))
+    .sort((a, b) => (a.order ?? 9999) - (b.order ?? 9999));
+}
+
+export async function adminGetCaseStudy(slug) {
+  const s = await getDoc(doc(db, 'caseStudies', slug));
+  return s.exists() ? { id: s.id, ...s.data() } : null;
+}
+
+export async function adminSaveCaseStudy(cs, isNew = false) {
+  const { id: _id, ...data } = cs; // drop any stale id; slug is the doc id
+  const slug = data.slug;
+  if (!slug) throw new Error('A web address is required.');
+  const ref = doc(db, 'caseStudies', slug);
+  if (isNew) {
+    const existing = await getDoc(ref);
+    if (existing.exists()) throw new Error(`A case study already exists at /case-studies/${slug}. Pick a different title or web address.`);
+  }
+  await saveWithHistory(ref, data);
+  return slug;
+}
+
+export async function adminDeleteCaseStudy(slug) {
+  const ref = doc(db, 'caseStudies', slug);
+  const versions = await getDocs(collection(ref, 'versions'));
+  const batch = writeBatch(db);
+  versions.docs.forEach((d) => batch.delete(d.ref));
+  batch.delete(ref);
+  await batch.commit();
+}
+
+export const adminListCaseStudyVersions = (slug) => listVersions(doc(db, 'caseStudies', slug));
+export const adminRestoreCaseStudyVersion = (slug, vid) => restoreVersion(doc(db, 'caseStudies', slug), vid);
+
 // --- Authors (reusable records that posts link to) --------------------------
 
 export async function adminListAuthors() {

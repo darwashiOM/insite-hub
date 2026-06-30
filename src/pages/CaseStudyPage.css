@@ -1,0 +1,11 @@
+.proxa-article .cs-detail { padding: 32px 56px 80px; }
+.proxa-article .cs-client { font-family: var(--display); font-weight: 600; color: var(--coral-deep); font-size: 1.05rem; margin: 0 0 18px; }
+.proxa-article .cs-stats { display: flex; flex-wrap: wrap; gap: 18px; margin: 8px 0 40px; }
+.proxa-article .cs-stat { flex: 1 1 160px; background: #f7f8f9; border: 1px solid var(--br, #e3e5ea); border-radius: 14px; padding: 22px 24px; }
+.proxa-article .cs-stat-value { font-family: var(--display); font-weight: 800; color: var(--ink); font-size: clamp(1.8rem, 3.5vw, 2.6rem); letter-spacing: -.02em; line-height: 1; }
+.proxa-article .cs-stat-label { color: var(--muted); font-size: .95rem; margin-top: 8px; line-height: 1.4; }
+.proxa-article .cs-block { max-width: var(--measure); margin: 0 0 34px; }
+.proxa-article .cs-block h2 { font-family: var(--display); font-weight: 700; color: var(--ink); font-size: 1.5rem; letter-spacing: -.01em; margin: 0 0 14px; }
+.proxa-article .cs-block p { color: #2a3340; font-size: 1.06rem; line-height: 1.65; margin: 0 0 14px; }
+.proxa-article .cs-back { background: none; border: none; padding: 0; font: inherit; color: var(--coral-deep); font-weight: 600; cursor: pointer; margin-top: 8px; }
+@media (max-width: 960px) { .proxa-article .cs-detail { padding: 28px 20px 60px; } }

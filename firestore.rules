@@ -24,6 +24,15 @@ service cloud.firestore {
       }
     }
 
+    // Case studies — public reads published ones; admin reads drafts + writes.
+    match /caseStudies/{id} {
+      allow read: if resource.data.published == true || isAdmin();
+      allow create, update, delete: if isAdmin();
+      match /versions/{versionId} {
+        allow read, write: if isAdmin();
+      }
+    }
+
     // Author records — admin-only (their fields are denormalized into published
     // articles, so the public never needs to read this collection directly).
     match /authors/{id} {

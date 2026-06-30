@@ -2,33 +2,38 @@ import { useEffect, useState, useCallback } from 'react';
 import {
   adminListArticles, adminDeleteArticle,
   adminListAuthors, adminDeleteAuthor,
+  adminListCaseStudies, adminDeleteCaseStudy,
 } from '../lib/adminBlog';
 import ArticleEditor from './ArticleEditor';
 import AuthorEditor from './AuthorEditor';
+import CaseStudyEditor from './CaseStudyEditor';
 import AdminPagesEditor from './AdminPagesEditor';
 import NavEditor from './NavEditor';
 
-// Admin shell with Blog | Authors | Site pages tabs.
+// Admin shell: Blog | Case studies | Authors | Site pages | Navigation.
 export default function AdminDashboard({ onLogout }) {
   const [tab, setTab] = useState('blog');
   const [articles, setArticles] = useState(null);
   const [authors, setAuthors] = useState(null);
-  const [view, setView] = useState('list');             // blog: 'list' | 'new' | <slug>
-  const [authorView, setAuthorView] = useState('list');  // authors: 'list' | 'new' | <id>
+  const [caseStudies, setCaseStudies] = useState(null);
+  const [view, setView] = useState('list');            // blog: 'list' | 'new' | <slug>
+  const [authorView, setAuthorView] = useState('list');
+  const [csView, setCsView] = useState('list');        // case studies: 'list' | 'new' | <slug>
   const [pagesDirty, setPagesDirty] = useState(false);
   const [navDirty, setNavDirty] = useState(false);
 
   const load = useCallback(() => Promise.all([
     adminListArticles().catch(() => []),
     adminListAuthors().catch(() => []),
+    adminListCaseStudies().catch(() => []),
   ]), []);
   const refresh = useCallback(async () => {
-    const [arts, auths] = await load();
-    setArticles(arts); setAuthors(auths);
+    const [arts, auths, cs] = await load();
+    setArticles(arts); setAuthors(auths); setCaseStudies(cs);
   }, [load]);
   useEffect(() => {
     let alive = true;
-    load().then(([arts, auths]) => { if (alive) { setArticles(arts); setAuthors(auths); } });
+    load().then(([arts, auths, cs]) => { if (alive) { setArticles(arts); setAuthors(auths); setCaseStudies(cs); } });
     return () => { alive = false; };
   }, [load]);
 
@@ -47,33 +52,31 @@ export default function AdminDashboard({ onLogout }) {
     if (!window.confirm(`Delete author "${a.name}"? This cannot be undone.`)) return;
     await adminDeleteAuthor(a.id); refresh();
   };
+  const removeCaseStudy = async (c) => {
+    if (!window.confirm(`Delete "${c.title}"? This cannot be undone.`)) return;
+    await adminDeleteCaseStudy(c.slug); refresh();
+  };
 
-  // Suggestions for the article editor's topic picker + author dropdown.
   const knownTopics = [...new Set((articles || []).map((a) => a.topic).filter(Boolean))].sort();
 
   // Full-screen editors take over.
   if (tab === 'blog' && view !== 'list') {
     const editing = view === 'new' ? null : articles?.find((a) => a.slug === view) || null;
     return (
-      <ArticleEditor
-        article={editing}
-        authors={authors || []}
-        knownTopics={knownTopics}
-        onDone={() => { setView('list'); refresh(); }}
-        onCancel={() => setView('list')}
-      />
+      <ArticleEditor article={editing} authors={authors || []} knownTopics={knownTopics}
+        onDone={() => { setView('list'); refresh(); }} onCancel={() => setView('list')} />
     );
   }
   if (tab === 'authors' && authorView !== 'list') {
     const editing = authorView === 'new' ? null : authors?.find((a) => a.id === authorView) || null;
-    return (
-      <AuthorEditor
-        author={editing}
-        onDone={() => { setAuthorView('list'); refresh(); }}
-        onCancel={() => setAuthorView('list')}
-      />
-    );
+    return <AuthorEditor author={editing} onDone={() => { setAuthorView('list'); refresh(); }} onCancel={() => setAuthorView('list')} />;
   }
+  if (tab === 'cs' && csView !== 'list') {
+    const editing = csView === 'new' ? null : caseStudies?.find((c) => c.slug === csView) || null;
+    return <CaseStudyEditor caseStudy={editing} onDone={() => { setCsView('list'); refresh(); }} onCancel={() => setCsView('list')} />;
+  }
+
+  const Loading = <p style={{ color: '#5c6370' }}>Loading…</p>;
 
   return (
     <div className="cms-admin">
@@ -81,12 +84,14 @@ export default function AdminDashboard({ onLogout }) {
         <h1>Proxa Labs Website Editor</h1>
         <div className="cms-tabs">
           <button className={'cms-tab' + (tab === 'blog' ? ' on' : '')} onClick={() => switchTab('blog')}>Blog</button>
+          <button className={'cms-tab' + (tab === 'cs' ? ' on' : '')} onClick={() => switchTab('cs')}>Case studies</button>
           <button className={'cms-tab' + (tab === 'authors' ? ' on' : '')} onClick={() => switchTab('authors')}>Authors</button>
           <button className={'cms-tab' + (tab === 'pages' ? ' on' : '')} onClick={() => switchTab('pages')}>Site pages</button>
           <button className={'cms-tab' + (tab === 'nav' ? ' on' : '')} onClick={() => switchTab('nav')}>Navigation</button>
         </div>
         <div style={{ display: 'flex', gap: 10 }}>
           {tab === 'blog' && <button className="cms-btn cms-btn-primary" onClick={() => setView('new')}>+ New article</button>}
+          {tab === 'cs' && <button className="cms-btn cms-btn-primary" onClick={() => setCsView('new')}>+ New case study</button>}
           {tab === 'authors' && <button className="cms-btn cms-btn-primary" onClick={() => setAuthorView('new')}>+ New author</button>}
           <button className="cms-btn" onClick={onLogout}>Log out</button>
         </div>
@@ -98,11 +103,9 @@ export default function AdminDashboard({ onLogout }) {
         ) : tab === 'pages' ? (
           <AdminPagesEditor onDirtyChange={setPagesDirty} />
         ) : tab === 'authors' ? (
-          authors === null ? (
-            <p style={{ color: '#5c6370' }}>Loading…</p>
-          ) : authors.length === 0 ? (
-            <p style={{ color: '#5c6370' }}>No authors yet. Click “New author” to add one.</p>
-          ) : (
+          authors === null ? Loading
+          : authors.length === 0 ? <p style={{ color: '#5c6370' }}>No authors yet. Click “New author” to add one.</p>
+          : (
             <div className="cms-list">
               {authors.map((a) => (
                 <div className="cms-card" key={a.id}>
@@ -116,11 +119,32 @@ export default function AdminDashboard({ onLogout }) {
               ))}
             </div>
           )
-        ) : articles === null ? (
-          <p style={{ color: '#5c6370' }}>Loading…</p>
-        ) : articles.length === 0 ? (
-          <p style={{ color: '#5c6370' }}>No articles yet. Click “New article” to write the first one.</p>
-        ) : (
+        ) : tab === 'cs' ? (
+          caseStudies === null ? Loading
+          : caseStudies.length === 0 ? <p style={{ color: '#5c6370' }}>No case studies yet. Click “New case study” to add one.</p>
+          : (
+            <div className="cms-list">
+              {caseStudies.map((c) => (
+                <div className="cms-card" key={c.id}>
+                  <div className="cms-card-main">
+                    <p className="cms-card-title">{c.title || '(untitled)'}</p>
+                    <p className="cms-card-meta">
+                      {c.client ? `${c.client} · ` : ''}{c.industry || 'No industry'} ·{' '}
+                      {c.published
+                        ? <a href={`/case-studies/${c.slug}`} target="_blank" rel="noopener noreferrer">View live ↗</a>
+                        : <span>not published yet</span>}
+                    </p>
+                  </div>
+                  <span className={'cms-badge ' + (c.published ? 'cms-badge-pub' : 'cms-badge-draft')}>{c.published ? 'Published' : 'Draft'}</span>
+                  <button className="cms-btn cms-btn-sm" onClick={() => setCsView(c.slug)}>Edit</button>
+                  <button className="cms-btn cms-btn-sm cms-btn-danger" onClick={() => removeCaseStudy(c)}>Delete</button>
+                </div>
+              ))}
+            </div>
+          )
+        ) : articles === null ? Loading
+        : articles.length === 0 ? <p style={{ color: '#5c6370' }}>No articles yet. Click “New article” to write the first one.</p>
+        : (
           <div className="cms-list">
             {articles.map((a) => (
               <div className="cms-card" key={a.id}>
@@ -133,9 +157,7 @@ export default function AdminDashboard({ onLogout }) {
                       : <span>not published yet</span>}
                   </p>
                 </div>
-                <span className={'cms-badge ' + (a.published ? 'cms-badge-pub' : 'cms-badge-draft')}>
-                  {a.published ? 'Published' : 'Draft'}
-                </span>
+                <span className={'cms-badge ' + (a.published ? 'cms-badge-pub' : 'cms-badge-draft')}>{a.published ? 'Published' : 'Draft'}</span>
                 <button className="cms-btn cms-btn-sm" onClick={() => setView(a.slug)}>Edit</button>
                 <button className="cms-btn cms-btn-sm cms-btn-danger" onClick={() => removeArticle(a)}>Delete</button>
               </div>
