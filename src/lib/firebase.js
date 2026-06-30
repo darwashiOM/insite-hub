@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app';
-import { getFirestore } from 'firebase/firestore';
+import { getFirestore, connectFirestoreEmulator } from 'firebase/firestore';
 
 // Public web config (safe to ship — access is gated by Firestore/Storage rules,
 // not by these keys). The admin password is NEVER here; it lives as a server secret.
@@ -16,3 +16,10 @@ export const app = initializeApp(firebaseConfig);
 // Firestore only — the public site reads published content. Auth + Storage are
 // initialized separately (firebaseAuth.js) so they load only in the admin chunk.
 export const db = getFirestore(app);
+
+// Local dev against the Firebase emulators. Guarded by DEV so production builds
+// (where import.meta.env.DEV is statically false) never reach this branch.
+export const USING_EMULATOR = import.meta.env.DEV && import.meta.env.VITE_USE_EMULATOR === '1';
+if (USING_EMULATOR) {
+  connectFirestoreEmulator(db, '127.0.0.1', 8080);
+}

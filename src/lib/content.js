@@ -5,7 +5,13 @@ import { defaultsFor } from '../content/manifest';
 // Function, CDN-cached) — no Firebase SDK in the public bundle. With SWR caching,
 // repeat visits apply overrides on first paint (no flash); first visit shows the
 // in-code defaults instantly and swaps in overrides when they arrive.
-const CONTENT_URL = import.meta.env.VITE_CONTENT_URL || '/api/content';
+// DEV-guarded emulator fallback so a production build can never point at localhost.
+// Uses import.meta.env directly (no firebase import) to keep the SDK out of the
+// public marketing bundle.
+const CONTENT_URL = import.meta.env.VITE_CONTENT_URL
+  || (import.meta.env.DEV && import.meta.env.VITE_USE_EMULATOR === '1'
+    ? 'http://127.0.0.1:5001/insite-hub-web/us-central1/getContent'
+    : '/api/content');
 export const CONTENT_CACHE_KEY = 'proxa.content.v1';
 
 // Warm the cache at app start so overrides are usually ready before navigation.

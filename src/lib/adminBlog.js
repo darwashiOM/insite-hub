@@ -8,7 +8,12 @@ import {
 } from 'firebase/firestore';
 import { ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
 
-const LOGIN_URL = import.meta.env.VITE_ADMIN_LOGIN_URL || '/api/admin-login';
+// Production hits the Hosting rewrite; local dev (DEV-guarded so it can never
+// reach a production build) hits the functions emulator.
+const LOGIN_URL = import.meta.env.VITE_ADMIN_LOGIN_URL
+  || (import.meta.env.DEV && import.meta.env.VITE_USE_EMULATOR === '1'
+    ? 'http://127.0.0.1:5001/insite-hub-web/us-central1/adminLogin'
+    : '/api/admin-login');
 
 // --- Auth -------------------------------------------------------------------
 
