@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { usePage } from '../lib/pages';
 import SectionRenderer from '../components/SectionRenderer';
+import { setJsonLd } from '../lib/jsonLd';
 
 function slugFromPath() {
   return window.location.pathname.replace(/^\/+|\/+$/g, '');
@@ -23,6 +24,18 @@ export default function DynamicPage({ setPage }) {
     } else if (robots) {
       robots.setAttribute('content', 'index, follow');
     }
+
+    // FAQPage structured data from any FAQ sections (helps AI tools quote answers).
+    const faqs = (page.sections || [])
+      .filter((s) => s.type === 'faq')
+      .flatMap((s) => (s.data && s.data.items) || [])
+      .filter((f) => f.question && f.answer);
+    setJsonLd('ld-faq', faqs.length ? {
+      '@context': 'https://schema.org',
+      '@type': 'FAQPage',
+      mainEntity: faqs.map((f) => ({ '@type': 'Question', name: f.question, acceptedAnswer: { '@type': 'Answer', text: f.answer } })),
+    } : null);
+    return () => setJsonLd('ld-faq', null);
   }, [page]);
 
   if (loading) return <div style={{ minHeight: '60vh' }} />;

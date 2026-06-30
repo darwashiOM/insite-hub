@@ -80,6 +80,22 @@ export default function SectionFieldEditor({ field, value, onChange }) {
       </div>
     );
   }
+  if (field.type === 'faqlist') {
+    const items = Array.isArray(value) ? value : [];
+    const setItem = (i, patch) => onChange(items.map((c, j) => (j === i ? { ...c, ...patch } : c)));
+    return (
+      <div className="cms-field"><label>{field.label}</label>
+        {items.map((c, i) => (
+          <div className="cms-block" key={i}>
+            <div className="cms-field"><label>Question</label><input className="cms-input" value={c.question || ''} onChange={(e) => setItem(i, { question: e.target.value })} /></div>
+            <div className="cms-field"><label>Answer</label><textarea className="cms-textarea" value={c.answer || ''} onChange={(e) => setItem(i, { answer: e.target.value })} /></div>
+            <div className="cms-block-head"><div className="cms-block-spacer" /><button className="cms-iconbtn" title="Remove" onClick={() => onChange(items.filter((_, j) => j !== i))}>✕</button></div>
+          </div>
+        ))}
+        <div className="cms-addrow"><button className="cms-btn cms-btn-sm" onClick={() => onChange([...items, { question: '', answer: '' }])}>+ Add question</button></div>
+      </div>
+    );
+  }
   // text (default)
   return (
     <div className="cms-field"><label>{field.label}</label>

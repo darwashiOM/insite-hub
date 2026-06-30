@@ -4,6 +4,7 @@ import CardGrid from '../components/sections/CardGrid';
 import CTABand from '../components/sections/CTABand';
 import SplitFeature from '../components/sections/SplitFeature';
 import PullQuote from '../components/sections/PullQuote';
+import FaqSection from '../components/sections/FaqSection';
 
 /*
  * The "kit of ready-made sections" (Mercy's S3). Each section type wraps a real
@@ -78,6 +79,14 @@ export const SECTION_KIT = {
       <CTABand heading={d.heading} body={d.body}
         primaryCta={d.ctaLabel ? { label: d.ctaLabel, onClick: () => go(d.ctaPage) } : undefined} />
     ),
+  },
+  faq: {
+    label: 'FAQ',
+    fields: [
+      { key: 'heading', label: 'Heading', type: 'text' },
+      { key: 'items', label: 'Questions & answers', type: 'faqlist' },
+    ],
+    render: (d) => <FaqSection heading={d.heading} items={d.items} />,
   },
 };
 
