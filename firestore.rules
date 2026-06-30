@@ -24,6 +24,15 @@ service cloud.firestore {
       }
     }
 
+    // CMS-built pages (kit-of-sections) — public reads published ones; admin writes.
+    match /pages/{id} {
+      allow read: if resource.data.published == true || isAdmin();
+      allow create, update, delete: if isAdmin();
+      match /versions/{versionId} {
+        allow read, write: if isAdmin();
+      }
+    }
+
     // Case studies — public reads published ones; admin reads drafts + writes.
     match /caseStudies/{id} {
       allow read: if resource.data.published == true || isAdmin();

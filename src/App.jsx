@@ -41,6 +41,7 @@ const CaseStudiesIndexPage = lazyWithReload(() => import('./pages/CaseStudiesInd
 const CaseStudyPage = lazyWithReload(() => import('./pages/CaseStudyPage'));
 const VideoGalleryPage = lazyWithReload(() => import('./pages/VideoGalleryPage'));
 const CmsFormPage = lazyWithReload(() => import('./pages/CmsFormPage'));
+const DynamicPage = lazyWithReload(() => import('./pages/DynamicPage'));
 const AdminPage = lazyWithReload(() => import('./admin/AdminPage'));
 
 const PAGE_TITLES = {
@@ -63,6 +64,7 @@ const PAGE_TITLES = {
   caseStudy: "Case Study · Proxa Labs",
   videos: "Videos · Proxa Labs",
   form: "Proxa Labs",
+  dynamicPage: "Proxa Labs",
   admin: "CMS · Proxa Labs",
   notfound: "Page not found · Proxa Labs",
 };
@@ -87,6 +89,7 @@ const DESCS = {
   caseStudy: "A Proxa Labs case study — challenge, approach, and results.",
   videos: "Short, practical videos on AI in biopharma commercial learning — strategy, evidence, and the field.",
   form: "Proxa Labs.",
+  dynamicPage: "Proxa Labs.",
   admin: "Proxa Labs content management.",
   notfound: "The page you're looking for doesn't exist or has moved.",
 };
@@ -112,7 +115,7 @@ const PAGES = {
   resources: ResourcesPage, newsletter: NewsletterPage, contact: ContactPage,
   futureproof: FutureProofPage, blog: BlogIndexPage, article: ArticlePage,
   caseStudies: CaseStudiesIndexPage, caseStudy: CaseStudyPage,
-  videos: VideoGalleryPage, form: CmsFormPage,
+  videos: VideoGalleryPage, form: CmsFormPage, dynamicPage: DynamicPage,
   admin: AdminPage, notfound: NotFoundPage,
 };
 
@@ -147,7 +150,9 @@ const pageFromLocation = () => {
   if (normalized.startsWith("/blog/") && normalized !== "/blog") return "article";
   if (normalized.startsWith("/case-studies/") && normalized !== "/case-studies") return "caseStudy";
   if (normalized.startsWith("/forms/") && normalized !== "/forms") return "form";
-  return PATH_PAGES[normalized] || "notfound";
+  // Anything else: try to resolve a marketer-built CMS page at this slug
+  // (DynamicPage shows a not-found if there's no published page there).
+  return PATH_PAGES[normalized] || "dynamicPage";
 };
 
 const urlForPage = (page, hash, slug) => {
@@ -261,7 +266,7 @@ export default function App() {
   const Page = PAGES[page] || HomePage;
   // For the dynamic article page, key by pathname so it remounts (re-fetches)
   // when navigating between articles.
-  const pageKey = (page === "article" || page === "caseStudy" || page === "form") ? window.location.pathname : page;
+  const pageKey = (page === "article" || page === "caseStudy" || page === "form" || page === "dynamicPage") ? window.location.pathname : page;
 
   // The admin is a standalone full-screen app — no marketing nav/footer.
   if (page === "admin") {
