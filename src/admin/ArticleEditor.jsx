@@ -1,5 +1,9 @@
 import { useState, useEffect, useRef } from 'react';
-import { adminSaveArticle, adminUploadImage, slugify } from '../lib/adminBlog';
+import {
+  adminSaveArticle, adminUploadImage, slugify,
+  adminListArticleVersions, adminRestoreArticleVersion,
+} from '../lib/adminBlog';
+import VersionHistory from './VersionHistory';
 
 const BLANK = {
   slug: '', pillar: 'Methodology', title: '', description: '',
@@ -157,6 +161,20 @@ export default function ArticleEditor({ article, onDone, onCancel }) {
       <div className="cms-wrap">
         {error && <p className="cms-err">{error}</p>}
         {okMsg && <p className="cms-ok-banner">{okMsg}</p>}
+
+        {!isNew && (
+          <VersionHistory
+            label="this article"
+            load={() => adminListArticleVersions(article.slug)}
+            onRestore={async (vid) => {
+              const snap = await adminRestoreArticleVersion(article.slug, vid);
+              const f = fromArticle({ ...snap, slug: article.slug });
+              initial.current = JSON.stringify(f);
+              setForm(f);
+              setOkMsg('Restored ✓ — the saved version now matches this.');
+            }}
+          />
+        )}
 
         <div className="cms-field">
           <label>Title</label>

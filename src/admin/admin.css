@@ -94,3 +94,10 @@
 .cms-adv-toggle input { width: 15px; height: 15px; accent-color: var(--o); }
 .cms-iconbtn:disabled { opacity: .35; cursor: default; }
 .cms-iconbtn:disabled:hover { border-color: var(--br); color: var(--bd); }
+
+/* version history */
+.cms-history { margin: 0 0 18px; }
+.cms-history-panel { margin-top: 10px; border: 1px solid var(--br); border-radius: 10px; padding: 10px 14px; background: var(--wh); }
+.cms-history-list { list-style: none; margin: 0; padding: 0; }
+.cms-history-list li { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 8px 0; border-bottom: 1px solid var(--br); font-size: 13px; color: var(--ink); }
+.cms-history-list li:last-child { border-bottom: 0; }

@@ -1,6 +1,10 @@
 import { useEffect, useState } from 'react';
 import { MANIFEST } from '../content/manifest';
-import { adminGetPageContent, adminSavePageContent, adminUploadImage } from '../lib/adminBlog';
+import {
+  adminGetPageContent, adminSavePageContent, adminUploadImage,
+  adminListPageVersions, adminRestorePageVersion,
+} from '../lib/adminBlog';
+import VersionHistory from './VersionHistory';
 
 const PAGE_IDS = Object.keys(MANIFEST);
 
@@ -97,6 +101,16 @@ export default function AdminPagesEditor({ onDirtyChange }) {
     }
   };
 
+  const restorePageVersion = async (vid) => {
+    const id = pageId;
+    const ov = (await adminRestorePageVersion(id, vid)) || {};
+    if (id !== pageId) return; // switched pages mid-restore; the [pageId] effect owns state now
+    setSaved(ov);
+    setValues(Object.fromEntries(fields.map((f) =>
+      [f.key, ov[f.key] != null && ov[f.key] !== '' ? ov[f.key] : f.default])));
+    setStatus('saved');
+  };
+
   // visible fields after filter / only-customized, grouped by section
   const visible = (values ? fields : []).filter((f) => {
     if (onlyCustom && String(values[f.key] ?? '') === String(f.default)) return false;
@@ -132,6 +146,13 @@ export default function AdminPagesEditor({ onDirtyChange }) {
         Each box shows the text that’s on the website now — just edit it. Leave a box as-is to keep it.
         Use <em>Restore original</em> to undo a change. Saving updates the live site within about a minute.
       </p>
+
+      <VersionHistory
+        key={pageId}
+        label="this page"
+        load={() => adminListPageVersions(pageId)}
+        onRestore={restorePageVersion}
+      />
 
       {values === null ? (
         <p style={{ color: '#5c6370' }}>Loading…</p>
