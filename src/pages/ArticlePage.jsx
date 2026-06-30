@@ -1,6 +1,8 @@
 import { useEffect } from 'react';
 import ArticleLayout from '../components/ArticleLayout';
 import { useArticle } from '../lib/blog';
+import { SITE_URL } from '../lib/site';
+import { setJsonLd, buildArticleLd, buildBreadcrumbLd } from '../lib/jsonLd';
 
 function slugFromPath() {
   const parts = window.location.pathname.replace(/\/+$/, '').split('/');
@@ -17,9 +19,22 @@ export default function ArticlePage({ setPage }) {
     document.title = `${article.title} · Proxa Labs`;
     const meta = document.querySelector('meta[name="description"]');
     if (meta && article.description) meta.content = article.description;
+
+    // Article + breadcrumb structured data (AEO). Removed on unmount so it
+    // doesn't linger on the next page.
+    const url = `${SITE_URL}/blog/${article.slug}`;
+    setJsonLd('ld-article', buildArticleLd(article, url));
+    setJsonLd('ld-breadcrumb', buildBreadcrumbLd([
+      { name: 'Home', url: `${SITE_URL}/` },
+      { name: 'Blog', url: `${SITE_URL}/blog` },
+      { name: article.title, url },
+    ]));
+
     // Deep-link: scroll to a #section once the body has rendered.
     const hash = window.location.hash.replace(/^#/, '');
     if (hash) window.setTimeout(() => document.getElementById(hash)?.scrollIntoView({ block: 'start' }), 60);
+
+    return () => { setJsonLd('ld-article', null); setJsonLd('ld-breadcrumb', null); };
   }, [article]);
 
   if (loading) {

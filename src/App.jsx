@@ -19,6 +19,8 @@ import NotFoundPage from './pages/NotFoundPage';
 import ErrorBoundary from './components/ErrorBoundary';
 import { prefetchContent } from './lib/content';
 import { trackPageView } from './analytics';
+import { SITE_URL, OG_IMAGE } from './lib/site';
+import { setJsonLd, buildOrgLd } from './lib/jsonLd';
 // Blog + admin are code-split so the Firebase SDK loads only on /blog routes and
 // the admin (not on the homepage / marketing pages).
 // If a hashed chunk is missing (stale tab after a redeploy), reload once to pick
@@ -79,12 +81,6 @@ const DESCS = {
 
 // Campaign / placeholder / private pages that should not be indexed.
 const NOINDEX_PAGES = new Set(["futureproof", "admin", "notfound"]);
-
-// Production origin used for canonical + social tags. Still insitehub.com until
-// the domain flips; override with VITE_SITE_URL. OG image is a placeholder until
-// a proper 1200x630 share image is added.
-const SITE_URL = (import.meta.env.VITE_SITE_URL || "https://www.insitehub.com").replace(/\/+$/, "");
-const OG_IMAGE = import.meta.env.VITE_OG_IMAGE || `${SITE_URL}/apple-touch-icon.png`;
 
 function upsertMeta(attr, key, content) {
   let el = document.head.querySelector(`meta[${attr}="${key}"]`);
@@ -165,6 +161,9 @@ export default function App() {
 
   // Warm the page-content cache early so overrides are ready before navigation.
   useEffect(() => { prefetchContent(); }, []);
+
+  // Site-wide Organization + WebSite structured data (one-time).
+  useEffect(() => { setJsonLd('ld-org', buildOrgLd()); }, []);
 
   useEffect(() => {
     const title = PAGE_TITLES[page] || PAGE_TITLES.home;

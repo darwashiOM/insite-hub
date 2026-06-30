@@ -1,0 +1,14 @@
+# Proxa Labs
+
+> Proxa Labs is the AI implementation partner built for biopharma commercial learning — advisory, an AI platform, and structured experimentation. Methodology-first, compliance by design.
+
+## Pages
+- [Platform](https://www.insitehub.com/platform): The closed-loop AI platform — Forge builds content, Cue delivers learning, Stage assesses readiness, Trace confirms competency.
+- [Advisory](https://www.insitehub.com/advisory): AI strategy, readiness assessments, governance, and infrastructure planning for biopharma commercial L&D.
+- [AI Literacy](https://www.insitehub.com/ai-literacy): Role-targeted AI fluency tracks for the commercial organization.
+- [InsiteX LMS](https://www.insitehub.com/insitex-lms): Enterprise learning management built for biopharma compliance.
+- [Content Development](https://www.insitehub.com/content-development): MLR-compliant content development, AI-powered or traditional.
+- [The Lab](https://www.insitehub.com/the-lab): Structured AI experimentation — define the use case, design the experiment, measure what matters.
+- [About](https://www.insitehub.com/about): 25 years of biopharma commercial learning expertise applied to AI implementation.
+- [Blog](https://www.insitehub.com/blog): Field notes and frameworks on commercial readiness and AI evidence.
+- [Contact](https://www.insitehub.com/contact): Start a conversation.
