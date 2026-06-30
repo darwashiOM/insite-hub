@@ -7,6 +7,7 @@ import VersionHistory from './VersionHistory';
 
 const BLANK = {
   slug: '', pillar: 'Methodology', topic: '', tags: '', featured: false, title: '', description: '',
+  metaTitle: '', canonical: '', ogImage: '', noindex: false,
   authorId: '', author: { name: '', role: '', bio: '', headshot: '' },
   date: '', readTime: '', summary: '',
   body: [], related: [], thumb: '', published: false, order: 0,
@@ -131,6 +132,7 @@ export default function ArticleEditor({ article, authors = [], knownTopics = [],
     const article = {
       slug, pillar: form.pillar.trim(), topic: form.topic.trim(), tags, featured: !!form.featured,
       title, description: form.description.trim(),
+      metaTitle: form.metaTitle.trim(), canonical: form.canonical.trim(), ogImage: form.ogImage.trim(), noindex: !!form.noindex,
       authorId: form.authorId || '',
       author: {
         name: form.author.name.trim(), role: form.author.role.trim(),
@@ -243,6 +245,31 @@ export default function ArticleEditor({ article, authors = [], knownTopics = [],
           <textarea className="cms-textarea" style={{ minHeight: 64 }} value={form.description}
             onChange={(e) => set('description', e.target.value)} />
           <p className="cms-hint">Shown in Google results and link previews. ~1–2 sentences.</p>
+        </div>
+
+        <div className="cms-section-h">Search &amp; sharing (optional)</div>
+        <div className="cms-field">
+          <label>Browser / search title</label>
+          <input className="cms-input" value={form.metaTitle} onChange={(e) => set('metaTitle', e.target.value)} />
+          <p className="cms-hint">Overrides the title in the browser tab and Google. Leave blank to use the headline.</p>
+        </div>
+        <div className="cms-row">
+          <div className="cms-field">
+            <label>Canonical URL</label>
+            <input className="cms-input" value={form.canonical} onChange={(e) => set('canonical', e.target.value)} />
+            <p className="cms-hint">Only if this post duplicates another page. Leave blank otherwise.</p>
+          </div>
+          <div className="cms-field">
+            <label>Social share image</label>
+            <input className="cms-input" placeholder="Image URL" value={form.ogImage} onChange={(e) => set('ogImage', e.target.value)} />
+            <p className="cms-hint">For link previews. Falls back to the hero image.</p>
+          </div>
+        </div>
+        <div className="cms-field">
+          <label className="cms-check">
+            <input type="checkbox" checked={form.noindex} onChange={(e) => set('noindex', e.target.checked)} />
+            Hide this post from search engines (no-index)
+          </label>
         </div>
 
         <div className="cms-field">

@@ -16,13 +16,30 @@ export default function ArticlePage({ setPage }) {
 
   useEffect(() => {
     if (!article) return;
-    document.title = `${article.title} · Proxa Labs`;
-    const meta = document.querySelector('meta[name="description"]');
-    if (meta && article.description) meta.content = article.description;
+    const setMeta = (attr, key, val) => {
+      let el = document.head.querySelector(`meta[${attr}="${key}"]`);
+      if (!el) { el = document.createElement('meta'); el.setAttribute(attr, key); document.head.appendChild(el); }
+      el.setAttribute('content', val);
+    };
+    const setLink = (rel, href) => {
+      let el = document.head.querySelector(`link[rel="${rel}"]`);
+      if (!el) { el = document.createElement('link'); el.setAttribute('rel', rel); document.head.appendChild(el); }
+      el.setAttribute('href', href);
+    };
+
+    // Per-post SEO overrides (these run after the generic per-route meta because
+    // the article loads async, so they win).
+    const url = (article.canonical && article.canonical.trim()) || `${SITE_URL}/blog/${article.slug}`;
+    document.title = (article.metaTitle && article.metaTitle.trim()) || `${article.title} · Proxa Labs`;
+    if (article.description) setMeta('name', 'description', article.description);
+    setLink('canonical', url);
+    setMeta('property', 'og:url', url);
+    const ogImg = (article.ogImage && article.ogImage.trim()) || (article.thumb && article.thumb.trim());
+    if (ogImg) { setMeta('property', 'og:image', ogImg); setMeta('name', 'twitter:image', ogImg); }
+    setMeta('name', 'robots', article.noindex ? 'noindex, nofollow' : 'index, follow');
 
     // Article + breadcrumb structured data (AEO). Removed on unmount so it
     // doesn't linger on the next page.
-    const url = `${SITE_URL}/blog/${article.slug}`;
     setJsonLd('ld-article', buildArticleLd(article, url));
     setJsonLd('ld-breadcrumb', buildBreadcrumbLd([
       { name: 'Home', url: `${SITE_URL}/` },
