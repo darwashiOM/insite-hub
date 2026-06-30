@@ -1,6 +1,7 @@
 const { onRequest } = require("firebase-functions/v2/https");
 const { defineSecret } = require("firebase-functions/params");
 const admin = require("firebase-admin");
+const { FieldValue } = require("firebase-admin/firestore");
 const crypto = require("crypto");
 const nodemailer = require("nodemailer");
 
@@ -290,5 +291,96 @@ exports.getContent = onRequest(async (req, res) => {
     // Non-2xx so clients keep their last-good cached overrides (and fall back to
     // in-code defaults on a cold load) instead of caching an empty {} over them.
     res.status(500).json({ error: "content unavailable" });
+  }
+});
+
+// ---------------------------------------------------------------------------
+// CMS forms: accept a submission for a marketer-built form, validate against the
+// form definition, store it (admin SDK — clients can't write submissions directly),
+// email a notification, and return a gated download link if the form gates a file.
+// Honeypot + per-IP rate limit guard against spam.
+// ---------------------------------------------------------------------------
+const FORM_MAX_PER_WINDOW = 12;
+const FORM_WINDOW_MS = 15 * 60 * 1000;
+
+function escapeHtml(v) {
+  return String(v == null ? "" : v)
+    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+}
+
+exports.submitForm = onRequest(async (req, res) => {
+  if (setCors(req, res)) return;
+  if (req.method !== "POST") { res.status(405).json({ error: "Method not allowed" }); return; }
+  try {
+    const db = admin.firestore();
+    const now = Date.now();
+    const body = req.body || {};
+    // Honeypot: a real user never fills this hidden field. Pretend success, store nothing.
+    if (body._hp) { res.status(200).json({ success: true }); return; }
+
+    const formSlug = String(body.formSlug || "");
+    if (!formSlug) { res.status(400).json({ error: "Missing form." }); return; }
+
+    const formSnap = await db.collection("forms").doc(formSlug).get();
+    if (!formSnap.exists || formSnap.data().published !== true) { res.status(404).json({ error: "Form not found." }); return; }
+    const form = formSnap.data();
+
+    // Per-IP rate limit.
+    const ip = clientIp(req);
+    const rlRef = db.collection("formRateLimit").doc(ip);
+    const rl = await rlRef.get();
+    const r = rl.exists ? rl.data() : { count: 0, first: now };
+    let count = r.count || 0; let first = r.first || now;
+    if (now - first > FORM_WINDOW_MS) { count = 0; first = now; }
+    if (count >= FORM_MAX_PER_WINDOW) { res.status(429).json({ error: "Too many submissions. Please try again later." }); return; }
+    await rlRef.set({ count: count + 1, first }, { merge: true });
+
+    // Validate required fields + consent against the definition.
+    const data = (body.data && typeof body.data === "object") ? body.data : {};
+    for (const f of (form.fields || [])) {
+      if (f.required && !String(data[f.key] == null ? "" : data[f.key]).trim()) {
+        res.status(400).json({ error: `Please fill in "${f.label || f.key}".` }); return;
+      }
+    }
+    if (form.consentText && !body.consent) { res.status(400).json({ error: "Please accept to continue." }); return; }
+
+    // Keep only fields the form actually defines (ignore anything extra a client posts).
+    const allowed = new Set((form.fields || []).map((f) => f.key));
+    const cleanData = {};
+    Object.keys(data).forEach((k) => { if (allowed.has(k)) cleanData[k] = String(data[k] == null ? "" : data[k]).slice(0, 5000); });
+
+    await db.collection("formSubmissions").add({
+      formSlug, formName: form.name || formSlug,
+      data: cleanData,
+      utm: (body.utm && typeof body.utm === "object") ? body.utm : {},
+      consent: !!body.consent,
+      createdAt: FieldValue.serverTimestamp(),
+    });
+
+    // Email notification (best-effort — never fail the submission if email errors).
+    const to = parseEmails(form.notifyEmail || process.env.NOTIFY_EMAIL || DEFAULT_NOTIFY_EMAILS);
+    if (to.length) {
+      const rows = (form.fields || [])
+        .map((f) => `<tr><td style="padding:6px 16px 6px 0;font-weight:bold;color:#666;">${escapeHtml(f.label || f.key)}</td><td style="padding:6px 0;">${escapeHtml(cleanData[f.key] || "")}</td></tr>`)
+        .join("");
+      const utmRows = Object.entries(body.utm || {})
+        .filter(([, v]) => v)
+        .map(([k, v]) => `<tr><td style="padding:6px 16px 6px 0;font-weight:bold;color:#999;">${escapeHtml(k)}</td><td style="padding:6px 0;color:#999;">${escapeHtml(v)}</td></tr>`)
+        .join("");
+      getTransporter().sendMail({
+        from: getFromAddress(),
+        to,
+        subject: `New form submission: ${form.name || formSlug}`,
+        html: `<h2>${escapeHtml(form.name || formSlug)}</h2><table style="border-collapse:collapse;font-family:sans-serif;font-size:14px;">${rows}${utmRows}</table>`,
+      }).catch((e) => console.error("submitForm email failed:", e));
+    }
+
+    const out = { success: true };
+    if (form.gated && form.gatedFileUrl) out.download = form.gatedFileUrl;
+    res.status(200).json(out);
+  } catch (err) {
+    console.error("submitForm failed:", err);
+    res.status(500).json({ error: "Submission failed — please try again." });
   }
 });

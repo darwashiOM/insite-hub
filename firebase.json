@@ -24,6 +24,10 @@
         "function": { "functionId": "getContent", "region": "us-central1" }
       },
       {
+        "source": "/api/submit-form",
+        "function": { "functionId": "submitForm", "region": "us-central1" }
+      },
+      {
         "source": "**",
         "destination": "/index.html"
       }

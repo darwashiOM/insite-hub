@@ -1,0 +1,31 @@
+.proxa-article .cmsform { max-width: 540px; margin: 8px 0 0; }
+.proxa-article .cmsform-field { margin: 0 0 18px; }
+.proxa-article .cmsform-field label { display: block; font-family: var(--display); font-weight: 600; color: var(--ink); font-size: .92rem; margin: 0 0 6px; }
+.proxa-article .cmsform-field input,
+.proxa-article .cmsform-field textarea,
+.proxa-article .cmsform-field select {
+  width: 100%; font: inherit; font-size: 1rem; color: var(--ink); padding: 12px 14px;
+  border: 1.5px solid var(--br, #e3e5ea); border-radius: 10px; background: #fff; outline: none; transition: border-color .15s;
+}
+.proxa-article .cmsform-field input:focus,
+.proxa-article .cmsform-field textarea:focus,
+.proxa-article .cmsform-field select:focus { border-color: var(--coral); }
+.proxa-article .cmsform-field textarea { min-height: 110px; resize: vertical; }
+.proxa-article .cmsform-field-check label,
+.proxa-article .cmsform-inline { display: flex; align-items: flex-start; gap: 10px; font-weight: 500; cursor: pointer; }
+.proxa-article .cmsform-field-check input,
+.proxa-article .cmsform-consent input { width: 18px; height: 18px; margin-top: 2px; accent-color: var(--coral); flex: 0 0 auto; }
+
+.proxa-article .cmsform-consent { display: flex; align-items: flex-start; gap: 10px; margin: 4px 0 20px; font-size: .9rem; color: var(--muted); line-height: 1.5; cursor: pointer; }
+
+.proxa-article .cmsform-hp { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
+
+.proxa-article .cmsform-submit { font: inherit; font-weight: 600; font-size: 1rem; color: #fff; background: var(--coral); border: none; border-radius: 10px; padding: 13px 26px; cursor: pointer; transition: background .15s, transform .1s; }
+.proxa-article .cmsform-submit:hover { background: var(--coral-deep); }
+.proxa-article .cmsform-submit:disabled { opacity: .6; cursor: default; }
+
+.proxa-article .cmsform-err { color: #b42318; font-weight: 600; margin: 0 0 16px; }
+.proxa-article .cmsform-done { max-width: 540px; }
+.proxa-article .cmsform-success { font-family: var(--display); font-weight: 600; color: var(--ink); font-size: 1.15rem; margin: 0 0 16px; }
+.proxa-article .cmsform-download { display: inline-block; font-weight: 600; color: #fff; background: var(--coral); border-radius: 10px; padding: 12px 24px; text-decoration: none; }
+.proxa-article .cmsform-download:hover { background: var(--coral-deep); }

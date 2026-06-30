@@ -238,6 +238,51 @@ export async function adminDeleteVideo(slug) {
 export const adminListVideoVersions = (slug) => listVersions(doc(db, 'videos', slug));
 export const adminRestoreVideoVersion = (slug, vid) => restoreVersion(doc(db, 'videos', slug), vid);
 
+// --- Forms + submissions ----------------------------------------------------
+
+export async function adminListForms() {
+  const snap = await getDocs(collection(db, 'forms'));
+  return snap.docs.map((d) => ({ id: d.id, ...d.data() }))
+    .sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+}
+
+export async function adminGetForm(slug) {
+  const s = await getDoc(doc(db, 'forms', slug));
+  return s.exists() ? { id: s.id, ...s.data() } : null;
+}
+
+export async function adminSaveForm(form, isNew = false) {
+  const { id: _id, ...data } = form;
+  const slug = data.slug;
+  if (!slug) throw new Error('A web address is required.');
+  const ref = doc(db, 'forms', slug);
+  if (isNew) {
+    const existing = await getDoc(ref);
+    if (existing.exists()) throw new Error('A form already exists at that web address. Pick a different name or address.');
+  }
+  await saveWithHistory(ref, data);
+  return slug;
+}
+
+export async function adminDeleteForm(slug) {
+  const ref = doc(db, 'forms', slug);
+  const versions = await getDocs(collection(ref, 'versions'));
+  const batch = writeBatch(db);
+  versions.docs.forEach((d) => batch.delete(d.ref));
+  batch.delete(ref);
+  await batch.commit();
+}
+
+export const adminListFormVersions = (slug) => listVersions(doc(db, 'forms', slug));
+export const adminRestoreFormVersion = (slug, vid) => restoreVersion(doc(db, 'forms', slug), vid);
+
+// Submissions (admin read only; written by the submitForm function). Newest
+// first; filter by form client-side to avoid a composite index.
+export async function adminListSubmissions() {
+  const snap = await getDocs(query(collection(db, 'formSubmissions'), orderBy('createdAt', 'desc'), limit(500)));
+  return snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+}
+
 // --- Authors (reusable records that posts link to) --------------------------
 
 export async function adminListAuthors() {

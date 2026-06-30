@@ -40,6 +40,7 @@ const ArticlePage = lazyWithReload(() => import('./pages/ArticlePage'));
 const CaseStudiesIndexPage = lazyWithReload(() => import('./pages/CaseStudiesIndexPage'));
 const CaseStudyPage = lazyWithReload(() => import('./pages/CaseStudyPage'));
 const VideoGalleryPage = lazyWithReload(() => import('./pages/VideoGalleryPage'));
+const CmsFormPage = lazyWithReload(() => import('./pages/CmsFormPage'));
 const AdminPage = lazyWithReload(() => import('./admin/AdminPage'));
 
 const PAGE_TITLES = {
@@ -61,6 +62,7 @@ const PAGE_TITLES = {
   caseStudies: "Case Studies · Proxa Labs",
   caseStudy: "Case Study · Proxa Labs",
   videos: "Videos · Proxa Labs",
+  form: "Proxa Labs",
   admin: "CMS · Proxa Labs",
   notfound: "Page not found · Proxa Labs",
 };
@@ -84,6 +86,7 @@ const DESCS = {
   caseStudies: "Real biopharma commercial teams, real results — the challenge, what Proxa Labs did, and the outcomes.",
   caseStudy: "A Proxa Labs case study — challenge, approach, and results.",
   videos: "Short, practical videos on AI in biopharma commercial learning — strategy, evidence, and the field.",
+  form: "Proxa Labs.",
   admin: "Proxa Labs content management.",
   notfound: "The page you're looking for doesn't exist or has moved.",
 };
@@ -109,7 +112,7 @@ const PAGES = {
   resources: ResourcesPage, newsletter: NewsletterPage, contact: ContactPage,
   futureproof: FutureProofPage, blog: BlogIndexPage, article: ArticlePage,
   caseStudies: CaseStudiesIndexPage, caseStudy: CaseStudyPage,
-  videos: VideoGalleryPage,
+  videos: VideoGalleryPage, form: CmsFormPage,
   admin: AdminPage, notfound: NotFoundPage,
 };
 
@@ -143,6 +146,7 @@ const pageFromLocation = () => {
   // /blog/<slug> resolves to the dynamic article page (slug read from the URL).
   if (normalized.startsWith("/blog/") && normalized !== "/blog") return "article";
   if (normalized.startsWith("/case-studies/") && normalized !== "/case-studies") return "caseStudy";
+  if (normalized.startsWith("/forms/") && normalized !== "/forms") return "form";
   return PATH_PAGES[normalized] || "notfound";
 };
 
@@ -150,6 +154,7 @@ const urlForPage = (page, hash, slug) => {
   let path;
   if (page === "article" && slug) path = `/blog/${slug}`;
   else if (page === "caseStudy" && slug) path = `/case-studies/${slug}`;
+  else if (page === "form" && slug) path = `/forms/${slug}`;
   else path = PAGE_PATHS[page] || PAGE_PATHS.home;
   return hash ? `${path}#${hash.replace(/^#/, "")}` : path;
 };
@@ -256,7 +261,7 @@ export default function App() {
   const Page = PAGES[page] || HomePage;
   // For the dynamic article page, key by pathname so it remounts (re-fetches)
   // when navigating between articles.
-  const pageKey = (page === "article" || page === "caseStudy") ? window.location.pathname : page;
+  const pageKey = (page === "article" || page === "caseStudy" || page === "form") ? window.location.pathname : page;
 
   // The admin is a standalone full-screen app — no marketing nav/footer.
   if (page === "admin") {
