@@ -1,4 +1,5 @@
 const { onRequest } = require("firebase-functions/v2/https");
+const { onSchedule } = require("firebase-functions/v2/scheduler");
 const { defineSecret } = require("firebase-functions/params");
 const admin = require("firebase-admin");
 const { FieldValue } = require("firebase-admin/firestore");
@@ -408,4 +409,33 @@ exports.submitForm = onRequest(async (req, res) => {
     console.error("submitForm failed:", err);
     res.status(500).json({ error: "Submission failed — please try again." });
   }
+});
+
+// ---------------------------------------------------------------------------
+// Scheduled publishing: content saved with a future publishAt (millis) stays a
+// draft until its time arrives; this runs periodically and flips it live. Only
+// publishAt (a range field) is queried, so no composite index is needed — once
+// published, publishAt is removed so a doc is never reprocessed.
+// ---------------------------------------------------------------------------
+async function publishDueContent() {
+  const db = admin.firestore();
+  const now = Date.now();
+  let count = 0;
+  for (const col of ["articles", "caseStudies", "videos"]) {
+    const snap = await db.collection(col).where("publishAt", "<=", now).get();
+    if (snap.empty) continue;
+    const batch = db.batch();
+    snap.forEach((d) => {
+      const upd = { publishAt: FieldValue.delete() };
+      if (!d.data().published) { upd.published = true; count += 1; }
+      batch.update(d.ref, upd);
+    });
+    await batch.commit();
+  }
+  return count;
+}
+
+exports.publishScheduled = onSchedule("every 10 minutes", async () => {
+  const n = await publishDueContent();
+  if (n) console.log(`publishScheduled: published ${n} item(s).`);
 });

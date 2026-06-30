@@ -216,10 +216,12 @@ export default function AdminDashboard({ onLogout }) {
                   <p className="cms-card-title">{a.title || '(untitled)'}</p>
                   <p className="cms-card-meta">
                     {a.pillar ? `${a.pillar} · ` : ''}{a.date || 'no date'} ·{' '}
-                    {a.published ? <a href={`/blog/${a.slug}`} target="_blank" rel="noopener noreferrer">View live ↗</a> : <span>not published yet</span>}
+                    {a.published ? <a href={`/blog/${a.slug}`} target="_blank" rel="noopener noreferrer">View live ↗</a>
+                      : a.publishAt ? <span>scheduled for {new Date(a.publishAt).toLocaleString()}</span>
+                      : <span>not published yet</span>}
                   </p>
                 </div>
-                {badge(a.published)}
+                {a.published ? badge(true) : a.publishAt ? <span className="cms-badge cms-badge-draft">Scheduled</span> : badge(false)}
                 <button className="cms-btn cms-btn-sm" onClick={() => setView(a.slug)}>Edit</button>
                 <button className="cms-btn cms-btn-sm cms-btn-danger" onClick={() => removeArticle(a)}>Delete</button>
               </div>

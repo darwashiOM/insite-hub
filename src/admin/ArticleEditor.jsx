@@ -10,7 +10,7 @@ const BLANK = {
   metaTitle: '', canonical: '', ogImage: '', noindex: false,
   authorId: '', author: { name: '', role: '', bio: '', headshot: '' },
   date: '', readTime: '', summary: '',
-  body: [], related: [], thumb: '', published: false, order: 0,
+  body: [], related: [], thumb: '', published: false, publishAt: '', order: 0,
 };
 
 // ~200 wpm estimate from the body text, used when the read-time field is blank.
@@ -18,6 +18,12 @@ function estimateReadTime(body) {
   const text = body.map((b) => b.html || b.text || '').join(' ').replace(/<[^>]+>/g, ' ');
   const words = text.split(/\s+/).filter(Boolean).length;
   return words ? `${Math.max(1, Math.round(words / 200))} min read` : '';
+}
+
+// millis -> "YYYY-MM-DDTHH:mm" (local) for a datetime-local input, and back.
+function toLocalDatetime(ms) {
+  const d = new Date(ms); const pad = (n) => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
 }
 
 // Build the initial form from an existing article, restoring per-heading nav
@@ -30,6 +36,7 @@ function fromArticle(a) {
     ...a,
     author: { ...BLANK.author, ...(a.author || {}) },
     tags: Array.isArray(a.tags) ? a.tags.join(', ') : (a.tags || ''),
+    publishAt: a.publishAt ? toLocalDatetime(a.publishAt) : '',
     body: (a.body || []).map((b) =>
       b.type === 'h2' ? { ...b, navLabel: tocMap[b.id] && tocMap[b.id] !== b.text ? tocMap[b.id] : '' } : { ...b }
     ),
@@ -129,6 +136,9 @@ export default function ArticleEditor({ article, authors = [], knownTopics = [],
     if (form.published && !hasBody && !window.confirm('This post has no body text yet. Publish it live anyway?')) return;
 
     const tags = String(form.tags || '').split(',').map((t) => t.trim()).filter(Boolean);
+    // A future publish time only applies while unpublished; publishing now clears it.
+    const scheduledMs = (!form.published && form.publishAt) ? Date.parse(form.publishAt) : NaN;
+    const isScheduled = !Number.isNaN(scheduledMs) && scheduledMs > Date.now();
     const article = {
       slug, pillar: form.pillar.trim(), topic: form.topic.trim(), tags, featured: !!form.featured,
       title, description: form.description.trim(),
@@ -142,13 +152,16 @@ export default function ArticleEditor({ article, authors = [], knownTopics = [],
       summary: form.summary.trim(), body, toc,
       related: form.related || [], thumb: form.thumb.trim(),
       published: !!form.published, order: Number(form.order) || 0,
+      ...(isScheduled ? { publishAt: scheduledMs } : {}),
     };
 
     setBusy(true);
     try {
       await adminSaveArticle(article, isNew);
       initial.current = JSON.stringify(form);
-      setOkMsg(article.published ? 'Saved ✓ — it’s live now.' : 'Saved as draft ✓');
+      setOkMsg(article.published ? 'Saved ✓ — it’s live now.'
+        : isScheduled ? `Saved ✓ — scheduled for ${new Date(scheduledMs).toLocaleString()}`
+        : 'Saved as draft ✓');
       setBusy(false);
       setTimeout(() => onDone(), 900);
     } catch (e) {
@@ -367,6 +380,14 @@ export default function ArticleEditor({ article, authors = [], knownTopics = [],
           <input type="file" accept="image/png,image/jpeg,image/gif,image/webp" style={{ marginTop: 8 }}
             onChange={(e) => upload(e.target.files[0], (url) => setAuthor('headshot', url))} />
         </div>
+
+        {!form.published && (
+          <div className="cms-field">
+            <label>Schedule publish for later (optional)</label>
+            <input className="cms-input" type="datetime-local" style={{ maxWidth: 260 }} value={form.publishAt} onChange={(e) => set('publishAt', e.target.value)} />
+            <p className="cms-hint">Leave blank to keep it a draft. Set a future time and it goes live automatically then.</p>
+          </div>
+        )}
 
         {/* Publish */}
         <div className="cms-toolbar">
