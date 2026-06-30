@@ -6,6 +6,7 @@ import {
 import ArticleEditor from './ArticleEditor';
 import AuthorEditor from './AuthorEditor';
 import AdminPagesEditor from './AdminPagesEditor';
+import NavEditor from './NavEditor';
 
 // Admin shell with Blog | Authors | Site pages tabs.
 export default function AdminDashboard({ onLogout }) {
@@ -15,6 +16,7 @@ export default function AdminDashboard({ onLogout }) {
   const [view, setView] = useState('list');             // blog: 'list' | 'new' | <slug>
   const [authorView, setAuthorView] = useState('list');  // authors: 'list' | 'new' | <id>
   const [pagesDirty, setPagesDirty] = useState(false);
+  const [navDirty, setNavDirty] = useState(false);
 
   const load = useCallback(() => Promise.all([
     adminListArticles().catch(() => []),
@@ -33,6 +35,7 @@ export default function AdminDashboard({ onLogout }) {
   const switchTab = (t) => {
     if (t === tab) return;
     if (tab === 'pages' && pagesDirty && !window.confirm('You have unsaved changes on this page. Discard them?')) return;
+    if (tab === 'nav' && navDirty && !window.confirm('You have unsaved navigation changes. Discard them?')) return;
     setTab(t);
   };
 
@@ -80,6 +83,7 @@ export default function AdminDashboard({ onLogout }) {
           <button className={'cms-tab' + (tab === 'blog' ? ' on' : '')} onClick={() => switchTab('blog')}>Blog</button>
           <button className={'cms-tab' + (tab === 'authors' ? ' on' : '')} onClick={() => switchTab('authors')}>Authors</button>
           <button className={'cms-tab' + (tab === 'pages' ? ' on' : '')} onClick={() => switchTab('pages')}>Site pages</button>
+          <button className={'cms-tab' + (tab === 'nav' ? ' on' : '')} onClick={() => switchTab('nav')}>Navigation</button>
         </div>
         <div style={{ display: 'flex', gap: 10 }}>
           {tab === 'blog' && <button className="cms-btn cms-btn-primary" onClick={() => setView('new')}>+ New article</button>}
@@ -89,7 +93,9 @@ export default function AdminDashboard({ onLogout }) {
       </div>
 
       <div className="cms-wrap">
-        {tab === 'pages' ? (
+        {tab === 'nav' ? (
+          <NavEditor onDirtyChange={setNavDirty} />
+        ) : tab === 'pages' ? (
           <AdminPagesEditor onDirtyChange={setPagesDirty} />
         ) : tab === 'authors' ? (
           authors === null ? (

@@ -1,5 +1,6 @@
 import { useJson, prefetch } from './fetchCache';
 import { defaultsFor } from '../content/manifest';
+import { mergeMenus } from '../content/navConfig';
 
 // Marketing pages read content overrides from a tiny JSON endpoint (a Cloud
 // Function, CDN-cached) — no Firebase SDK in the public bundle. With SWR caching,
@@ -16,6 +17,13 @@ export const CONTENT_CACHE_KEY = 'proxa.content.v1';
 
 // Warm the cache at app start so overrides are usually ready before navigation.
 export function prefetchContent() { prefetch(CONTENT_URL, CONTENT_CACHE_KEY); }
+
+// Header dropdown menus (Platform / Solutions / Resources), CMS-overridable.
+// Reads from the same cached content payload, falling back to the in-code defaults.
+export function useNavMenus() {
+  const data = useJson(CONTENT_URL, CONTENT_CACHE_KEY);
+  return mergeMenus(data && data.nav);
+}
 
 // Returns a getter c(key) -> override (if non-empty) else the in-code default.
 export function usePageContent(pageId) {

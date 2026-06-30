@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import Icon from './Icon';
+import { useNavMenus } from '../lib/content';
 
 const WHERE_ITEMS = [
   {icon:<Icon name="strategy" size={20} />,title:"I need an AI strategy",desc:"Assess your readiness and build a roadmap before any technology decision.",tag:"Advisory",p:"advisory"},
@@ -9,22 +10,6 @@ const WHERE_ITEMS = [
   {icon:<Icon name="content" size={20} />,title:"I need content for a launch",desc:"AI-generated or human-led, MLR-compliant content on your timeline.",tag:"Content",p:"content"},
   {icon:<Icon name="lms" size={20} />,title:"I need an LMS first",desc:"Enterprise learning infrastructure built for biopharma compliance.",tag:"InsiteX LMS",p:"insitex"},
   {icon:<Icon name="chat" size={20} />,title:"I'm not sure yet",desc:"30 minutes. No pitch. Tell us where you're stuck.",tag:"Book a Consult",p:"contact",track:"talk"},
-];
-
-const PLATFORM_ITEMS = [
-  ["AI Platform", "platform"],
-  ["InsiteX LMS", "insitex"],
-];
-
-const SOLUTIONS_ITEMS = [
-  ["AI Literacy", "literacy"],
-  ["Advisory", "advisory"],
-  ["Content", "content"],
-];
-
-const RESOURCES_ITEMS = [
-  ["Resources", "resources"],
-  ["Blog", "blog"],
 ];
 
 const Chevron = ({ open }) => (
@@ -38,6 +23,7 @@ const Nav = ({ page, setPage, scrolled }) => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [mobileAccordion, setMobileAccordion] = useState(null);
   const navRef = useRef(null);
+  const menus = useNavMenus(); // { platform, solutions, resources } — CMS-overridable
 
   useEffect(() => {
     if (!openDropdown) return;
@@ -55,7 +41,7 @@ const Nav = ({ page, setPage, scrolled }) => {
 
   const toggle = (k) => setOpenDropdown(o => o === k ? null : k);
   const toggleMobile = (k) => setMobileAccordion(o => o === k ? null : k);
-  const isActive = (items) => items.some(([, p]) => p === page);
+  const isActive = (items) => items.some((it) => it.page === page);
 
   return (
     <>
@@ -91,7 +77,7 @@ const Nav = ({ page, setPage, scrolled }) => {
           {/* Platform */}
           <div style={{ position: "relative" }}>
             <button
-              className={"nl nl-drop" + (isActive(PLATFORM_ITEMS) ? " on" : "")}
+              className={"nl nl-drop" + (isActive(menus.platform) ? " on" : "")}
               onClick={() => toggle("platform")}
               style={{ color: openDropdown === "platform" ? "var(--o)" : undefined }}
             >
@@ -100,8 +86,8 @@ const Nav = ({ page, setPage, scrolled }) => {
             </button>
             {openDropdown === "platform" && (
               <div className="nav-mini-menu">
-                {PLATFORM_ITEMS.map(([l, p]) => (
-                  <button key={p} className={"nav-mini-item" + (page === p ? " on" : "")} onClick={() => go(p)}>{l}</button>
+                {menus.platform.map((it, i) => (
+                  <button key={i} className={"nav-mini-item" + (page === it.page ? " on" : "")} onClick={() => go(it.page)}>{it.label}</button>
                 ))}
               </div>
             )}
@@ -110,7 +96,7 @@ const Nav = ({ page, setPage, scrolled }) => {
           {/* Solutions */}
           <div style={{ position: "relative" }}>
             <button
-              className={"nl nl-drop" + (isActive(SOLUTIONS_ITEMS) ? " on" : "")}
+              className={"nl nl-drop" + (isActive(menus.solutions) ? " on" : "")}
               onClick={() => toggle("solutions")}
               style={{ color: openDropdown === "solutions" ? "var(--o)" : undefined }}
             >
@@ -119,8 +105,8 @@ const Nav = ({ page, setPage, scrolled }) => {
             </button>
             {openDropdown === "solutions" && (
               <div className="nav-mini-menu">
-                {SOLUTIONS_ITEMS.map(([l, p]) => (
-                  <button key={p} className={"nav-mini-item" + (page === p ? " on" : "")} onClick={() => go(p)}>{l}</button>
+                {menus.solutions.map((it, i) => (
+                  <button key={i} className={"nav-mini-item" + (page === it.page ? " on" : "")} onClick={() => go(it.page)}>{it.label}</button>
                 ))}
               </div>
             )}
@@ -132,7 +118,7 @@ const Nav = ({ page, setPage, scrolled }) => {
           {/* Resources (mini) */}
           <div style={{ position: "relative" }}>
             <button
-              className={"nl nl-drop" + (isActive(RESOURCES_ITEMS) ? " on" : "")}
+              className={"nl nl-drop" + (isActive(menus.resources) ? " on" : "")}
               onClick={() => toggle("resources")}
               style={{ color: openDropdown === "resources" ? "var(--o)" : undefined }}
             >
@@ -141,8 +127,8 @@ const Nav = ({ page, setPage, scrolled }) => {
             </button>
             {openDropdown === "resources" && (
               <div className="nav-mini-menu">
-                {RESOURCES_ITEMS.map(([l, p]) => (
-                  <button key={p} className={"nav-mini-item" + (page === p ? " on" : "")} onClick={() => go(p)}>{l}</button>
+                {menus.resources.map((it, i) => (
+                  <button key={i} className={"nav-mini-item" + (page === it.page ? " on" : "")} onClick={() => go(it.page)}>{it.label}</button>
                 ))}
               </div>
             )}
@@ -183,8 +169,8 @@ const Nav = ({ page, setPage, scrolled }) => {
         </button>
         {mobileAccordion === "platform" && (
           <div className="mobile-accordion-body">
-            {PLATFORM_ITEMS.map(([l, p]) => (
-              <button key={p} className={page === p ? "on" : ""} onClick={() => go(p)}>{l}</button>
+            {menus.platform.map((it, i) => (
+              <button key={i} className={page === it.page ? "on" : ""} onClick={() => go(it.page)}>{it.label}</button>
             ))}
           </div>
         )}
@@ -195,8 +181,8 @@ const Nav = ({ page, setPage, scrolled }) => {
         </button>
         {mobileAccordion === "solutions" && (
           <div className="mobile-accordion-body">
-            {SOLUTIONS_ITEMS.map(([l, p]) => (
-              <button key={p} className={page === p ? "on" : ""} onClick={() => go(p)}>{l}</button>
+            {menus.solutions.map((it, i) => (
+              <button key={i} className={page === it.page ? "on" : ""} onClick={() => go(it.page)}>{it.label}</button>
             ))}
           </div>
         )}
@@ -209,8 +195,8 @@ const Nav = ({ page, setPage, scrolled }) => {
         </button>
         {mobileAccordion === "resources" && (
           <div className="mobile-accordion-body">
-            {RESOURCES_ITEMS.map(([l, p]) => (
-              <button key={p} className={page === p ? "on" : ""} onClick={() => go(p)}>{l}</button>
+            {menus.resources.map((it, i) => (
+              <button key={i} className={page === it.page ? "on" : ""} onClick={() => go(it.page)}>{it.label}</button>
             ))}
           </div>
         )}
