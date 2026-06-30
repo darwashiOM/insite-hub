@@ -41,7 +41,7 @@
     "indexes": "firestore.indexes.json"
   },
   "storage": [
-    { "bucket": "insite-hub-web-blog", "rules": "storage.rules" }
+    { "target": "blog", "rules": "storage.rules" }
   ],
   "emulators": {
     "auth": { "port": 9099 },

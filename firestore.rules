@@ -42,6 +42,12 @@ service cloud.firestore {
       }
     }
 
+    // Media library — admin-only (the public uses the image URLs directly, not
+    // this catalog of metadata).
+    match /media/{id} {
+      allow read, write: if isAdmin();
+    }
+
     // Author records — admin-only (their fields are denormalized into published
     // articles, so the public never needs to read this collection directly).
     match /authors/{id} {

@@ -112,3 +112,11 @@
 .cms-preview-bar { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 11px 24px; background: var(--ink, #0c1218); color: #fff; font-size: 13px; flex: 0 0 auto; }
 .cms-preview-bar .cms-btn { background: #fff; }
 .cms-preview-body { flex: 1; overflow: auto; }
+
+/* media library */
+.cms-media-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 18px; }
+.cms-media-item { border: 1px solid var(--br); border-radius: 12px; padding: 10px; background: var(--wh); }
+.cms-media-thumb { aspect-ratio: 4 / 3; border-radius: 8px; background: #f0f2f4 center/cover no-repeat; margin-bottom: 10px; }
+.cms-media-alt { font-size: 13px; padding: 8px 10px; }
+.cms-media-warn { color: #b54708; font-size: 12px; font-weight: 600; margin: 6px 0 0; }
+.cms-media-actions { display: flex; gap: 8px; margin-top: 8px; }

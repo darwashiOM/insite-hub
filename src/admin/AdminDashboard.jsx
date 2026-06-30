@@ -12,6 +12,7 @@ import CaseStudyEditor from './CaseStudyEditor';
 import VideoEditor from './VideoEditor';
 import FormBuilder from './FormBuilder';
 import SubmissionsView from './SubmissionsView';
+import MediaLibrary from './MediaLibrary';
 import AdminPagesEditor from './AdminPagesEditor';
 import NavEditor from './NavEditor';
 
@@ -99,6 +100,7 @@ export default function AdminDashboard({ onLogout }) {
           <button className={'cms-tab' + (tab === 'videos' ? ' on' : '')} onClick={() => switchTab('videos')}>Videos</button>
           <button className={'cms-tab' + (tab === 'forms' ? ' on' : '')} onClick={() => switchTab('forms')}>Forms</button>
           <button className={'cms-tab' + (tab === 'authors' ? ' on' : '')} onClick={() => switchTab('authors')}>Authors</button>
+          <button className={'cms-tab' + (tab === 'media' ? ' on' : '')} onClick={() => switchTab('media')}>Media</button>
           <button className={'cms-tab' + (tab === 'pages' ? ' on' : '')} onClick={() => switchTab('pages')}>Site pages</button>
           <button className={'cms-tab' + (tab === 'nav' ? ' on' : '')} onClick={() => switchTab('nav')}>Navigation</button>
         </div>
@@ -120,6 +122,8 @@ export default function AdminDashboard({ onLogout }) {
       <div className="cms-wrap">
         {tab === 'nav' ? (
           <NavEditor onDirtyChange={setNavDirty} />
+        ) : tab === 'media' ? (
+          <MediaLibrary />
         ) : tab === 'pages' ? (
           <AdminPagesEditor onDirtyChange={setPagesDirty} />
         ) : tab === 'forms' ? (

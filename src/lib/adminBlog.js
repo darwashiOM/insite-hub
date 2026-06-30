@@ -5,6 +5,7 @@ import { signInWithCustomToken, signOut, onAuthStateChanged } from 'firebase/aut
 import {
   collection, getDocs, getDocsFromServer, doc, getDoc, serverTimestamp,
   writeBatch, runTransaction, query, orderBy, limit,
+  addDoc, updateDoc, deleteDoc,
 } from 'firebase/firestore';
 import { ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
 
@@ -159,7 +160,33 @@ export async function adminUploadImage(file) {
   const path = `blog/${Date.now()}-${safe}`;
   const r = storageRef(storage, path);
   await uploadBytes(r, file, { contentType: file.type });
-  return getDownloadURL(r);
+  const url = await getDownloadURL(r);
+  // Record it in the media library so it can be browsed + reused. Best-effort:
+  // the upload itself already succeeded, so don't fail on a recording error.
+  try {
+    await addDoc(collection(db, 'media'), {
+      url, filename: file.name || safe, contentType: file.type, size: file.size, alt: '',
+      createdAt: serverTimestamp(),
+    });
+  } catch { /* ignore */ }
+  return url;
+}
+
+// --- Media library ----------------------------------------------------------
+
+export async function adminListMedia() {
+  const snap = await getDocs(query(collection(db, 'media'), orderBy('createdAt', 'desc'), limit(1000)));
+  return snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+}
+
+export async function adminUpdateMediaAlt(id, alt) {
+  await updateDoc(doc(db, 'media', id), { alt: String(alt || '').slice(0, 300) });
+}
+
+// Removes the library record only; the stored file (and any URLs already used in
+// content) keep working, so deleting a record never breaks a published page.
+export async function adminDeleteMedia(id) {
+  await deleteDoc(doc(db, 'media', id));
 }
 
 // --- Case studies -----------------------------------------------------------

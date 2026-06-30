@@ -1,5 +1,15 @@
 {
   "projects": {
     "default": "insite-hub-web"
-  }
+  },
+  "targets": {
+    "insite-hub-web": {
+      "storage": {
+        "blog": [
+          "insite-hub-web-blog"
+        ]
+      }
+    }
+  },
+  "etags": {}
 }
