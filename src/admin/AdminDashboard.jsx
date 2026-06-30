@@ -17,6 +17,7 @@ import PageBuilder from './PageBuilder';
 import MediaLibrary from './MediaLibrary';
 import AdminPagesEditor from './AdminPagesEditor';
 import NavEditor from './NavEditor';
+import RedirectsEditor from './RedirectsEditor';
 
 // Admin shell: Blog | Case studies | Videos | Forms | Authors | Site pages | Navigation.
 export default function AdminDashboard({ onLogout }) {
@@ -114,6 +115,7 @@ export default function AdminDashboard({ onLogout }) {
           <button className={'cms-tab' + (tab === 'media' ? ' on' : '')} onClick={() => switchTab('media')}>Media</button>
           <button className={'cms-tab' + (tab === 'pages' ? ' on' : '')} onClick={() => switchTab('pages')}>Site pages</button>
           <button className={'cms-tab' + (tab === 'nav' ? ' on' : '')} onClick={() => switchTab('nav')}>Navigation</button>
+          <button className={'cms-tab' + (tab === 'redirects' ? ' on' : '')} onClick={() => switchTab('redirects')}>Redirects</button>
         </div>
         <div style={{ display: 'flex', gap: 10 }}>
           {tab === 'blog' && <button className="cms-btn cms-btn-primary" onClick={() => setView('new')}>+ New article</button>}
@@ -134,6 +136,8 @@ export default function AdminDashboard({ onLogout }) {
       <div className="cms-wrap">
         {tab === 'nav' ? (
           <NavEditor onDirtyChange={setNavDirty} />
+        ) : tab === 'redirects' ? (
+          <RedirectsEditor />
         ) : tab === 'media' ? (
           <MediaLibrary />
         ) : tab === 'pages' ? (

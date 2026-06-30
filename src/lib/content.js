@@ -18,6 +18,12 @@ export const CONTENT_CACHE_KEY = 'proxa.content.v1';
 // Warm the cache at app start so overrides are usually ready before navigation.
 export function prefetchContent() { prefetch(CONTENT_URL, CONTENT_CACHE_KEY); }
 
+// Marketer-managed redirects ([{from, to}]) from the same cached content payload.
+export function useRedirects() {
+  const data = useJson(CONTENT_URL, CONTENT_CACHE_KEY);
+  return (data && data.redirects && Array.isArray(data.redirects.rules)) ? data.redirects.rules : [];
+}
+
 // Header dropdown menus (Platform / Solutions / Resources), CMS-overridable.
 // Reads from the same cached content payload, falling back to the in-code defaults.
 export function useNavMenus() {

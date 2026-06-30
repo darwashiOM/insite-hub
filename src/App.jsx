@@ -1,4 +1,4 @@
-import { useState, useEffect, lazy, Suspense } from "react";
+import { useState, useEffect, useRef, lazy, Suspense } from "react";
 import './styles.css';
 import Nav from './components/Nav';
 import Footer from './components/Footer';
@@ -17,7 +17,7 @@ import ContactPage from './pages/ContactPage';
 import FutureProofPage from './pages/FutureProofPage';
 import NotFoundPage from './pages/NotFoundPage';
 import ErrorBoundary from './components/ErrorBoundary';
-import { prefetchContent } from './lib/content';
+import { prefetchContent, useRedirects } from './lib/content';
 import { trackPageView } from './analytics';
 import { SITE_URL, OG_IMAGE } from './lib/site';
 import { setJsonLd, buildOrgLd } from './lib/jsonLd';
@@ -250,6 +250,26 @@ export default function App() {
       window.history.replaceState({}, "", LEGACY_PATHS[normalized] + window.location.hash);
     }
   }, []);
+
+  // Marketer-managed redirects (from the CMS). Applied once when they load: if the
+  // current path matches a rule, forward to its target — client-side for internal
+  // paths (no reload loop), full navigation for external URLs.
+  const redirects = useRedirects();
+  const redirectedRef = useRef(false);
+  useEffect(() => {
+    if (redirectedRef.current || !redirects.length) return;
+    redirectedRef.current = true;
+    const path = window.location.pathname.replace(/\/+$/, "") || "/";
+    const rule = redirects.find((r) => r && r.from && ((r.from.replace(/\/+$/, "") || "/") === path));
+    if (rule && rule.to && rule.to.replace(/\/+$/, "") !== path) {
+      if (/^https?:\/\//.test(rule.to)) {
+        window.location.href = rule.to;
+      } else {
+        window.history.replaceState({}, "", rule.to);
+        window.dispatchEvent(new PopStateEvent("popstate")); // re-resolve via the popstate handler
+      }
+    }
+  }, [redirects]);
 
   const setPage = (nextPage, options = {}) => {
     const hash = typeof options === "string" ? options : options.hash;
