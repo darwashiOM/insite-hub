@@ -189,6 +189,12 @@
 .proxa-article .blog-eyebrow { margin-bottom: 16px; }
 .proxa-article .blog-title { font-family: var(--display); font-weight: 800; color: var(--ink); font-size: clamp(2rem, 4vw, 2.8rem); line-height: 1.1; letter-spacing: -.022em; margin: 0 0 12px; }
 .proxa-article .blog-sub { color: var(--muted); font-size: 1.06rem; line-height: 1.55; max-width: var(--measure); margin: 0 0 44px; }
+.proxa-article .blog-filters { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 16px; margin: -16px 0 36px; }
+.proxa-article .blog-filter { display: flex; flex-direction: column; gap: 5px; font-size: .68rem; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); font-weight: 700; }
+.proxa-article .blog-filter select { font: inherit; font-size: .92rem; text-transform: none; letter-spacing: 0; font-weight: 500; color: var(--ink); padding: 8px 12px; border: 1px solid #e3e5ea; border-radius: 8px; background: #fff; cursor: pointer; }
+.proxa-article .blog-filter-check { flex-direction: row; align-items: center; gap: 8px; text-transform: none; letter-spacing: 0; font-size: .92rem; font-weight: 500; color: var(--ink); cursor: pointer; padding-bottom: 8px; }
+.proxa-article .blog-filter-check input { accent-color: var(--coral); width: 16px; height: 16px; }
+.proxa-article .blog-filter-clear { background: none; border: none; padding: 8px 2px; font: inherit; font-size: .85rem; font-weight: 600; color: var(--coral-deep); cursor: pointer; text-decoration: underline; }
 .proxa-article .blog-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 26px; }
 @media (max-width: 860px) { .proxa-article .blog-grid { grid-template-columns: 1fr; gap: 22px; max-width: var(--measure); } }
 .proxa-article .blog-card { display: block; width: 100%; text-align: left; background: none; border: none; padding: 0; font: inherit; color: inherit; cursor: pointer; }

@@ -6,11 +6,18 @@ import {
 import VersionHistory from './VersionHistory';
 
 const BLANK = {
-  slug: '', pillar: 'Methodology', title: '', description: '',
+  slug: '', pillar: 'Methodology', topic: '', tags: '', featured: false, title: '', description: '',
   author: { name: '', role: '', bio: '', headshot: '' },
   date: '', readTime: '', summary: '',
   body: [], related: [], thumb: '', published: false, order: 0,
 };
+
+// ~200 wpm estimate from the body text, used when the read-time field is blank.
+function estimateReadTime(body) {
+  const text = body.map((b) => b.html || b.text || '').join(' ').replace(/<[^>]+>/g, ' ');
+  const words = text.split(/\s+/).filter(Boolean).length;
+  return words ? `${Math.max(1, Math.round(words / 200))} min read` : '';
+}
 
 // Build the initial form from an existing article, restoring per-heading nav
 // labels from its toc so they survive editing.
@@ -21,6 +28,7 @@ function fromArticle(a) {
     ...JSON.parse(JSON.stringify(BLANK)),
     ...a,
     author: { ...BLANK.author, ...(a.author || {}) },
+    tags: Array.isArray(a.tags) ? a.tags.join(', ') : (a.tags || ''),
     body: (a.body || []).map((b) =>
       b.type === 'h2' ? { ...b, navLabel: tocMap[b.id] && tocMap[b.id] !== b.text ? tocMap[b.id] : '' } : { ...b }
     ),
@@ -119,13 +127,15 @@ export default function ArticleEditor({ article, onDone, onCancel }) {
     const hasBody = body.some((b) => (b.type === 'p' && b.html) || (b.type === 'h2' && b.text) || (b.type === 'quote' && b.text));
     if (form.published && !hasBody && !window.confirm('This post has no body text yet. Publish it live anyway?')) return;
 
+    const tags = String(form.tags || '').split(',').map((t) => t.trim()).filter(Boolean);
     const article = {
-      slug, pillar: form.pillar.trim(), title, description: form.description.trim(),
+      slug, pillar: form.pillar.trim(), topic: form.topic.trim(), tags, featured: !!form.featured,
+      title, description: form.description.trim(),
       author: {
         name: form.author.name.trim(), role: form.author.role.trim(),
         bio: form.author.bio.trim(), headshot: form.author.headshot.trim(),
       },
-      date: form.date.trim(), readTime: form.readTime.trim(),
+      date: form.date.trim(), readTime: form.readTime.trim() || estimateReadTime(body),
       summary: form.summary.trim(), body, toc,
       related: form.related || [], thumb: form.thumb.trim(),
       published: !!form.published, order: Number(form.order) || 0,
@@ -197,12 +207,26 @@ export default function ArticleEditor({ article, onDone, onCancel }) {
 
         <div className="cms-row">
           <div className="cms-field">
+            <label>Topic</label>
+            <input className="cms-input" value={form.topic} onChange={(e) => set('topic', e.target.value)} />
+            <p className="cms-hint">Groups posts on the blog so visitors can filter by it.</p>
+          </div>
+          <div className="cms-field">
+            <label>Tags</label>
+            <input className="cms-input" value={form.tags} onChange={(e) => set('tags', e.target.value)} />
+            <p className="cms-hint">Comma-separated, e.g. readiness, evidence.</p>
+          </div>
+        </div>
+
+        <div className="cms-row">
+          <div className="cms-field">
             <label>Date (e.g. June 22, 2026)</label>
             <input className="cms-input" value={form.date} onChange={(e) => set('date', e.target.value)} />
           </div>
           <div className="cms-field">
             <label>Read time (e.g. 7 min read)</label>
             <input className="cms-input" value={form.readTime} onChange={(e) => set('readTime', e.target.value)} />
+            <p className="cms-hint">Leave blank to auto-calculate from the body.</p>
           </div>
         </div>
 
@@ -303,6 +327,10 @@ export default function ArticleEditor({ article, onDone, onCancel }) {
 
         {/* Publish */}
         <div className="cms-toolbar">
+          <label className="cms-check">
+            <input type="checkbox" checked={form.featured} onChange={(e) => set('featured', e.target.checked)} />
+            Featured
+          </label>
           <label className="cms-check">
             <input type="checkbox" checked={form.published} onChange={(e) => set('published', e.target.checked)} />
             Published (visible on the public site)
