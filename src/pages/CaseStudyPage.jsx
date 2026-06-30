@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useCaseStudy } from '../lib/caseStudies';
 import { SITE_URL } from '../lib/site';
-import { setJsonLd, buildBreadcrumbLd } from '../lib/jsonLd';
+import { setJsonLd, buildBreadcrumbLd, setSocialCards } from '../lib/jsonLd';
 import '../components/ArticleLayout.css';
 import './CaseStudyPage.css';
 
@@ -22,6 +22,7 @@ export default function CaseStudyPage({ setPage }) {
     const meta = document.querySelector('meta[name="description"]');
     if (meta && cs.summary) meta.content = cs.summary;
     const url = `${SITE_URL}/case-studies/${cs.slug}`;
+    setSocialCards({ title: cs.title, description: cs.summary, image: cs.ogImage || cs.thumb, url });
     setJsonLd('ld-breadcrumb', buildBreadcrumbLd([
       { name: 'Home', url: `${SITE_URL}/` },
       { name: 'Case studies', url: `${SITE_URL}/case-studies` },

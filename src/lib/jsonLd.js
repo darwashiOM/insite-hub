@@ -14,6 +14,28 @@ export function setJsonLd(id, obj) {
   el.textContent = JSON.stringify(obj);
 }
 
+function upsertMeta(attr, key, content) {
+  let el = document.head.querySelector(`meta[${attr}="${key}"]`);
+  if (!el) { el = document.createElement('meta'); el.setAttribute(attr, key); document.head.appendChild(el); }
+  el.setAttribute('content', content);
+}
+
+// Per-item social cards (og/twitter) + canonical. App.jsx sets generic ones on
+// page change; content pages call this with their specifics so shared links and
+// search show the right title/description/image/url. The prerender bakes the
+// final values into the static HTML.
+export function setSocialCards({ title, description, image, url }) {
+  if (title) { upsertMeta('property', 'og:title', title); upsertMeta('name', 'twitter:title', title); }
+  if (description) { upsertMeta('property', 'og:description', description); upsertMeta('name', 'twitter:description', description); }
+  if (image) { upsertMeta('property', 'og:image', image); upsertMeta('name', 'twitter:image', image); }
+  if (url) {
+    upsertMeta('property', 'og:url', url);
+    let link = document.head.querySelector('link[rel="canonical"]');
+    if (!link) { link = document.createElement('link'); link.setAttribute('rel', 'canonical'); document.head.appendChild(link); }
+    link.setAttribute('href', url);
+  }
+}
+
 // "June 22, 2026" -> "2026-06-22" (schema.org wants ISO). Null if unparseable.
 function toIsoDate(d) {
   const n = Date.parse(d || '');

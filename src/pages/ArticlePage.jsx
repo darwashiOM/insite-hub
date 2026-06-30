@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import ArticleLayout from '../components/ArticleLayout';
 import { useArticle } from '../lib/blog';
 import { SITE_URL } from '../lib/site';
-import { setJsonLd, buildArticleLd, buildBreadcrumbLd } from '../lib/jsonLd';
+import { setJsonLd, buildArticleLd, buildBreadcrumbLd, setSocialCards } from '../lib/jsonLd';
 
 function slugFromPath() {
   const parts = window.location.pathname.replace(/\/+$/, '').split('/');
@@ -21,21 +21,18 @@ export default function ArticlePage({ setPage }) {
       if (!el) { el = document.createElement('meta'); el.setAttribute(attr, key); document.head.appendChild(el); }
       el.setAttribute('content', val);
     };
-    const setLink = (rel, href) => {
-      let el = document.head.querySelector(`link[rel="${rel}"]`);
-      if (!el) { el = document.createElement('link'); el.setAttribute('rel', rel); document.head.appendChild(el); }
-      el.setAttribute('href', href);
-    };
-
     // Per-post SEO overrides (these run after the generic per-route meta because
     // the article loads async, so they win).
     const url = (article.canonical && article.canonical.trim()) || `${SITE_URL}/blog/${article.slug}`;
     document.title = (article.metaTitle && article.metaTitle.trim()) || `${article.title} · Proxa Labs`;
     if (article.description) setMeta('name', 'description', article.description);
-    setLink('canonical', url);
-    setMeta('property', 'og:url', url);
     const ogImg = (article.ogImage && article.ogImage.trim()) || (article.thumb && article.thumb.trim());
-    if (ogImg) { setMeta('property', 'og:image', ogImg); setMeta('name', 'twitter:image', ogImg); }
+    setSocialCards({
+      title: (article.metaTitle && article.metaTitle.trim()) || article.title,
+      description: article.description,
+      image: ogImg || undefined,
+      url,
+    });
     setMeta('name', 'robots', article.noindex ? 'noindex, nofollow' : 'index, follow');
 
     // Article + breadcrumb structured data (AEO). Removed on unmount so it

@@ -1,7 +1,8 @@
 import { useEffect } from 'react';
 import { usePage } from '../lib/pages';
 import SectionRenderer from '../components/SectionRenderer';
-import { setJsonLd } from '../lib/jsonLd';
+import { setJsonLd, setSocialCards } from '../lib/jsonLd';
+import { SITE_URL } from '../lib/site';
 
 function slugFromPath() {
   return window.location.pathname.replace(/^\/+|\/+$/g, '');
@@ -17,6 +18,7 @@ export default function DynamicPage({ setPage }) {
     document.title = `${page.metaTitle || page.title || 'Proxa Labs'} · Proxa Labs`;
     const meta = document.querySelector('meta[name="description"]');
     if (meta && page.description) meta.content = page.description;
+    setSocialCards({ title: page.metaTitle || page.title, description: page.description, image: page.ogImage, url: `${SITE_URL}/${slug}` });
     let robots = document.head.querySelector('meta[name="robots"]');
     if (page.noindex) {
       if (!robots) { robots = document.createElement('meta'); robots.setAttribute('name', 'robots'); document.head.appendChild(robots); }
@@ -36,7 +38,7 @@ export default function DynamicPage({ setPage }) {
       mainEntity: faqs.map((f) => ({ '@type': 'Question', name: f.question, acceptedAnswer: { '@type': 'Answer', text: f.answer } })),
     } : null);
     return () => setJsonLd('ld-faq', null);
-  }, [page]);
+  }, [page, slug]);
 
   if (loading) return <div style={{ minHeight: '60vh' }} />;
 
