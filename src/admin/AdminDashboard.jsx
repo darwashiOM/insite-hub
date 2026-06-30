@@ -1,19 +1,34 @@
 import { useEffect, useState, useCallback } from 'react';
-import { adminListArticles, adminDeleteArticle } from '../lib/adminBlog';
+import {
+  adminListArticles, adminDeleteArticle,
+  adminListAuthors, adminDeleteAuthor,
+} from '../lib/adminBlog';
 import ArticleEditor from './ArticleEditor';
+import AuthorEditor from './AuthorEditor';
 import AdminPagesEditor from './AdminPagesEditor';
 
-// Admin shell with Blog | Site pages tabs.
+// Admin shell with Blog | Authors | Site pages tabs.
 export default function AdminDashboard({ onLogout }) {
   const [tab, setTab] = useState('blog');
   const [articles, setArticles] = useState(null);
-  const [view, setView] = useState('list'); // 'list' | 'new' | <slug>
+  const [authors, setAuthors] = useState(null);
+  const [view, setView] = useState('list');             // blog: 'list' | 'new' | <slug>
+  const [authorView, setAuthorView] = useState('list');  // authors: 'list' | 'new' | <id>
   const [pagesDirty, setPagesDirty] = useState(false);
 
+  const load = useCallback(() => Promise.all([
+    adminListArticles().catch(() => []),
+    adminListAuthors().catch(() => []),
+  ]), []);
   const refresh = useCallback(async () => {
-    setArticles(await adminListArticles().catch(() => []));
-  }, []);
-  useEffect(() => { refresh(); }, [refresh]);
+    const [arts, auths] = await load();
+    setArticles(arts); setAuthors(auths);
+  }, [load]);
+  useEffect(() => {
+    let alive = true;
+    load().then(([arts, auths]) => { if (alive) { setArticles(arts); setAuthors(auths); } });
+    return () => { alive = false; };
+  }, [load]);
 
   const switchTab = (t) => {
     if (t === tab) return;
@@ -21,20 +36,38 @@ export default function AdminDashboard({ onLogout }) {
     setTab(t);
   };
 
-  const remove = async (a) => {
+  const removeArticle = async (a) => {
     if (!window.confirm(`Delete "${a.title}"? This cannot be undone.`)) return;
-    await adminDeleteArticle(a.slug);
-    refresh();
+    await adminDeleteArticle(a.slug); refresh();
+  };
+  const removeAuthor = async (a) => {
+    if (!window.confirm(`Delete author "${a.name}"? This cannot be undone.`)) return;
+    await adminDeleteAuthor(a.id); refresh();
   };
 
-  // The article editor takes over the full screen (with its own bar).
+  // Suggestions for the article editor's topic picker + author dropdown.
+  const knownTopics = [...new Set((articles || []).map((a) => a.topic).filter(Boolean))].sort();
+
+  // Full-screen editors take over.
   if (tab === 'blog' && view !== 'list') {
     const editing = view === 'new' ? null : articles?.find((a) => a.slug === view) || null;
     return (
       <ArticleEditor
         article={editing}
+        authors={authors || []}
+        knownTopics={knownTopics}
         onDone={() => { setView('list'); refresh(); }}
         onCancel={() => setView('list')}
+      />
+    );
+  }
+  if (tab === 'authors' && authorView !== 'list') {
+    const editing = authorView === 'new' ? null : authors?.find((a) => a.id === authorView) || null;
+    return (
+      <AuthorEditor
+        author={editing}
+        onDone={() => { setAuthorView('list'); refresh(); }}
+        onCancel={() => setAuthorView('list')}
       />
     );
   }
@@ -45,10 +78,12 @@ export default function AdminDashboard({ onLogout }) {
         <h1>Proxa Labs Website Editor</h1>
         <div className="cms-tabs">
           <button className={'cms-tab' + (tab === 'blog' ? ' on' : '')} onClick={() => switchTab('blog')}>Blog</button>
+          <button className={'cms-tab' + (tab === 'authors' ? ' on' : '')} onClick={() => switchTab('authors')}>Authors</button>
           <button className={'cms-tab' + (tab === 'pages' ? ' on' : '')} onClick={() => switchTab('pages')}>Site pages</button>
         </div>
         <div style={{ display: 'flex', gap: 10 }}>
           {tab === 'blog' && <button className="cms-btn cms-btn-primary" onClick={() => setView('new')}>+ New article</button>}
+          {tab === 'authors' && <button className="cms-btn cms-btn-primary" onClick={() => setAuthorView('new')}>+ New author</button>}
           <button className="cms-btn" onClick={onLogout}>Log out</button>
         </div>
       </div>
@@ -56,6 +91,25 @@ export default function AdminDashboard({ onLogout }) {
       <div className="cms-wrap">
         {tab === 'pages' ? (
           <AdminPagesEditor onDirtyChange={setPagesDirty} />
+        ) : tab === 'authors' ? (
+          authors === null ? (
+            <p style={{ color: '#5c6370' }}>Loading…</p>
+          ) : authors.length === 0 ? (
+            <p style={{ color: '#5c6370' }}>No authors yet. Click “New author” to add one.</p>
+          ) : (
+            <div className="cms-list">
+              {authors.map((a) => (
+                <div className="cms-card" key={a.id}>
+                  <div className="cms-card-main">
+                    <p className="cms-card-title">{a.name || '(unnamed)'}</p>
+                    <p className="cms-card-meta">{a.title || 'No title'}</p>
+                  </div>
+                  <button className="cms-btn cms-btn-sm" onClick={() => setAuthorView(a.id)}>Edit</button>
+                  <button className="cms-btn cms-btn-sm cms-btn-danger" onClick={() => removeAuthor(a)}>Delete</button>
+                </div>
+              ))}
+            </div>
+          )
         ) : articles === null ? (
           <p style={{ color: '#5c6370' }}>Loading…</p>
         ) : articles.length === 0 ? (
@@ -77,7 +131,7 @@ export default function AdminDashboard({ onLogout }) {
                   {a.published ? 'Published' : 'Draft'}
                 </span>
                 <button className="cms-btn cms-btn-sm" onClick={() => setView(a.slug)}>Edit</button>
-                <button className="cms-btn cms-btn-sm cms-btn-danger" onClick={() => remove(a)}>Delete</button>
+                <button className="cms-btn cms-btn-sm cms-btn-danger" onClick={() => removeArticle(a)}>Delete</button>
               </div>
             ))}
           </div>

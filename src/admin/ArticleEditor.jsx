@@ -7,7 +7,7 @@ import VersionHistory from './VersionHistory';
 
 const BLANK = {
   slug: '', pillar: 'Methodology', topic: '', tags: '', featured: false, title: '', description: '',
-  author: { name: '', role: '', bio: '', headshot: '' },
+  authorId: '', author: { name: '', role: '', bio: '', headshot: '' },
   date: '', readTime: '', summary: '',
   body: [], related: [], thumb: '', published: false, order: 0,
 };
@@ -41,7 +41,7 @@ function newBlock(type) {
   return { type: 'p', html: '' };
 }
 
-export default function ArticleEditor({ article, onDone, onCancel }) {
+export default function ArticleEditor({ article, authors = [], knownTopics = [], onDone, onCancel }) {
   const isNew = !article;
   const initial = useRef(null);
   const [form, setForm] = useState(() => { const f = fromArticle(article); initial.current = JSON.stringify(f); return f; });
@@ -131,6 +131,7 @@ export default function ArticleEditor({ article, onDone, onCancel }) {
     const article = {
       slug, pillar: form.pillar.trim(), topic: form.topic.trim(), tags, featured: !!form.featured,
       title, description: form.description.trim(),
+      authorId: form.authorId || '',
       author: {
         name: form.author.name.trim(), role: form.author.role.trim(),
         bio: form.author.bio.trim(), headshot: form.author.headshot.trim(),
@@ -208,8 +209,9 @@ export default function ArticleEditor({ article, onDone, onCancel }) {
         <div className="cms-row">
           <div className="cms-field">
             <label>Topic</label>
-            <input className="cms-input" value={form.topic} onChange={(e) => set('topic', e.target.value)} />
-            <p className="cms-hint">Groups posts on the blog so visitors can filter by it.</p>
+            <input className="cms-input" list="cms-known-topics" value={form.topic} onChange={(e) => set('topic', e.target.value)} />
+            <datalist id="cms-known-topics">{knownTopics.map((t) => <option key={t} value={t} />)}</datalist>
+            <p className="cms-hint">Pick an existing topic or type a new one — visitors can filter the blog by it.</p>
           </div>
           <div className="cms-field">
             <label>Tags</label>
@@ -304,6 +306,20 @@ export default function ArticleEditor({ article, onDone, onCancel }) {
 
         {/* Author */}
         <div className="cms-section-h">Author</div>
+        {authors.length > 0 && (
+          <div className="cms-field">
+            <label>Use a saved author</label>
+            <select className="cms-select" value={form.authorId || ''} onChange={(e) => {
+              const a = authors.find((x) => x.id === e.target.value);
+              if (a) setForm((f) => ({ ...f, authorId: a.id, author: { name: a.name || '', role: a.title || '', bio: a.bio || '', headshot: a.headshot || '' } }));
+              else setForm((f) => ({ ...f, authorId: '' }));
+            }}>
+              <option value="">— manual entry —</option>
+              {authors.map((a) => <option key={a.id} value={a.id}>{a.name}</option>)}
+            </select>
+            <p className="cms-hint">Pick a saved author to fill the fields below, or leave on “manual entry”.</p>
+          </div>
+        )}
         <div className="cms-row">
           <div className="cms-field">
             <label>Name</label>

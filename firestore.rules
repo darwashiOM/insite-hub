@@ -24,6 +24,15 @@ service cloud.firestore {
       }
     }
 
+    // Author records — admin-only (their fields are denormalized into published
+    // articles, so the public never needs to read this collection directly).
+    match /authors/{id} {
+      allow read, write: if isAdmin();
+      match /versions/{versionId} {
+        allow read, write: if isAdmin();
+      }
+    }
+
     // Page content overrides (editable marketing copy). Publicly readable; admin-only writes.
     match /siteContent/{page} {
       allow read: if true;

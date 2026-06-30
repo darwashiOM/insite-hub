@@ -162,6 +162,38 @@ export async function adminUploadImage(file) {
   return getDownloadURL(r);
 }
 
+// --- Authors (reusable records that posts link to) --------------------------
+
+export async function adminListAuthors() {
+  const snap = await getDocs(collection(db, 'authors'));
+  return snap.docs.map((d) => ({ id: d.id, ...d.data() }))
+    .sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+}
+
+export async function adminGetAuthor(id) {
+  const s = await getDoc(doc(db, 'authors', id));
+  return s.exists() ? { id: s.id, ...s.data() } : null;
+}
+
+export async function adminSaveAuthor(author) {
+  const id = author.id || doc(collection(db, 'authors')).id; // stable auto-id on create
+  const { id: _id, ...data } = author;
+  await saveWithHistory(doc(db, 'authors', id), data);
+  return id;
+}
+
+export async function adminDeleteAuthor(id) {
+  const ref = doc(db, 'authors', id);
+  const versions = await getDocs(collection(ref, 'versions'));
+  const batch = writeBatch(db);
+  versions.docs.forEach((d) => batch.delete(d.ref));
+  batch.delete(ref);
+  await batch.commit();
+}
+
+export const adminListAuthorVersions = (id) => listVersions(doc(db, 'authors', id));
+export const adminRestoreAuthorVersion = (id, vid) => restoreVersion(doc(db, 'authors', id), vid);
+
 // --- Page content overrides (Phase 2) -------------------------------------
 
 export async function adminGetPageContent(pageId) {
