@@ -4,6 +4,7 @@ import {
   adminListArticleVersions, adminRestoreArticleVersion,
 } from '../lib/adminBlog';
 import VersionHistory from './VersionHistory';
+import ArticleLayout from '../components/ArticleLayout';
 
 const BLANK = {
   slug: '', pillar: 'Methodology', topic: '', tags: '', featured: false, title: '', description: '',
@@ -57,6 +58,7 @@ export default function ArticleEditor({ article, authors = [], knownTopics = [],
   const [error, setError] = useState('');
   const [okMsg, setOkMsg] = useState('');
   const [showAdvanced, setShowAdvanced] = useState(false);
+  const [previewOpen, setPreviewOpen] = useState(false);
   // Once the slug is hand-edited, stop auto-deriving it from the title.
   const [slugDirty, setSlugDirty] = useState(!isNew);
   const titleRef = useRef(null);
@@ -101,16 +103,12 @@ export default function ArticleEditor({ article, authors = [], knownTopics = [],
     finally { setBusy(false); }
   };
 
-  const save = async () => {
-    setError(''); setOkMsg('');
+  // Build the saved-shape article from the current form (body normalized + TOC
+  // derived). Anchor ids are made unique so duplicate headings don't collide.
+  // Shared by Save and the live Preview.
+  const buildArticle = () => {
     const title = form.title.trim();
-    if (!title) { setError('Please add a title.'); titleRef.current?.focus(); return; }
     const slug = (form.slug.trim() || slugify(title));
-    if (!slug) { setError('Please add a web address.'); return; }
-
-    // Normalize body + derive TOC from headings. Anchor ids are made unique
-    // (so duplicate headings don't collide); empty-text headings are kept in the
-    // body but excluded from the TOC.
     const usedIds = new Set();
     const uniqueId = (raw) => {
       const base = (raw || '').trim() || 'section';
@@ -131,15 +129,11 @@ export default function ArticleEditor({ article, authors = [], knownTopics = [],
       return { type: 'p', html: (b.html || '').trim() };
     });
     const toc = headings.filter((h) => h.text).map((h) => ({ id: h.id, label: h.navLabel || h.text }));
-
-    const hasBody = body.some((b) => (b.type === 'p' && b.html) || (b.type === 'h2' && b.text) || (b.type === 'quote' && b.text));
-    if (form.published && !hasBody && !window.confirm('This post has no body text yet. Publish it live anyway?')) return;
-
     const tags = String(form.tags || '').split(',').map((t) => t.trim()).filter(Boolean);
     // A future publish time only applies while unpublished; publishing now clears it.
     const scheduledMs = (!form.published && form.publishAt) ? Date.parse(form.publishAt) : NaN;
     const isScheduled = !Number.isNaN(scheduledMs) && scheduledMs > Date.now();
-    const article = {
+    return {
       slug, pillar: form.pillar.trim(), topic: form.topic.trim(), tags, featured: !!form.featured,
       title, description: form.description.trim(),
       metaTitle: form.metaTitle.trim(), canonical: form.canonical.trim(), ogImage: form.ogImage.trim(), noindex: !!form.noindex,
@@ -154,13 +148,23 @@ export default function ArticleEditor({ article, authors = [], knownTopics = [],
       published: !!form.published, order: Number(form.order) || 0,
       ...(isScheduled ? { publishAt: scheduledMs } : {}),
     };
+  };
+
+  const save = async () => {
+    setError(''); setOkMsg('');
+    const title = form.title.trim();
+    if (!title) { setError('Please add a title.'); titleRef.current?.focus(); return; }
+    if (!(form.slug.trim() || slugify(title))) { setError('Please add a web address.'); return; }
+    const article = buildArticle();
+    const hasBody = article.body.some((b) => (b.type === 'p' && b.html) || (b.type === 'h2' && b.text) || (b.type === 'quote' && b.text));
+    if (article.published && !hasBody && !window.confirm('This post has no body text yet. Publish it live anyway?')) return;
 
     setBusy(true);
     try {
       await adminSaveArticle(article, isNew);
       initial.current = JSON.stringify(form);
       setOkMsg(article.published ? 'Saved ✓ — it’s live now.'
-        : isScheduled ? `Saved ✓ — scheduled for ${new Date(scheduledMs).toLocaleString()}`
+        : article.publishAt ? `Saved ✓ — scheduled for ${new Date(article.publishAt).toLocaleString()}`
         : 'Saved as draft ✓');
       setBusy(false);
       setTimeout(() => onDone(), 900);
@@ -177,6 +181,7 @@ export default function ArticleEditor({ article, authors = [], knownTopics = [],
       <div className="cms-bar">
         <h1>{isNew ? 'New article' : 'Edit article'}</h1>
         <div style={{ display: 'flex', gap: 10 }}>
+          <button className="cms-btn" onClick={() => setPreviewOpen(true)} disabled={busy}>Preview</button>
           <button className="cms-btn" onClick={cancel} disabled={busy}>Cancel</button>
           <button className="cms-btn cms-btn-primary" onClick={save} disabled={busy}>
             {busy ? 'Saving…' : 'Save'}
@@ -406,6 +411,18 @@ export default function ArticleEditor({ article, authors = [], knownTopics = [],
           <button className="cms-btn cms-btn-primary" onClick={save} disabled={busy}>{busy ? 'Saving…' : 'Save'}</button>
         </div>
       </div>
+
+      {previewOpen && (
+        <div className="cms-preview-overlay">
+          <div className="cms-preview-bar">
+            <span>Preview — how this article will look. Nothing is saved.</span>
+            <button className="cms-btn cms-btn-sm" onClick={() => setPreviewOpen(false)}>Close preview</button>
+          </div>
+          <div className="cms-preview-body">
+            <ArticleLayout article={buildArticle()} />
+          </div>
+        </div>
+      )}
     </div>
   );
 }

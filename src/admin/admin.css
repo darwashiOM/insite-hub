@@ -106,3 +106,9 @@
 .cms-sub-data { margin-top: 8px; font-size: 13px; color: var(--ink); display: grid; gap: 3px; }
 .cms-sub-data strong { color: var(--bd); font-weight: 600; }
 .cms-sub-utm { color: var(--bd); }
+
+/* live preview overlay */
+.cms-preview-overlay { position: fixed; inset: 0; z-index: 1000; background: #fff; display: flex; flex-direction: column; }
+.cms-preview-bar { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 11px 24px; background: var(--ink, #0c1218); color: #fff; font-size: 13px; flex: 0 0 auto; }
+.cms-preview-bar .cms-btn { background: #fff; }
+.cms-preview-body { flex: 1; overflow: auto; }
