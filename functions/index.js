@@ -301,7 +301,17 @@ exports.getContent = onRequest(async (req, res) => {
 // Honeypot + per-IP rate limit guard against spam.
 // ---------------------------------------------------------------------------
 const FORM_MAX_PER_WINDOW = 12;
+const FORM_GLOBAL_MAX = 300; // total across all IPs per window — bounds spam even if a single IP key is forged
 const FORM_WINDOW_MS = 15 * 60 * 1000;
+const UTM_KEYS = ["utm_source", "utm_medium", "utm_campaign", "utm_term", "utm_content", "gclid"];
+
+// Window-aware counter step for the rate limiter (returns the next {count, first}).
+function rlNext(snap, now) {
+  const d = snap.exists ? snap.data() : { count: 0, first: now };
+  let count = d.count || 0; let first = d.first || now;
+  if (now - first > FORM_WINDOW_MS) { count = 0; first = now; }
+  return { count: count + 1, first };
+}
 
 function escapeHtml(v) {
   return String(v == null ? "" : v)
@@ -326,17 +336,8 @@ exports.submitForm = onRequest(async (req, res) => {
     if (!formSnap.exists || formSnap.data().published !== true) { res.status(404).json({ error: "Form not found." }); return; }
     const form = formSnap.data();
 
-    // Per-IP rate limit.
-    const ip = clientIp(req);
-    const rlRef = db.collection("formRateLimit").doc(ip);
-    const rl = await rlRef.get();
-    const r = rl.exists ? rl.data() : { count: 0, first: now };
-    let count = r.count || 0; let first = r.first || now;
-    if (now - first > FORM_WINDOW_MS) { count = 0; first = now; }
-    if (count >= FORM_MAX_PER_WINDOW) { res.status(429).json({ error: "Too many submissions. Please try again later." }); return; }
-    await rlRef.set({ count: count + 1, first }, { merge: true });
-
-    // Validate required fields + consent against the definition.
+    // Validate required fields + consent FIRST (so a user's typo never burns their
+    // rate-limit budget, and invalid spam never reaches the counter/store).
     const data = (body.data && typeof body.data === "object") ? body.data : {};
     for (const f of (form.fields || [])) {
       if (f.required && !String(data[f.key] == null ? "" : data[f.key]).trim()) {
@@ -345,15 +346,39 @@ exports.submitForm = onRequest(async (req, res) => {
     }
     if (form.consentText && !body.consent) { res.status(400).json({ error: "Please accept to continue." }); return; }
 
-    // Keep only fields the form actually defines (ignore anything extra a client posts).
+    // Rate limit: per-IP AND a global cap, in one transaction so concurrent bursts
+    // can't race past the limit. The global cap bounds total spam/email volume even
+    // if a caller forges the per-request IP (the per-IP key isn't trustworthy on a
+    // direct, non-Hosting call — a CAPTCHA / App Check is the real fix, see README).
+    const ip = clientIp(req);
+    const ipRef = db.collection("formRateLimit").doc(ip);
+    const gRef = db.collection("formRateLimit").doc("global-counter"); // not __x__ (Firestore reserves those)
+    let rateLimited = false;
+    await db.runTransaction(async (tx) => {
+      const [ipS, gS] = await Promise.all([tx.get(ipRef), tx.get(gRef)]);
+      const ipd = rlNext(ipS, now);
+      const gd = rlNext(gS, now);
+      if (ipd.count > FORM_MAX_PER_WINDOW || gd.count > FORM_GLOBAL_MAX) { rateLimited = true; return; }
+      const expireAt = new Date(now + FORM_WINDOW_MS); // for a Firestore TTL policy
+      tx.set(ipRef, { ...ipd, expireAt }, { merge: true });
+      tx.set(gRef, { ...gd, expireAt }, { merge: true });
+    });
+    if (rateLimited) { res.status(429).json({ error: "Too many submissions. Please try again later." }); return; }
+
+    // Keep only fields the form defines + only known UTM keys (drop/cap everything
+    // else to prevent arbitrary/oversized data being stored).
     const allowed = new Set((form.fields || []).map((f) => f.key));
     const cleanData = {};
     Object.keys(data).forEach((k) => { if (allowed.has(k)) cleanData[k] = String(data[k] == null ? "" : data[k]).slice(0, 5000); });
+    const cleanUtm = {};
+    if (body.utm && typeof body.utm === "object") {
+      UTM_KEYS.forEach((k) => { if (body.utm[k] != null) cleanUtm[k] = String(body.utm[k]).slice(0, 200); });
+    }
 
     await db.collection("formSubmissions").add({
       formSlug, formName: form.name || formSlug,
       data: cleanData,
-      utm: (body.utm && typeof body.utm === "object") ? body.utm : {},
+      utm: cleanUtm,
       consent: !!body.consent,
       createdAt: FieldValue.serverTimestamp(),
     });
@@ -364,14 +389,14 @@ exports.submitForm = onRequest(async (req, res) => {
       const rows = (form.fields || [])
         .map((f) => `<tr><td style="padding:6px 16px 6px 0;font-weight:bold;color:#666;">${escapeHtml(f.label || f.key)}</td><td style="padding:6px 0;">${escapeHtml(cleanData[f.key] || "")}</td></tr>`)
         .join("");
-      const utmRows = Object.entries(body.utm || {})
-        .filter(([, v]) => v)
+      const utmRows = Object.entries(cleanUtm)
         .map(([k, v]) => `<tr><td style="padding:6px 16px 6px 0;font-weight:bold;color:#999;">${escapeHtml(k)}</td><td style="padding:6px 0;color:#999;">${escapeHtml(v)}</td></tr>`)
         .join("");
+      const subjectName = String(form.name || formSlug).replace(/[\r\n]+/g, " ").slice(0, 200);
       getTransporter().sendMail({
         from: getFromAddress(),
         to,
-        subject: `New form submission: ${form.name || formSlug}`,
+        subject: `New form submission: ${subjectName}`,
         html: `<h2>${escapeHtml(form.name || formSlug)}</h2><table style="border-collapse:collapse;font-family:sans-serif;font-size:14px;">${rows}${utmRows}</table>`,
       }).catch((e) => console.error("submitForm email failed:", e));
     }

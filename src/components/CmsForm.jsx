@@ -24,7 +24,8 @@ export default function CmsForm({ form }) {
     setBusy(true);
     try {
       const out = await submitForm({ formSlug: form.slug, data: values, utm: readUtm(), consent, _hp: hp });
-      setDone(out || {});
+      if (out && out.success) setDone(out);
+      else { setError('Submission failed. Please try again.'); setBusy(false); }
     } catch (err) {
       setError(err.message || 'Submission failed.');
       setBusy(false);
