@@ -132,6 +132,15 @@ export default function ArticleLayout({ article, setPage }) {
                   </blockquote>
                 );
               }
+              if (b.type === 'image') {
+                if (!b.src) return null;
+                return (
+                  <figure key={i} className="body-img">
+                    <img src={b.src} alt={b.alt || ''} loading="lazy" />
+                    {b.caption && <figcaption>{b.caption}</figcaption>}
+                  </figure>
+                );
+              }
               return <p key={i} dangerouslySetInnerHTML={clean(b.html)} />;
             })}
           </div>

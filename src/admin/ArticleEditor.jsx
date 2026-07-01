@@ -6,6 +6,7 @@ import {
 import VersionHistory from './VersionHistory';
 import { useDraftBackup, useSaveShortcut, useFadingMessage } from './useEditorSafety';
 import RestoreBanner from './RestoreBanner';
+import PublishSummary from './PublishSummary';
 import SeoPreview, { CharCount } from './SeoPreview';
 import StatusSelect from './StatusSelect';
 import { statusOf } from './status';
@@ -54,6 +55,7 @@ function fromArticle(a) {
 function newBlock(type) {
   if (type === 'h2') return { type: 'h2', text: '', id: '', navLabel: '' };
   if (type === 'quote') return { type: 'quote', text: '' };
+  if (type === 'image') return { type: 'image', src: '', alt: '', caption: '' };
   return { type: 'p', html: '' };
 }
 
@@ -101,7 +103,7 @@ export default function ArticleEditor({ article, authors = [], knownTopics = [],
   const addBlock = (type) => setForm((f) => ({ ...f, body: [...f.body, newBlock(type)] }));
   const removeBlock = (i) => {
     const b = form.body[i];
-    if ((b.html || b.text || '').trim() && !window.confirm('Delete this block? Its text will be lost.')) return;
+    if ((b.html || b.text || b.src || '').trim() && !window.confirm('Delete this block? Its content will be lost.')) return;
     setForm((f) => ({ ...f, body: f.body.filter((_, j) => j !== i) }));
   };
   const moveBlock = (i, dir) => setForm((f) => {
@@ -144,6 +146,7 @@ export default function ArticleEditor({ article, authors = [], knownTopics = [],
         return { type: 'h2', id, text };
       }
       if (b.type === 'quote') return { type: 'quote', text: (b.text || '').trim() };
+      if (b.type === 'image') return { type: 'image', src: (b.src || '').trim(), alt: (b.alt || '').trim(), caption: (b.caption || '').trim() };
       return { type: 'p', html: (b.html || '').trim() };
     });
     const toc = headings.filter((h) => h.text).map((h) => ({ id: h.id, label: h.navLabel || h.text }));
@@ -178,7 +181,7 @@ export default function ArticleEditor({ article, authors = [], knownTopics = [],
     if (!title) { setError('Please add a title.'); titleRef.current?.focus(); return; }
     if (!(form.slug.trim() || slugify(title))) { setError('Please add a web address.'); return; }
     const article = buildArticle();
-    const hasBody = article.body.some((b) => (b.type === 'p' && b.html) || (b.type === 'h2' && b.text) || (b.type === 'quote' && b.text));
+    const hasBody = article.body.some((b) => (b.type === 'p' && b.html) || (b.type === 'h2' && b.text) || (b.type === 'quote' && b.text) || (b.type === 'image' && b.src));
     if (article.published && !hasBody && !window.confirm('This post has no body text yet. Publish it live anyway?')) return;
 
     setBusy(true);
@@ -343,6 +346,10 @@ export default function ArticleEditor({ article, authors = [], knownTopics = [],
         {/* Body */}
         <div className="cms-section-h">
           Body
+          {(() => {
+            const words = form.body.map((b) => b.html || b.text || '').join(' ').replace(/<[^>]+>/g, ' ').split(/\s+/).filter(Boolean).length;
+            return words > 0 && <span className="cms-wordcount">{words.toLocaleString()} words · ~{Math.max(1, Math.round(words / 200))} min read</span>;
+          })()}
           <label className="cms-adv-toggle">
             <input type="checkbox" checked={showAdvanced} onChange={(e) => setShowAdvanced(e.target.checked)} /> Advanced
           </label>
@@ -354,6 +361,7 @@ export default function ArticleEditor({ article, authors = [], knownTopics = [],
                 <option value="p">Paragraph</option>
                 <option value="h2">Heading</option>
                 <option value="quote">Quote</option>
+                <option value="image">Image</option>
               </select>
               <div className="cms-block-spacer" />
               <button className="cms-iconbtn" title="Move up" onClick={() => moveBlock(i, -1)} disabled={i === 0}>↑</button>
@@ -376,6 +384,20 @@ export default function ArticleEditor({ article, authors = [], knownTopics = [],
             ) : b.type === 'quote' ? (
               <textarea className="cms-textarea" placeholder="Quote text"
                 value={b.text || ''} onChange={(e) => setBlock(i, { text: e.target.value })} />
+            ) : b.type === 'image' ? (
+              <>
+                <input className="cms-input" placeholder="Image URL (or upload below)" value={b.src || ''}
+                  onChange={(e) => setBlock(i, { src: e.target.value })} />
+                <input type="file" accept="image/png,image/jpeg,image/gif,image/webp" style={{ marginTop: 8 }}
+                  onChange={(e) => upload(e.target.files[0], (url) => setBlock(i, { src: url }))} />
+                {b.src && <img className="cms-thumb-prev" src={b.src} alt="" />}
+                <div className="cms-row" style={{ marginTop: 10 }}>
+                  <input className="cms-input" placeholder="Describe the image (alt text — helps accessibility & SEO)" value={b.alt || ''}
+                    onChange={(e) => setBlock(i, { alt: e.target.value })} />
+                  <input className="cms-input" placeholder="Caption (optional, shows under the image)" value={b.caption || ''}
+                    onChange={(e) => setBlock(i, { caption: e.target.value })} />
+                </div>
+              </>
             ) : (
               <RichText value={b.html || ''} placeholder="Paragraph text — select to make bold/italic, add a link or a list"
                 onChange={(v) => setBlock(i, { html: v })} />
@@ -386,6 +408,7 @@ export default function ArticleEditor({ article, authors = [], knownTopics = [],
           <button className="cms-btn cms-btn-sm" onClick={() => addBlock('p')}>+ Paragraph</button>
           <button className="cms-btn cms-btn-sm" onClick={() => addBlock('h2')}>+ Heading</button>
           <button className="cms-btn cms-btn-sm" onClick={() => addBlock('quote')}>+ Pull quote</button>
+          <button className="cms-btn cms-btn-sm" onClick={() => addBlock('image')}>+ Image</button>
         </div>
 
         {/* Author */}
@@ -434,6 +457,7 @@ export default function ArticleEditor({ article, authors = [], knownTopics = [],
         )}
 
         {/* Publish */}
+        <PublishSummary status={form.status} publishAt={form.publishAt} />
         <div className="cms-toolbar">
           <label className="cms-check">
             <input type="checkbox" checked={form.featured} onChange={(e) => set('featured', e.target.checked)} />

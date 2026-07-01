@@ -1,7 +1,23 @@
 import { useRef, useEffect } from 'react';
+import DOMPurify from 'dompurify';
 import './RichText.css';
 
 const exec = (cmd, val) => document.execCommand(cmd, false, val);
+
+// Pasting from Google Docs / Word keeps only the formatting we support (bold,
+// italic, links, lists) and drops the font/span cruft — WordPress-style.
+const cleanPaste = (e) => {
+  e.preventDefault();
+  const html = e.clipboardData.getData('text/html');
+  if (html) {
+    exec('insertHTML', DOMPurify.sanitize(html, {
+      ALLOWED_TAGS: ['b', 'i', 'em', 'strong', 'a', 'ul', 'ol', 'li', 'p', 'br'],
+      ALLOWED_ATTR: ['href'],
+    }));
+  } else {
+    exec('insertText', e.clipboardData.getData('text/plain'));
+  }
+};
 
 // Minimal rich-text field (bold / italic / list / link) over a contentEditable,
 // outputting HTML. Sanitized on render (DOMPurify) wherever it's shown. The value
@@ -30,7 +46,7 @@ export default function RichText({ value, onChange, placeholder }) {
         {btn('Clear', () => exec('removeFormat'), 'Clear formatting')}
       </div>
       <div ref={ref} className="richtext-area cms-input" contentEditable suppressContentEditableWarning
-        onInput={emit} data-placeholder={placeholder || ''} />
+        onInput={emit} onPaste={(e) => { cleanPaste(e); emit(); }} data-placeholder={placeholder || ''} />
     </div>
   );
 }

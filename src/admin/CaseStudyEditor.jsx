@@ -6,6 +6,7 @@ import {
 import VersionHistory from './VersionHistory';
 import { useDraftBackup, useSaveShortcut, useFadingMessage } from './useEditorSafety';
 import RestoreBanner from './RestoreBanner';
+import PublishSummary from './PublishSummary';
 import SeoPreview, { CharCount } from './SeoPreview';
 import CaseStudyLayout from '../components/CaseStudyLayout';
 import StatusSelect from './StatusSelect';
@@ -252,6 +253,7 @@ export default function CaseStudyEditor({ caseStudy, onCancel }) {
           <p className="cms-hint">{form.status === 'published' ? 'Already published.' : 'Keep the status below on Draft/Review and set a time — it goes live automatically.'}</p>
         </div>
 
+        <PublishSummary status={form.status} publishAt={form.publishAt} />
         <div className="cms-toolbar">
           <StatusSelect value={form.status} onChange={(v) => set('status', v)} />
           <div className="cms-toolbar-spacer" />

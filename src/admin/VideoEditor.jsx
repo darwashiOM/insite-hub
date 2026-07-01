@@ -7,6 +7,7 @@ import { parseYouTubeId } from '../lib/videos';
 import VersionHistory from './VersionHistory';
 import { useDraftBackup, useSaveShortcut, useFadingMessage } from './useEditorSafety';
 import RestoreBanner from './RestoreBanner';
+import PublishSummary from './PublishSummary';
 import StatusSelect from './StatusSelect';
 import { statusOf } from './status';
 
@@ -198,6 +199,7 @@ export default function VideoEditor({ video, onCancel }) {
           <p className="cms-hint">{form.status === 'published' ? 'Already published.' : 'Keep the status below on Draft/Review and set a time — it goes live automatically.'}</p>
         </div>
 
+        <PublishSummary status={form.status} publishAt={form.publishAt} />
         <div className="cms-toolbar">
           <StatusSelect value={form.status} onChange={(v) => set('status', v)} />
           <div className="cms-toolbar-spacer" />

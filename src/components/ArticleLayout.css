@@ -208,3 +208,8 @@
   .proxa-article .layout,
   .proxa-article .blog-index { padding-left: 20px; padding-right: 20px; }
 }
+
+/* inline images in the article body */
+.prose .body-img { margin: 34px 0; }
+.prose .body-img img { display: block; width: 100%; border-radius: 14px; }
+.prose .body-img figcaption { margin-top: 10px; font-size: 0.86rem; color: #7b8794; text-align: center; }
