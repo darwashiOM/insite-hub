@@ -170,3 +170,15 @@
 .cms-chip { font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600; border-radius: 999px; padding: 7px 14px; border: 1px solid var(--br); background: var(--wh); color: var(--bd); cursor: pointer; transition: all .15s; }
 .cms-chip:hover { border-color: var(--ink); color: var(--ink); }
 .cms-chip.on { background: var(--ink); border-color: var(--ink); color: #fff; }
+
+/* Page-builder: add-section cards + collapsed-section snippet */
+.cms-addgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 10px; margin-bottom: 8px; }
+.cms-addcard { display: flex; flex-direction: column; gap: 3px; text-align: left; padding: 12px 14px; border: 1px dashed var(--br); border-radius: 10px; background: var(--wh); cursor: pointer; font-family: inherit; transition: border-color .15s; }
+.cms-addcard:hover { border-color: var(--o-deep); }
+.cms-addcard-title { font-weight: 700; font-size: 13.5px; color: var(--ink); }
+.cms-addcard-desc { color: var(--bd); font-size: 12px; line-height: 1.35; }
+.cms-block-snippet { color: #9aa2ad; font-size: 12.5px; margin-left: 10px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 340px; }
+
+/* media drag-and-drop */
+.cms-dropzone { border-radius: 12px; }
+.cms-dropzone.on { outline: 3px dashed var(--o); outline-offset: -3px; background: rgba(245,130,95,.05); }

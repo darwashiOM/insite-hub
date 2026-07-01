@@ -89,6 +89,7 @@ export default function ContentTypeEditor({ type, onDone, onCancel, onDirty }) {
 
         <div className="cms-section-h">Fields</div>
         <p className="cms-hint">Every item of this type will have a title + summary automatically. Add the extra fields you want below.</p>
+        {!isNew && <p className="cms-hint" style={{ color: '#b54708' }}>Heads-up: entries that already exist keep their old values — removing or renaming a field hides that content on them (it isn’t deleted, but it stops showing).</p>}
         {form.fields.map((fl, i) => (
           <div className="cms-block" key={i}>
             <div className="cms-row">

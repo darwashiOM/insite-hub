@@ -20,7 +20,7 @@ export default function MediaLibrary() {
     return () => { alive = false; };
   }, []);
 
-  const upload = async (files) => {
+  const upload = useCallback(async (files) => {
     if (!files || !files.length) return;
     setBusy(true); setStatus('');
     try {
@@ -33,6 +33,26 @@ export default function MediaLibrary() {
       setBusy(false);
       if (fileRef.current) fileRef.current.value = '';
     }
+  }, [refresh]);
+
+  // Paste an image anywhere on the Media tab to upload it (screenshots!).
+  useEffect(() => {
+    const h = (e) => {
+      const files = [...(e.clipboardData?.files || [])].filter((f) => f.type.startsWith('image/'));
+      if (files.length) { e.preventDefault(); upload(files); }
+    };
+    window.addEventListener('paste', h);
+    return () => window.removeEventListener('paste', h);
+  }, [upload]);
+
+  const [dragOver, setDragOver] = useState(false);
+  const onDrop = (e) => {
+    e.preventDefault(); setDragOver(false);
+    const files = [...e.dataTransfer.files];
+    const imgs = files.filter((f) => f.type.startsWith('image/'));
+    const docs = files.filter((f) => !f.type.startsWith('image/'));
+    if (imgs.length) upload(imgs);
+    if (docs.length) uploadDocs(docs);
   };
 
   const uploadDocs = async (files) => {
@@ -71,7 +91,10 @@ export default function MediaLibrary() {
   });
 
   return (
-    <div>
+    <div className={'cms-dropzone' + (dragOver ? ' on' : '')}
+      onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
+      onDragLeave={() => setDragOver(false)}
+      onDrop={onDrop}>
       <div className="cms-pages-head">
         <div className="cms-field" style={{ maxWidth: 280, marginBottom: 0 }}>
           <label>Search</label>
@@ -88,7 +111,8 @@ export default function MediaLibrary() {
 
       <p className="cms-intro">
         Upload once, reuse anywhere. Give each image <em>alt text</em> — a short description that helps accessibility and search.
-        Use <em>Copy link</em> to paste an image into a post or page.
+        Use <em>Copy link</em> to paste an image into a post or page. Tip: you can also <em>drag &amp; drop</em> files anywhere
+        on this tab, or <em>paste</em> a screenshot straight in.
       </p>
 
       {media === null ? (

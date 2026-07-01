@@ -69,7 +69,14 @@ export default function ContentTypesManager({ onDirtyChange }) {
   }
 
   // Content types list
-  const removeType = async (t) => { if (window.confirm(`Delete the "${t.label}" content type? Its entries stay in the database but won't render. This cannot be undone.`)) { await adminDeleteContentType(t.key); loadTypes(); } };
+  const removeType = async (t) => {
+    // check for entries first, so deleting a type in use is a deliberate act
+    const existing = await adminListEntries(t.key).catch(() => []);
+    const msg = existing.length
+      ? `“${t.label}” has ${existing.length} entr${existing.length === 1 ? 'y' : 'ies'}. Deleting the type takes them all off the site (their content stays in the database but won’t show anywhere). Delete it anyway?`
+      : `Delete the “${t.label}” content type? This cannot be undone.`;
+    if (window.confirm(msg)) { await adminDeleteContentType(t.key); loadTypes(); }
+  };
   return (
     <div>
       <div className="cms-pages-head">

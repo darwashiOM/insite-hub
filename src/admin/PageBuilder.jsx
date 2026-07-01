@@ -10,25 +10,47 @@ import { statusOf } from './status';
 
 const BLANK = { slug: '', title: '', description: '', metaTitle: '', ogImage: '', canonical: '', structuredType: '', customCode: '', noindex: false, sections: [], published: false };
 
-const fromPage = (p) => ({
-  ...BLANK, ...(p || {}),
-  sections: ((p && p.sections) || []).map((s) => ({ type: s.type, data: { ...(s.data || {}) } })),
-  status: statusOf(p),
-});
+// Plain-language blurbs for the "add a section" cards.
+const SECTION_DESCS = {
+  hero: 'Big opening banner — headline, subtext and buttons',
+  split: 'Text on one side, an image on the other',
+  richText: 'Free-form formatted text',
+  cards: 'A grid of small cards — features, benefits, steps',
+  stats: 'A row of big numbers (“40% faster …”)',
+  quote: 'A standout customer quote',
+  cta: 'A colored call-to-action band with a button',
+  faq: 'Questions & answers (also feeds Google’s FAQ results)',
+  logoStrip: 'A row of client or partner logos',
+  form: 'Drop in one of your forms to capture leads',
+};
+
+// First bit of text in a section, for the collapsed header.
+const sectionSnippet = (s) => {
+  const v = Object.values(s.data || {}).find((x) => typeof x === 'string' && x.trim());
+  return v ? v.replace(/<[^>]+>/g, '').trim().slice(0, 64) : '';
+};
+
+const stripUi = (f) => JSON.stringify({ ...f, sections: f.sections.map((s) => ({ type: s.type, data: s.data })) });
+
+const fromPage = (p) => {
+  const sections = ((p && p.sections) || []).map((s) => ({ type: s.type, data: { ...(s.data || {}) } }));
+  // small pages open expanded; long pages start collapsed so the structure reads at a glance
+  sections.forEach((s) => { s._open = sections.length <= 2; });
+  return { ...BLANK, ...(p || {}), sections, status: statusOf(p) };
+};
 
 export default function PageBuilder({ page, isAdmin = true, onDone, onCancel }) {
   const isNew = !page;
   const [form, setForm] = useState(() => fromPage(page));
-  const [savedJson, setSavedJson] = useState(() => JSON.stringify(fromPage(page)));
+  const [savedJson, setSavedJson] = useState(() => stripUi(fromPage(page)));
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const [okMsg, setOkMsg] = useState('');
   const [slugDirty, setSlugDirty] = useState(!isNew);
   const [previewOpen, setPreviewOpen] = useState(false);
-  const [addType, setAddType] = useState(SECTION_TYPES[0]);
   const titleRef = useRef(null);
 
-  const dirty = JSON.stringify(form) !== savedJson;
+  const dirty = stripUi(form) !== savedJson;
   useEffect(() => {
     const h = (e) => { if (dirty) { e.preventDefault(); e.returnValue = ''; } };
     window.addEventListener('beforeunload', h);
@@ -37,7 +59,16 @@ export default function PageBuilder({ page, isAdmin = true, onDone, onCancel }) 
   const cancel = () => { if (dirty && !window.confirm('Discard your unsaved changes?')) return; onCancel(); };
 
   const set = (k, v) => setForm((f) => ({ ...f, [k]: v }));
-  const addSection = () => setForm((f) => ({ ...f, sections: [...f.sections, { type: addType, data: {} }] }));
+  const addSection = (type) => setForm((f) => ({ ...f, sections: [...f.sections, { type, data: {}, _open: true }] }));
+  const toggleSection = (i) => setForm((f) => ({
+    ...f, sections: f.sections.map((s, j) => (j === i ? { ...s, _open: !s._open } : s)),
+  }));
+  const duplicateSection = (i) => setForm((f) => {
+    const s = f.sections[i];
+    const copy = { type: s.type, data: JSON.parse(JSON.stringify(s.data || {})), _open: false };
+    const arr = f.sections.slice(); arr.splice(i + 1, 0, copy);
+    return { ...f, sections: arr };
+  });
   const removeSection = (i) => {
     const s = form.sections[i];
     const hasContent = s && Object.values(s.data || {}).some((v) => (Array.isArray(v) ? v.length : String(v || '').trim()));
@@ -66,9 +97,9 @@ export default function PageBuilder({ page, isAdmin = true, onDone, onCancel }) 
         slug, title, description: form.description.trim(), metaTitle: form.metaTitle.trim(),
         ogImage: form.ogImage.trim(), canonical: form.canonical.trim(),
         structuredType: form.structuredType, customCode: form.customCode,
-        noindex: !!form.noindex, sections: form.sections, published: form.status === 'published', status: form.status,
+        noindex: !!form.noindex, sections: form.sections.map((s) => ({ type: s.type, data: s.data })), published: form.status === 'published', status: form.status,
       }, isNew);
-      setSavedJson(JSON.stringify(form));
+      setSavedJson(stripUi(form));
       setOkMsg(form.status === 'published' ? `Saved ✓ — live at /${slug}` : form.status === 'review' ? 'Saved — ready for review ✓' : 'Saved as draft ✓');
       setBusy(false);
       setTimeout(() => onDone(), 900);
@@ -97,7 +128,7 @@ export default function PageBuilder({ page, isAdmin = true, onDone, onCancel }) 
 
         {!isNew && (
           <VersionHistory label="this page" load={() => adminListPageDocVersions(page.slug)}
-            onRestore={async (vid) => { const snap = await adminRestorePageDocVersion(page.slug, vid); const f = fromPage(snap); setForm(f); setSavedJson(JSON.stringify(f)); setOkMsg('Restored ✓'); }} />
+            onRestore={async (vid) => { const snap = await adminRestorePageDocVersion(page.slug, vid); const f = fromPage(snap); setForm(f); setSavedJson(stripUi(f)); setOkMsg('Restored ✓'); }} />
         )}
 
         <div className="cms-row">
@@ -118,26 +149,33 @@ export default function PageBuilder({ page, isAdmin = true, onDone, onCancel }) 
         {form.sections.length === 0 && <p className="cms-hint">No sections yet — add one below to start building.</p>}
         {form.sections.map((s, i) => {
           const def = SECTION_KIT[s.type];
+          const snip = sectionSnippet(s);
           return (
             <div className="cms-block" key={i}>
               <div className="cms-block-head">
-                <strong style={{ fontSize: 13 }}>{def ? def.label : s.type}</strong>
+                <button className="cms-iconbtn" title={s._open ? 'Collapse' : 'Expand'} onClick={() => toggleSection(i)}>{s._open ? '▾' : '▸'}</button>
+                <strong style={{ fontSize: 13, cursor: 'pointer' }} onClick={() => toggleSection(i)}>{def ? def.label : s.type}</strong>
+                {!s._open && snip && <span className="cms-block-snippet">{snip}…</span>}
                 <div className="cms-block-spacer" />
+                <button className="cms-iconbtn" title="Duplicate this section" onClick={() => duplicateSection(i)}>⧉</button>
                 <button className="cms-iconbtn" title="Move up" onClick={() => moveSection(i, -1)} disabled={i === 0}>↑</button>
                 <button className="cms-iconbtn" title="Move down" onClick={() => moveSection(i, 1)} disabled={i === form.sections.length - 1}>↓</button>
                 <button className="cms-iconbtn" title="Remove" onClick={() => removeSection(i)}>✕</button>
               </div>
-              {def && def.fields.map((f) => (
+              {s._open && def && def.fields.map((f) => (
                 <SectionFieldEditor key={f.key} field={f} value={s.data[f.key]} onChange={(v) => setSectionField(i, f.key, v)} />
               ))}
             </div>
           );
         })}
-        <div className="cms-addrow" style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
-          <select className="cms-select" style={{ maxWidth: 220 }} value={addType} onChange={(e) => setAddType(e.target.value)}>
-            {SECTION_TYPES.map((t) => <option key={t} value={t}>{SECTION_KIT[t].label}</option>)}
-          </select>
-          <button className="cms-btn cms-btn-sm" onClick={addSection}>+ Add section</button>
+        <p className="cms-hint" style={{ margin: '18px 0 8px' }}>Add a section:</p>
+        <div className="cms-addgrid">
+          {SECTION_TYPES.map((t) => (
+            <button key={t} className="cms-addcard" onClick={() => addSection(t)}>
+              <span className="cms-addcard-title">+ {SECTION_KIT[t].label}</span>
+              <span className="cms-addcard-desc">{SECTION_DESCS[t] || ''}</span>
+            </button>
+          ))}
         </div>
 
         <div className="cms-section-h">Search &amp; sharing (optional)</div>

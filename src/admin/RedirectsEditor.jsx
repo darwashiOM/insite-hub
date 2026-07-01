@@ -43,7 +43,19 @@ export default function RedirectsEditor({ onDirtyChange }) {
   const save = async () => {
     setBusy(true); setStatus('');
     try {
-      const clean = rules.filter((r) => r.from.trim() && r.to.trim()).map((r) => ({ from: r.from.trim(), to: r.to.trim() }));
+      // normalize + guard against the classic redirect mistakes
+      const norm = (p) => (/^https?:\/\//.test(p) ? p : '/' + p.replace(/^\/+/, ''));
+      const clean = rules.filter((r) => r.from.trim() && r.to.trim())
+        .map((r) => ({ from: norm(r.from.trim()), to: norm(r.to.trim()) }));
+      const loops = clean.filter((r) => r.from === r.to);
+      if (loops.length) { setStatus(`“${loops[0].from}” redirects to itself — fix that rule first.`); setBusy(false); return; }
+      const seen = new Set();
+      for (const r of clean) {
+        if (seen.has(r.from)) { setStatus(`Two rules start from “${r.from}” — remove one of them.`); setBusy(false); return; }
+        seen.add(r.from);
+      }
+      const chain = clean.find((r) => clean.some((o) => o.from === r.to));
+      if (chain) { setStatus(`“${chain.from} → ${chain.to}” points at another redirect — point it straight at the final page instead.`); setBusy(false); return; }
       await adminSavePageContent('redirects', { rules: clean });
       loadInto({ rules: clean });
       setStatus('saved');
