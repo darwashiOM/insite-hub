@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { adminSaveEntry, slugify, adminUploadImage, adminListEntryVersions, adminRestoreEntryVersion } from '../lib/adminBlog';
 import { statusOf } from './status';
 import StatusSelect from './StatusSelect';
@@ -39,7 +39,7 @@ function EntryField({ field, value, onChange, onUpload }) {
   }
 }
 
-export default function ContentEntryEditor({ type, entry, onDone, onCancel }) {
+export default function ContentEntryEditor({ type, entry, onDone, onCancel, onDirty }) {
   const isNew = !entry;
   const [form, setForm] = useState(() => from(type, entry));
   const [savedJson, setSavedJson] = useState(() => JSON.stringify(from(type, entry)));
@@ -50,6 +50,12 @@ export default function ContentEntryEditor({ type, entry, onDone, onCancel }) {
   const [previewOpen, setPreviewOpen] = useState(false);
 
   const dirty = JSON.stringify(form) !== savedJson;
+  useEffect(() => { onDirty?.(dirty); return () => onDirty?.(false); }, [dirty, onDirty]);
+  useEffect(() => {
+    const h = (e) => { if (dirty) { e.preventDefault(); e.returnValue = ''; } };
+    window.addEventListener('beforeunload', h);
+    return () => window.removeEventListener('beforeunload', h);
+  }, [dirty]);
   const cancel = () => { if (dirty && !window.confirm('Discard your unsaved changes?')) return; onCancel(); };
   const set = (k, v) => setForm((f) => ({ ...f, [k]: v }));
   const setValue = (key, v) => setForm((f) => ({ ...f, values: { ...f.values, [key]: v } }));
@@ -77,16 +83,16 @@ export default function ContentEntryEditor({ type, entry, onDone, onCancel }) {
 
   const singular = type.singular || type.label || 'entry';
   return (
-    <div className="cms-admin">
-      <div className="cms-bar">
-        <h1>{isNew ? `New ${singular.toLowerCase()}` : `Edit ${singular.toLowerCase()}`}</h1>
+    <div>
+      <div className="cms-subbar">
+        <h2>{isNew ? `New ${singular.toLowerCase()}` : `Edit ${singular.toLowerCase()}`}</h2>
         <div style={{ display: 'flex', gap: 10 }}>
           <button className="cms-btn" onClick={() => setPreviewOpen(true)} disabled={busy || !form.title.trim()}>Preview</button>
-          <button className="cms-btn" onClick={cancel} disabled={busy}>Cancel</button>
+          <button className="cms-btn" onClick={cancel} disabled={busy}>{dirty ? 'Cancel' : 'Back'}</button>
           <button className="cms-btn cms-btn-primary" onClick={save} disabled={busy}>{busy ? 'Saving…' : 'Save'}</button>
         </div>
       </div>
-      <div className="cms-wrap">
+      <div>
         {error && <p className="cms-err">{error}</p>}
         {okMsg && <p className="cms-ok-banner">{okMsg}</p>}
         {!isNew && (

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { adminSaveContentType, slugify, adminListContentTypeVersions, adminRestoreContentTypeVersion } from '../lib/adminBlog';
 import VersionHistory from './VersionHistory';
 
@@ -10,7 +10,7 @@ const FIELD_TYPES = [
 const BLANK = { key: '', label: '', singular: '', listTitle: '', intro: '', fields: [] };
 const from = (t) => ({ ...BLANK, ...(t || {}), fields: ((t && t.fields) || []).map((f) => ({ options: '', ...f })) });
 
-export default function ContentTypeEditor({ type, onDone, onCancel }) {
+export default function ContentTypeEditor({ type, onDone, onCancel, onDirty }) {
   const isNew = !type;
   const [form, setForm] = useState(() => from(type));
   const [savedJson, setSavedJson] = useState(() => JSON.stringify(from(type)));
@@ -19,6 +19,12 @@ export default function ContentTypeEditor({ type, onDone, onCancel }) {
   const [okMsg, setOkMsg] = useState('');
 
   const dirty = JSON.stringify(form) !== savedJson;
+  useEffect(() => { onDirty?.(dirty); return () => onDirty?.(false); }, [dirty, onDirty]);
+  useEffect(() => {
+    const h = (e) => { if (dirty) { e.preventDefault(); e.returnValue = ''; } };
+    window.addEventListener('beforeunload', h);
+    return () => window.removeEventListener('beforeunload', h);
+  }, [dirty]);
   const cancel = () => { if (dirty && !window.confirm('Discard your unsaved changes?')) return; onCancel(); };
   const set = (k, v) => setForm((f) => ({ ...f, [k]: v }));
   const setField = (i, patch) => setForm((f) => ({ ...f, fields: f.fields.map((x, j) => (j === i ? { ...x, ...patch } : x)) }));
@@ -50,15 +56,15 @@ export default function ContentTypeEditor({ type, onDone, onCancel }) {
   };
 
   return (
-    <div className="cms-admin">
-      <div className="cms-bar">
-        <h1>{isNew ? 'New content type' : `Edit type: ${form.label}`}</h1>
+    <div>
+      <div className="cms-subbar">
+        <h2>{isNew ? 'New content type' : `Edit type: ${form.label}`}</h2>
         <div style={{ display: 'flex', gap: 10 }}>
-          <button className="cms-btn" onClick={cancel} disabled={busy}>Cancel</button>
+          <button className="cms-btn" onClick={cancel} disabled={busy}>{dirty ? 'Cancel' : 'Back'}</button>
           <button className="cms-btn cms-btn-primary" onClick={save} disabled={busy}>{busy ? 'Saving…' : 'Save'}</button>
         </div>
       </div>
-      <div className="cms-wrap">
+      <div>
         {error && <p className="cms-err">{error}</p>}
         {okMsg && <p className="cms-ok-banner">{okMsg}</p>}
         {!isNew && (

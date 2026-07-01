@@ -56,6 +56,7 @@ export default function AdminDashboard({ role, onLogout }) {
   const [pagesDirty, setPagesDirty] = useState(false);
   const [navDirty, setNavDirty] = useState(false);
   const [redirectsDirty, setRedirectsDirty] = useState(false);
+  const [typesDirty, setTypesDirty] = useState(false);
 
   const load = useCallback(() => Promise.all([
     adminListArticles().catch(() => []),
@@ -80,7 +81,15 @@ export default function AdminDashboard({ role, onLogout }) {
     if (tab === 'pages' && pagesDirty && !window.confirm('You have unsaved changes on this page. Discard them?')) return;
     if (tab === 'nav' && navDirty && !window.confirm('You have unsaved navigation changes. Discard them?')) return;
     if (tab === 'redirects' && redirectsDirty && !window.confirm('You have unsaved redirect changes. Discard them?')) return;
+    if (tab === 'types' && typesDirty && !window.confirm('You have unsaved changes in the content-type editor. Discard them?')) return;
+    if (tab === 'forms' && t !== 'forms') setFormsSub('forms'); // always re-enter Forms on the forms list
     setTab(t);
+  };
+
+  const logout = () => {
+    if ((pagesDirty || navDirty || redirectsDirty || typesDirty)
+      && !window.confirm('You have unsaved changes that will be lost. Log out anyway?')) return;
+    onLogout();
   };
 
   const removeArticle = async (a) => { if (window.confirm(`Delete "${a.title}"? This cannot be undone.`)) { await adminDeleteArticle(a.slug); refresh(); } };
@@ -100,27 +109,27 @@ export default function AdminDashboard({ role, onLogout }) {
   // Full-screen editors take over.
   if (tab === 'blog' && view !== 'list') {
     const editing = view === 'new' ? null : articles?.find((a) => a.slug === view) || null;
-    return <ArticleEditor article={editing} authors={authors || []} knownTopics={knownTopics} onDone={() => { setView('list'); refresh(); }} onCancel={() => setView('list')} />;
+    return <ArticleEditor article={editing} authors={authors || []} knownTopics={knownTopics} onDone={() => { setView('list'); refresh(); }} onCancel={() => { setView('list'); refresh(); }} />;
   }
   if (tab === 'authors' && authorView !== 'list') {
     const editing = authorView === 'new' ? null : authors?.find((a) => a.id === authorView) || null;
-    return <AuthorEditor author={editing} onDone={() => { setAuthorView('list'); refresh(); }} onCancel={() => setAuthorView('list')} />;
+    return <AuthorEditor author={editing} onDone={() => { setAuthorView('list'); refresh(); }} onCancel={() => { setAuthorView('list'); refresh(); }} />;
   }
   if (tab === 'cs' && csView !== 'list') {
     const editing = csView === 'new' ? null : caseStudies?.find((c) => c.slug === csView) || null;
-    return <CaseStudyEditor caseStudy={editing} onDone={() => { setCsView('list'); refresh(); }} onCancel={() => setCsView('list')} />;
+    return <CaseStudyEditor caseStudy={editing} onDone={() => { setCsView('list'); refresh(); }} onCancel={() => { setCsView('list'); refresh(); }} />;
   }
   if (tab === 'videos' && vidView !== 'list') {
     const editing = vidView === 'new' ? null : videos?.find((v) => v.slug === vidView) || null;
-    return <VideoEditor video={editing} onDone={() => { setVidView('list'); refresh(); }} onCancel={() => setVidView('list')} />;
+    return <VideoEditor video={editing} onDone={() => { setVidView('list'); refresh(); }} onCancel={() => { setVidView('list'); refresh(); }} />;
   }
   if (tab === 'forms' && formView !== 'list') {
     const editing = formView === 'new' ? null : forms?.find((f) => f.slug === formView) || null;
-    return <FormBuilder form={editing} onDone={() => { setFormView('list'); refresh(); }} onCancel={() => setFormView('list')} />;
+    return <FormBuilder form={editing} onDone={() => { setFormView('list'); refresh(); }} onCancel={() => { setFormView('list'); refresh(); }} />;
   }
   if (tab === 'landing' && pageView !== 'list') {
     const editing = pageView === 'new' ? null : pages?.find((p) => p.slug === pageView) || null;
-    return <PageBuilder page={editing} isAdmin={isAdmin} onDone={() => { setPageView('list'); refresh(); }} onCancel={() => setPageView('list')} />;
+    return <PageBuilder page={editing} isAdmin={isAdmin} onDone={() => { setPageView('list'); refresh(); }} onCancel={() => { setPageView('list'); refresh(); }} />;
   }
 
   const Loading = <p style={{ color: '#5c6370' }}>Loading…</p>;
@@ -165,7 +174,7 @@ export default function AdminDashboard({ role, onLogout }) {
               <button className="cms-btn cms-btn-primary" onClick={() => setFormView('new')}>+ New form</button>
             </>
           )}
-          <button className="cms-btn" onClick={onLogout}>Log out</button>
+          <button className="cms-btn" onClick={logout}>Log out</button>
         </div>
       </div>
 
@@ -178,7 +187,7 @@ export default function AdminDashboard({ role, onLogout }) {
         {tab === 'activity' ? (
           <ActivityView />
         ) : tab === 'types' ? (
-          <ContentTypesManager />
+          <ContentTypesManager onDirtyChange={setTypesDirty} />
         ) : tab === 'nav' ? (
           <NavEditor onDirtyChange={setNavDirty} />
         ) : tab === 'redirects' ? (

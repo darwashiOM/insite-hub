@@ -6,14 +6,19 @@ import {
 import ContentTypeEditor from './ContentTypeEditor';
 import ContentEntryEditor from './ContentEntryEditor';
 
-export default function ContentTypesManager() {
+export default function ContentTypesManager({ onDirtyChange }) {
   const [types, setTypes] = useState(null);
   const [typeEdit, setTypeEdit] = useState(null); // 'new' | typeObj | null
   const [active, setActive] = useState(null);      // type whose entries we manage
   const [entries, setEntries] = useState(null);
   const [entryEdit, setEntryEdit] = useState(null); // 'new' | entryObj | null
 
-  const loadTypes = useCallback(() => adminListContentTypes().then(setTypes).catch(() => setTypes([])), []);
+  // Re-sync `active` too, so the entries view (and its editor) never keeps a stale schema
+  // after the type was edited.
+  const loadTypes = useCallback(() => adminListContentTypes().then((t) => {
+    setTypes(t);
+    setActive((a) => (a ? t.find((x) => x.key === a.key) || null : a));
+  }).catch(() => setTypes([])), []);
   useEffect(() => { let a = true; adminListContentTypes().then((t) => { if (a) setTypes(t); }).catch(() => { if (a) setTypes([]); }); return () => { a = false; }; }, []);
   const loadEntries = (typeKey) => adminListEntries(typeKey).then(setEntries).catch(() => setEntries([]));
   const openEntries = (t) => { setActive(t); setEntries(null); loadEntries(t.key); };
@@ -24,8 +29,8 @@ export default function ContentTypesManager() {
     return <span className="cms-badge cms-badge-draft">Draft</span>;
   };
 
-  if (typeEdit) return <ContentTypeEditor type={typeEdit === 'new' ? null : typeEdit} onDone={() => { setTypeEdit(null); loadTypes(); }} onCancel={() => setTypeEdit(null)} />;
-  if (active && entryEdit) return <ContentEntryEditor type={active} entry={entryEdit === 'new' ? null : entryEdit} onDone={() => { setEntryEdit(null); loadEntries(active.key); }} onCancel={() => setEntryEdit(null)} />;
+  if (typeEdit) return <ContentTypeEditor type={typeEdit === 'new' ? null : typeEdit} onDirty={onDirtyChange} onDone={() => { setTypeEdit(null); loadTypes(); }} onCancel={() => { setTypeEdit(null); loadTypes(); }} />;
+  if (active && entryEdit) return <ContentEntryEditor type={active} entry={entryEdit === 'new' ? null : entryEdit} onDirty={onDirtyChange} onDone={() => { setEntryEdit(null); loadEntries(active.key); }} onCancel={() => { setEntryEdit(null); loadEntries(active.key); }} />;
 
   // Entries of the active type
   if (active) {

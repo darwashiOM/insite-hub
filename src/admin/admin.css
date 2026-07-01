@@ -124,6 +124,10 @@
 .cms-media-warn { color: #b54708; font-size: 12px; font-weight: 600; margin: 6px 0 0; }
 .cms-media-actions { display: flex; gap: 8px; margin-top: 8px; }
 
+/* Sub-header for editors that live inside a tab (content types) — not a second sticky bar */
+.cms-subbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin: 0 0 22px; }
+.cms-subbar h2 { margin: 0; font-size: 18px; }
+
 /* "Start here" home + per-tab orientation line */
 .cms-tab-home { font-weight: 700; }
 .cms-tab-home.on { color: var(--o-deep); }
