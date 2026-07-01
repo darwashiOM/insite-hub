@@ -21,11 +21,25 @@ import NavEditor from './NavEditor';
 import RedirectsEditor from './RedirectsEditor';
 import ActivityView from './ActivityView';
 import ContentTypesManager from './ContentTypesManager';
+import StartHere from './StartHere';
+
+// One-line orientation shown at the top of each list tab (Start here + the
+// full-screen editor tabs bring their own copy).
+const TAB_INTRO = {
+  blog: 'Write and publish articles. Use “+ New article” to start one, or Edit any post below.',
+  cs: 'Customer stories and results. Use “+ New case study” to add one.',
+  videos: 'Your video library — add YouTube or hosted videos, with a transcript so search and AI tools can read them.',
+  forms: 'Build contact forms and gated downloads, and read who submitted them (Submissions).',
+  landing: 'Build a brand-new page from ready-made blocks — hero, features, CTA and more. (To edit an existing page like the Homepage, use “Main pages”.)',
+  authors: 'The people whose names appear on blog posts and case studies.',
+  media: 'Upload images and files once, then reuse them anywhere on the site.',
+  activity: 'A history of what changed, and when.',
+};
 
 // Admin shell: Blog | Case studies | Videos | Forms | Authors | Site pages | Navigation.
 export default function AdminDashboard({ role, onLogout }) {
   const isAdmin = role !== 'editor'; // editors manage content but not design/settings
-  const [tab, setTab] = useState('blog');
+  const [tab, setTab] = useState('start');
   const [articles, setArticles] = useState(null);
   const [authors, setAuthors] = useState(null);
   const [caseStudies, setCaseStudies] = useState(null);
@@ -123,6 +137,7 @@ export default function AdminDashboard({ role, onLogout }) {
       <div className="cms-bar">
         <h1>Proxa Labs Website Editor</h1>
         <div className="cms-tabs">
+          <button className={'cms-tab cms-tab-home' + (tab === 'start' ? ' on' : '')} onClick={() => switchTab('start')}>★ Start here</button>
           <button className={'cms-tab' + (tab === 'blog' ? ' on' : '')} onClick={() => switchTab('blog')}>Blog</button>
           <button className={'cms-tab' + (tab === 'cs' ? ' on' : '')} onClick={() => switchTab('cs')}>Case studies</button>
           <button className={'cms-tab' + (tab === 'videos' ? ' on' : '')} onClick={() => switchTab('videos')}>Videos</button>
@@ -132,7 +147,7 @@ export default function AdminDashboard({ role, onLogout }) {
           <button className={'cms-tab' + (tab === 'media' ? ' on' : '')} onClick={() => switchTab('media')}>Media</button>
           {isAdmin && <>
             <button className={'cms-tab' + (tab === 'types' ? ' on' : '')} onClick={() => switchTab('types')}>Content types</button>
-            <button className={'cms-tab' + (tab === 'pages' ? ' on' : '')} onClick={() => switchTab('pages')}>Site pages</button>
+            <button className={'cms-tab' + (tab === 'pages' ? ' on' : '')} onClick={() => switchTab('pages')}>Main pages</button>
             <button className={'cms-tab' + (tab === 'nav' ? ' on' : '')} onClick={() => switchTab('nav')}>Navigation</button>
             <button className={'cms-tab' + (tab === 'redirects' ? ' on' : '')} onClick={() => switchTab('redirects')}>Redirects</button>
             <button className={'cms-tab' + (tab === 'activity' ? ' on' : '')} onClick={() => switchTab('activity')}>Activity</button>
@@ -155,6 +170,11 @@ export default function AdminDashboard({ role, onLogout }) {
       </div>
 
       <div className="cms-wrap">
+        {tab === 'start' ? (
+          <StartHere go={switchTab} isAdmin={isAdmin} />
+        ) : (
+        <>
+        {TAB_INTRO[tab] && <p className="cms-tab-intro">{TAB_INTRO[tab]}</p>}
         {tab === 'activity' ? (
           <ActivityView />
         ) : tab === 'types' ? (
@@ -297,6 +317,8 @@ export default function AdminDashboard({ role, onLogout }) {
               </div>
             ))}
           </div>
+        )}
+        </>
         )}
       </div>
     </div>

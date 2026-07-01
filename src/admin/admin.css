@@ -123,3 +123,17 @@
 .cms-media-alt { font-size: 13px; padding: 8px 10px; }
 .cms-media-warn { color: #b54708; font-size: 12px; font-weight: 600; margin: 6px 0 0; }
 .cms-media-actions { display: flex; gap: 8px; margin-top: 8px; }
+
+/* "Start here" home + per-tab orientation line */
+.cms-tab-home { font-weight: 700; }
+.cms-tab-home.on { color: var(--o-deep); }
+.cms-tab-intro { color: var(--bd); font-size: 14.5px; line-height: 1.5; margin: 0 0 20px; max-width: 720px; }
+.cms-start-lead { color: var(--bd); font-size: 15px; line-height: 1.5; margin: 2px 0 26px; }
+.cms-start-group { margin-bottom: 26px; }
+.cms-start-h { font-size: 12px; text-transform: uppercase; letter-spacing: .07em; color: #9aa2ad; font-weight: 700; margin: 0 0 12px; }
+.cms-start-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; }
+.cms-start-card { display: flex; flex-direction: column; align-items: flex-start; gap: 3px; text-align: left; padding: 15px 17px; border: 1px solid var(--br); border-radius: 12px; background: var(--wh); cursor: pointer; transition: border-color .15s, box-shadow .15s; font-family: inherit; }
+.cms-start-card:hover { border-color: var(--o-deep); box-shadow: 0 4px 14px rgba(12,18,24,.07); }
+.cms-start-ico { font-size: 22px; line-height: 1; margin-bottom: 5px; }
+.cms-start-title { font-weight: 700; font-size: 15px; color: var(--ink); }
+.cms-start-desc { color: var(--bd); font-size: 13px; line-height: 1.4; }
