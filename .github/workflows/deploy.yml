@@ -39,11 +39,18 @@ jobs:
       - name: Build with Sentry release artifacts
         run: npm run build
 
+      # Deploy via the Firebase CLI (idempotent — always creates a fresh release, so
+      # it never fails with "version is already the current active version" the way
+      # action-hosting-deploy did when a build matched what was already live).
       - name: Deploy to Firebase Hosting
-        uses: FirebaseExtended/action-hosting-deploy@v0
-        with:
-          repoToken: ${{ secrets.GITHUB_TOKEN }}
-          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_INSITE_HUB_WEB }}
-          projectId: insite-hub-web
-          channelId: live
+        run: |
+          if [ "${FIREBASE_SERVICE_ACCOUNT:0:1}" = "{" ]; then
+            printf '%s' "$FIREBASE_SERVICE_ACCOUNT" > "$RUNNER_TEMP/sa.json"
+          else
+            printf '%s' "$FIREBASE_SERVICE_ACCOUNT" | base64 -d > "$RUNNER_TEMP/sa.json"
+          fi
+          export GOOGLE_APPLICATION_CREDENTIALS="$RUNNER_TEMP/sa.json"
+          npx --yes firebase-tools@latest deploy --only hosting --project insite-hub-web --non-interactive
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_INSITE_HUB_WEB }}
 
