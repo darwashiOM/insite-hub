@@ -287,6 +287,22 @@ export async function adminListPageDestinations() {
   return pages.filter((p) => p.published).map((p) => ({ page: p.slug, label: p.title || p.slug }));
 }
 
+// Duplicate a content doc as a fresh unpublished draft (new free slug, "(copy)"
+// title, schedule dropped). `save` is the collection's adminSaveX(obj, isNew).
+async function duplicateDoc(col, slug, save) {
+  const s = await getDoc(doc(db, col, slug));
+  if (!s.exists()) throw new Error('That item no longer exists.');
+  const { publishAt: _pa, ...data } = s.data();
+  let newSlug = `${slug}-copy`, n = 2;
+  while ((await getDoc(doc(db, col, newSlug))).exists()) newSlug = `${slug}-copy-${n++}`;
+  await save({ ...data, slug: newSlug, title: `${data.title || 'Untitled'} (copy)`, published: false, status: 'draft' }, true);
+  return newSlug;
+}
+export const adminDuplicatePage = (slug) => duplicateDoc('pages', slug, adminSavePage);
+export const adminDuplicateArticle = (slug) => duplicateDoc('articles', slug, adminSaveArticle);
+export const adminDuplicateCaseStudy = (slug) => duplicateDoc('caseStudies', slug, adminSaveCaseStudy);
+export const adminDuplicateVideo = (slug) => duplicateDoc('videos', slug, adminSaveVideo);
+
 // --- Videos -----------------------------------------------------------------
 
 export async function adminListVideos() {

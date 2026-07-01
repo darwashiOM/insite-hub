@@ -6,6 +6,7 @@ import {
   adminListVideos, adminDeleteVideo,
   adminListForms, adminDeleteForm,
   adminListPages, adminDeletePage,
+  adminDuplicatePage, adminDuplicateArticle, adminDuplicateCaseStudy, adminDuplicateVideo,
 } from '../lib/adminBlog';
 import ArticleEditor from './ArticleEditor';
 import AuthorEditor from './AuthorEditor';
@@ -71,6 +72,11 @@ export default function AdminDashboard({ onLogout }) {
   const removeVideo = async (v) => { if (window.confirm(`Delete "${v.title}"? This cannot be undone.`)) { await adminDeleteVideo(v.slug); refresh(); } };
   const removeForm = async (f) => { if (window.confirm(`Delete "${f.name}"? This cannot be undone.`)) { await adminDeleteForm(f.slug); refresh(); } };
   const removePage = async (p) => { if (window.confirm(`Delete "${p.title}"? This cannot be undone.`)) { await adminDeletePage(p.slug); refresh(); } };
+  const dupe = (fn) => async (item) => { try { await fn(item.slug); await refresh(); } catch (e) { window.alert('Duplicate failed: ' + (e.message || e)); } };
+  const duplicateArticle = dupe(adminDuplicateArticle);
+  const duplicateCaseStudy = dupe(adminDuplicateCaseStudy);
+  const duplicateVideo = dupe(adminDuplicateVideo);
+  const duplicatePage = dupe(adminDuplicatePage);
 
   const knownTopics = [...new Set((articles || []).map((a) => a.topic).filter(Boolean))].sort();
 
@@ -191,6 +197,7 @@ export default function AdminDashboard({ onLogout }) {
                   </div>
                   {badge(p)}
                   <button className="cms-btn cms-btn-sm" onClick={() => setPageView(p.slug)}>Edit</button>
+                  <button className="cms-btn cms-btn-sm" onClick={() => duplicatePage(p)}>Duplicate</button>
                   <button className="cms-btn cms-btn-sm cms-btn-danger" onClick={() => removePage(p)}>Delete</button>
                 </div>
               ))}
@@ -229,6 +236,7 @@ export default function AdminDashboard({ onLogout }) {
                   </div>
                   {badge(c)}
                   <button className="cms-btn cms-btn-sm" onClick={() => setCsView(c.slug)}>Edit</button>
+                  <button className="cms-btn cms-btn-sm" onClick={() => duplicateCaseStudy(c)}>Duplicate</button>
                   <button className="cms-btn cms-btn-sm cms-btn-danger" onClick={() => removeCaseStudy(c)}>Delete</button>
                 </div>
               ))}
@@ -250,6 +258,7 @@ export default function AdminDashboard({ onLogout }) {
                   </div>
                   {badge(v)}
                   <button className="cms-btn cms-btn-sm" onClick={() => setVidView(v.slug)}>Edit</button>
+                  <button className="cms-btn cms-btn-sm" onClick={() => duplicateVideo(v)}>Duplicate</button>
                   <button className="cms-btn cms-btn-sm cms-btn-danger" onClick={() => removeVideo(v)}>Delete</button>
                 </div>
               ))}
@@ -272,6 +281,7 @@ export default function AdminDashboard({ onLogout }) {
                 </div>
                 {badge(a)}
                 <button className="cms-btn cms-btn-sm" onClick={() => setView(a.slug)}>Edit</button>
+                <button className="cms-btn cms-btn-sm" onClick={() => duplicateArticle(a)}>Duplicate</button>
                 <button className="cms-btn cms-btn-sm cms-btn-danger" onClick={() => removeArticle(a)}>Delete</button>
               </div>
             ))}
