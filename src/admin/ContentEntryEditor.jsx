@@ -4,6 +4,8 @@ import { statusOf } from './status';
 import StatusSelect from './StatusSelect';
 import RichText from './RichText';
 import VersionHistory from './VersionHistory';
+import { useDraftBackup, useSaveShortcut, useFadingMessage } from './useEditorSafety';
+import RestoreBanner from './RestoreBanner';
 import EntryLayout from '../components/EntryLayout';
 
 const from = (type, entry) => ({
@@ -39,7 +41,7 @@ function EntryField({ field, value, onChange, onUpload }) {
   }
 }
 
-export default function ContentEntryEditor({ type, entry, onDone, onCancel, onDirty }) {
+export default function ContentEntryEditor({ type, entry, onCancel, onDirty }) {
   const isNew = !entry;
   const [form, setForm] = useState(() => from(type, entry));
   const [savedJson, setSavedJson] = useState(() => JSON.stringify(from(type, entry)));
@@ -47,16 +49,26 @@ export default function ContentEntryEditor({ type, entry, onDone, onCancel, onDi
   const [error, setError] = useState('');
   const [okMsg, setOkMsg] = useState('');
   const [slugDirty, setSlugDirty] = useState(!isNew);
+  const [savedOnce, setSavedOnce] = useState(false);
+  const createMode = isNew && !savedOnce;
   const [previewOpen, setPreviewOpen] = useState(false);
 
   const dirty = JSON.stringify(form) !== savedJson;
+  const { backup, clear: clearBackup } = useDraftBackup(`entry:${entry?.id || `${type.key}-new`}`, form, dirty);
+  useFadingMessage(okMsg, setOkMsg);
   useEffect(() => { onDirty?.(dirty); return () => onDirty?.(false); }, [dirty, onDirty]);
   useEffect(() => {
     const h = (e) => { if (dirty) { e.preventDefault(); e.returnValue = ''; } };
     window.addEventListener('beforeunload', h);
     return () => window.removeEventListener('beforeunload', h);
   }, [dirty]);
-  const cancel = () => { if (dirty && !window.confirm('Discard your unsaved changes?')) return; onCancel(); };
+  const cancel = () => {
+    if (dirty) {
+      if (!window.confirm('Discard your unsaved changes?')) return;
+      clearBackup();
+    }
+    onCancel();
+  };
   const set = (k, v) => setForm((f) => ({ ...f, [k]: v }));
   const setValue = (key, v) => setForm((f) => ({ ...f, values: { ...f.values, [key]: v } }));
   const upload = async (file, then) => { if (!file) return; setBusy(true); setError(''); try { then(await adminUploadImage(file)); } catch (e) { setError('Upload failed: ' + (e.message || e)); } finally { setBusy(false); } };
@@ -74,18 +86,22 @@ export default function ContentEntryEditor({ type, entry, onDone, onCancel, onDi
         typeKey: type.key, slug, title, summary: form.summary.trim(), values: form.values,
         metaTitle: form.metaTitle.trim(), description: form.description.trim(), ogImage: form.ogImage.trim(), noindex: !!form.noindex,
         order: Number(form.order) || 0, published, status: form.status,
-      }, isNew);
+      }, createMode);
       setSavedJson(JSON.stringify(form));
+      setSavedOnce(true);
+      clearBackup();
       setOkMsg(published ? `Saved ✓ — live at /${type.key}/${slug}` : form.status === 'review' ? 'Saved — ready for review ✓' : 'Saved as draft ✓');
-      setBusy(false); setTimeout(onDone, 800);
+      setBusy(false);
     } catch (e) { setBusy(false); setError(/permission/i.test(e.message || '') ? 'Session timed out — log in again, then Save.' : 'Save failed: ' + (e.message || e)); }
   };
+
+  useSaveShortcut(save);
 
   const singular = type.singular || type.label || 'entry';
   return (
     <div>
       <div className="cms-subbar">
-        <h2>{isNew ? `New ${singular.toLowerCase()}` : `Edit ${singular.toLowerCase()}`}</h2>
+        <h2>{createMode ? `New ${singular.toLowerCase()}` : `Edit ${singular.toLowerCase()}`}</h2>
         <div style={{ display: 'flex', gap: 10 }}>
           <button className="cms-btn" onClick={() => setPreviewOpen(true)} disabled={busy || !form.title.trim()}>Preview</button>
           <button className="cms-btn" onClick={cancel} disabled={busy}>{dirty ? 'Cancel' : 'Back'}</button>
@@ -95,17 +111,20 @@ export default function ContentEntryEditor({ type, entry, onDone, onCancel, onDi
       <div>
         {error && <p className="cms-err">{error}</p>}
         {okMsg && <p className="cms-ok-banner">{okMsg}</p>}
+        <RestoreBanner backup={backup} initialJson={savedJson}
+          onRestore={() => { setForm(backup.form); setSlugDirty(true); clearBackup(); setOkMsg('Restored your unsaved edits ✓ — hit Save to keep them.'); }}
+          onDiscard={clearBackup} />
         {!isNew && (
           <VersionHistory label={`this ${singular.toLowerCase()}`} load={() => adminListEntryVersions(entry.id)}
             onRestore={async (vid) => { const snap = await adminRestoreEntryVersion(entry.id, vid); const f = from(type, snap); setForm(f); setSavedJson(JSON.stringify(f)); setOkMsg('Restored ✓'); }} />
         )}
 
         <div className="cms-field"><label>Title</label>
-          <input className="cms-input" value={form.title} onChange={(e) => { const v = e.target.value; set('title', v); if (isNew && !slugDirty) set('slug', slugify(v)); }} /></div>
+          <input className="cms-input" value={form.title} onChange={(e) => { const v = e.target.value; set('title', v); if (createMode && !slugDirty) set('slug', slugify(v)); }} /></div>
         <div className="cms-row">
           <div className="cms-field"><label>Web address</label>
-            <input className="cms-input" value={form.slug} disabled={!isNew} onChange={(e) => { set('slug', slugify(e.target.value)); setSlugDirty(true); }} />
-            <p className="cms-hint">/{type.key}/{form.slug || '…'}{!isNew && ' · fixed after creation'}</p></div>
+            <input className="cms-input" value={form.slug} disabled={!createMode} onChange={(e) => { set('slug', slugify(e.target.value)); setSlugDirty(true); }} />
+            <p className="cms-hint">/{type.key}/{form.slug || '…'}{!createMode && ' · fixed after creation'}</p></div>
           <div className="cms-field"><label>Sort order (lower shows first)</label>
             <input className="cms-input" type="number" style={{ maxWidth: 140 }} value={form.order} onChange={(e) => set('order', e.target.value)} /></div>
         </div>

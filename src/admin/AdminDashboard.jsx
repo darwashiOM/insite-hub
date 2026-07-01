@@ -109,7 +109,7 @@ export default function AdminDashboard({ role, onLogout }) {
   // Full-screen editors take over.
   if (tab === 'blog' && view !== 'list') {
     const editing = view === 'new' ? null : articles?.find((a) => a.slug === view) || null;
-    return <ArticleEditor article={editing} authors={authors || []} knownTopics={knownTopics} onDone={() => { setView('list'); refresh(); }} onCancel={() => { setView('list'); refresh(); }} />;
+    return <ArticleEditor article={editing} authors={authors || []} knownTopics={knownTopics} onCancel={() => { setView('list'); refresh(); }} />;
   }
   if (tab === 'authors' && authorView !== 'list') {
     const editing = authorView === 'new' ? null : authors?.find((a) => a.id === authorView) || null;
@@ -117,11 +117,11 @@ export default function AdminDashboard({ role, onLogout }) {
   }
   if (tab === 'cs' && csView !== 'list') {
     const editing = csView === 'new' ? null : caseStudies?.find((c) => c.slug === csView) || null;
-    return <CaseStudyEditor caseStudy={editing} onDone={() => { setCsView('list'); refresh(); }} onCancel={() => { setCsView('list'); refresh(); }} />;
+    return <CaseStudyEditor caseStudy={editing} onCancel={() => { setCsView('list'); refresh(); }} />;
   }
   if (tab === 'videos' && vidView !== 'list') {
     const editing = vidView === 'new' ? null : videos?.find((v) => v.slug === vidView) || null;
-    return <VideoEditor video={editing} onDone={() => { setVidView('list'); refresh(); }} onCancel={() => { setVidView('list'); refresh(); }} />;
+    return <VideoEditor video={editing} onCancel={() => { setVidView('list'); refresh(); }} />;
   }
   if (tab === 'forms' && formView !== 'list') {
     const editing = formView === 'new' ? null : forms?.find((f) => f.slug === formView) || null;

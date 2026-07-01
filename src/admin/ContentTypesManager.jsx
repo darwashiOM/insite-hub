@@ -30,7 +30,7 @@ export default function ContentTypesManager({ onDirtyChange }) {
   };
 
   if (typeEdit) return <ContentTypeEditor type={typeEdit === 'new' ? null : typeEdit} onDirty={onDirtyChange} onDone={() => { setTypeEdit(null); loadTypes(); }} onCancel={() => { setTypeEdit(null); loadTypes(); }} />;
-  if (active && entryEdit) return <ContentEntryEditor type={active} entry={entryEdit === 'new' ? null : entryEdit} onDirty={onDirtyChange} onDone={() => { setEntryEdit(null); loadEntries(active.key); }} onCancel={() => { setEntryEdit(null); loadEntries(active.key); }} />;
+  if (active && entryEdit) return <ContentEntryEditor type={active} entry={entryEdit === 'new' ? null : entryEdit} onDirty={onDirtyChange} onCancel={() => { setEntryEdit(null); loadEntries(active.key); }} />;
 
   // Entries of the active type
   if (active) {

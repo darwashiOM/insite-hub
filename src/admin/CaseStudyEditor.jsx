@@ -4,6 +4,8 @@ import {
   adminListCaseStudyVersions, adminRestoreCaseStudyVersion,
 } from '../lib/adminBlog';
 import VersionHistory from './VersionHistory';
+import { useDraftBackup, useSaveShortcut, useFadingMessage } from './useEditorSafety';
+import RestoreBanner from './RestoreBanner';
 import CaseStudyLayout from '../components/CaseStudyLayout';
 import StatusSelect from './StatusSelect';
 import { statusOf } from './status';
@@ -28,7 +30,7 @@ const withStats = (cs) => ({
   status: statusOf(cs),
 });
 
-export default function CaseStudyEditor({ caseStudy, onDone, onCancel }) {
+export default function CaseStudyEditor({ caseStudy, onCancel }) {
   const isNew = !caseStudy;
   const initial = useRef(null);
   const [form, setForm] = useState(() => { const f = withStats(caseStudy); initial.current = JSON.stringify(f); return f; });
@@ -36,16 +38,26 @@ export default function CaseStudyEditor({ caseStudy, onDone, onCancel }) {
   const [error, setError] = useState('');
   const [okMsg, setOkMsg] = useState('');
   const [slugDirty, setSlugDirty] = useState(!isNew);
+  const [savedOnce, setSavedOnce] = useState(false);
+  const createMode = isNew && !savedOnce;
   const [previewOpen, setPreviewOpen] = useState(false);
   const titleRef = useRef(null);
 
   const dirty = JSON.stringify(form) !== initial.current;
+  const { backup, clear: clearBackup } = useDraftBackup(`caseStudy:${caseStudy?.slug || 'new'}`, form, dirty);
+  useFadingMessage(okMsg, setOkMsg);
   useEffect(() => {
     const h = (e) => { if (dirty) { e.preventDefault(); e.returnValue = ''; } };
     window.addEventListener('beforeunload', h);
     return () => window.removeEventListener('beforeunload', h);
   }, [dirty]);
-  const cancel = () => { if (dirty && !window.confirm('Discard your unsaved changes?')) return; onCancel(); };
+  const cancel = () => {
+    if (dirty) {
+      if (!window.confirm('Discard your unsaved changes?')) return;
+      clearBackup();
+    }
+    onCancel();
+  };
 
   const set = (k, v) => setForm((f) => ({ ...f, [k]: v }));
   const setStat = (i, patch) => setForm((f) => ({ ...f, stats: f.stats.map((s, j) => (j === i ? { ...s, ...patch } : s)) }));
@@ -83,11 +95,12 @@ export default function CaseStudyEditor({ caseStudy, onDone, onCancel }) {
         heroImage: form.heroImage.trim(), published, status: form.status, order: Number(form.order) || 0,
         metaTitle: form.metaTitle.trim(), canonical: form.canonical.trim(), ogImage: form.ogImage.trim(), noindex: !!form.noindex,
         ...(isScheduled ? { publishAt: scheduledMs } : {}),
-      }, isNew);
+      }, createMode);
       initial.current = JSON.stringify(form);
+      setSavedOnce(true);
+      clearBackup();
       setOkMsg(published ? 'Saved ✓ — it’s live now.' : form.status === 'review' ? 'Saved — ready for review ✓' : 'Saved as draft ✓');
       setBusy(false);
-      setTimeout(() => onDone(), 800);
     } catch (e) {
       setBusy(false);
       setError(/permission/i.test(e.message || '')
@@ -96,19 +109,24 @@ export default function CaseStudyEditor({ caseStudy, onDone, onCancel }) {
     }
   };
 
+  useSaveShortcut(save);
+
   return (
     <div className="cms-admin">
       <div className="cms-bar">
-        <h1>{isNew ? 'New case study' : 'Edit case study'}</h1>
+        <h1>{createMode ? 'New case study' : 'Edit case study'}</h1>
         <div style={{ display: 'flex', gap: 10 }}>
           <button className="cms-btn" onClick={() => setPreviewOpen(true)} disabled={busy || !form.title.trim()}>Preview</button>
-          <button className="cms-btn" onClick={cancel} disabled={busy}>Cancel</button>
+          <button className="cms-btn" onClick={cancel} disabled={busy}>{dirty ? 'Cancel' : 'Back'}</button>
           <button className="cms-btn cms-btn-primary" onClick={save} disabled={busy}>{busy ? 'Saving…' : 'Save'}</button>
         </div>
       </div>
       <div className="cms-wrap">
         {error && <p className="cms-err">{error}</p>}
         {okMsg && <p className="cms-ok-banner">{okMsg}</p>}
+        <RestoreBanner backup={backup} initialJson={initial.current}
+          onRestore={() => { setForm(backup.form); setSlugDirty(true); clearBackup(); setOkMsg('Restored your unsaved edits ✓ — hit Save to keep them.'); }}
+          onDiscard={clearBackup} />
 
         {!isNew && (
           <VersionHistory
@@ -127,15 +145,15 @@ export default function CaseStudyEditor({ caseStudy, onDone, onCancel }) {
         <div className="cms-field">
           <label>Title</label>
           <input ref={titleRef} className="cms-input" value={form.title}
-            onChange={(e) => { const v = e.target.value; set('title', v); if (isNew && !slugDirty) set('slug', slugify(v)); }} />
+            onChange={(e) => { const v = e.target.value; set('title', v); if (createMode && !slugDirty) set('slug', slugify(v)); }} />
         </div>
 
         <div className="cms-row">
           <div className="cms-field">
             <label>Web address</label>
-            <input className="cms-input" value={form.slug} disabled={!isNew}
+            <input className="cms-input" value={form.slug} disabled={!createMode}
               onChange={(e) => { set('slug', slugify(e.target.value)); setSlugDirty(true); }} />
-            <p className="cms-hint">/case-studies/{form.slug || '…'}{!isNew && ' · fixed after creation'}</p>
+            <p className="cms-hint">/case-studies/{form.slug || '…'}{!createMode && ' · fixed after creation'}</p>
           </div>
           <div className="cms-field">
             <label>Sort order (lower shows first)</label>

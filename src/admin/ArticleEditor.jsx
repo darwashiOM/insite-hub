@@ -4,6 +4,8 @@ import {
   adminListArticleVersions, adminRestoreArticleVersion,
 } from '../lib/adminBlog';
 import VersionHistory from './VersionHistory';
+import { useDraftBackup, useSaveShortcut, useFadingMessage } from './useEditorSafety';
+import RestoreBanner from './RestoreBanner';
 import StatusSelect from './StatusSelect';
 import { statusOf } from './status';
 import RichText from './RichText';
@@ -54,7 +56,7 @@ function newBlock(type) {
   return { type: 'p', html: '' };
 }
 
-export default function ArticleEditor({ article, authors = [], knownTopics = [], onDone, onCancel }) {
+export default function ArticleEditor({ article, authors = [], knownTopics = [], onCancel }) {
   const isNew = !article;
   const initial = useRef(null);
   const [form, setForm] = useState(() => { const f = fromArticle(article); initial.current = JSON.stringify(f); return f; });
@@ -65,15 +67,26 @@ export default function ArticleEditor({ article, authors = [], knownTopics = [],
   const [previewOpen, setPreviewOpen] = useState(false);
   // Once the slug is hand-edited, stop auto-deriving it from the title.
   const [slugDirty, setSlugDirty] = useState(!isNew);
+  // After the first successful save of a new post, further saves update it in place.
+  const [savedOnce, setSavedOnce] = useState(false);
+  const createMode = isNew && !savedOnce;
   const titleRef = useRef(null);
 
   const dirty = JSON.stringify(form) !== initial.current;
+  const { backup, clear: clearBackup } = useDraftBackup(`article:${article?.slug || 'new'}`, form, dirty);
+  useFadingMessage(okMsg, setOkMsg);
   useEffect(() => {
     const h = (e) => { if (dirty) { e.preventDefault(); e.returnValue = ''; } };
     window.addEventListener('beforeunload', h);
     return () => window.removeEventListener('beforeunload', h);
   }, [dirty]);
-  const cancel = () => { if (dirty && !window.confirm('Discard your unsaved changes?')) return; onCancel(); };
+  const cancel = () => {
+    if (dirty) {
+      if (!window.confirm('Discard your unsaved changes?')) return;
+      clearBackup();
+    }
+    onCancel();
+  };
 
   const set = (k, v) => setForm((f) => ({ ...f, [k]: v }));
   const setAuthor = (k, v) => setForm((f) => ({ ...f, author: { ...f.author, [k]: v } }));
@@ -169,14 +182,15 @@ export default function ArticleEditor({ article, authors = [], knownTopics = [],
 
     setBusy(true);
     try {
-      await adminSaveArticle(article, isNew);
+      await adminSaveArticle(article, createMode);
       initial.current = JSON.stringify(form);
-      setOkMsg(article.published ? 'Saved ✓ — it’s live now.'
+      setSavedOnce(true);
+      clearBackup();
+      setOkMsg(article.published ? 'Saved ✓ — it’s live now. Keep writing, or hit Back when you’re done.'
         : article.publishAt ? `Saved ✓ — scheduled for ${new Date(article.publishAt).toLocaleString()}`
         : form.status === 'review' ? 'Saved — ready for review ✓'
         : 'Saved as draft ✓');
       setBusy(false);
-      setTimeout(() => onDone(), 900);
     } catch (e) {
       setBusy(false);
       setError(/permission/i.test(e.message || '')
@@ -185,13 +199,15 @@ export default function ArticleEditor({ article, authors = [], knownTopics = [],
     }
   };
 
+  useSaveShortcut(save);
+
   return (
     <div className="cms-admin">
       <div className="cms-bar">
-        <h1>{isNew ? 'New article' : 'Edit article'}</h1>
+        <h1>{createMode ? 'New article' : 'Edit article'}</h1>
         <div style={{ display: 'flex', gap: 10 }}>
           <button className="cms-btn" onClick={() => setPreviewOpen(true)} disabled={busy}>Preview</button>
-          <button className="cms-btn" onClick={cancel} disabled={busy}>Cancel</button>
+          <button className="cms-btn" onClick={cancel} disabled={busy}>{dirty ? 'Cancel' : 'Back'}</button>
           <button className="cms-btn cms-btn-primary" onClick={save} disabled={busy}>
             {busy ? 'Saving…' : 'Save'}
           </button>
@@ -201,6 +217,9 @@ export default function ArticleEditor({ article, authors = [], knownTopics = [],
       <div className="cms-wrap">
         {error && <p className="cms-err">{error}</p>}
         {okMsg && <p className="cms-ok-banner">{okMsg}</p>}
+        <RestoreBanner backup={backup} initialJson={initial.current}
+          onRestore={() => { setForm(backup.form); setSlugDirty(true); clearBackup(); setOkMsg('Restored your unsaved edits ✓ — hit Save to keep them.'); }}
+          onDiscard={clearBackup} />
 
         {!isNew && (
           <VersionHistory
@@ -219,15 +238,15 @@ export default function ArticleEditor({ article, authors = [], knownTopics = [],
         <div className="cms-field">
           <label>Title</label>
           <input ref={titleRef} className="cms-input" value={form.title}
-            onChange={(e) => { const v = e.target.value; set('title', v); if (isNew && !slugDirty) set('slug', slugify(v)); }} />
+            onChange={(e) => { const v = e.target.value; set('title', v); if (createMode && !slugDirty) set('slug', slugify(v)); }} />
         </div>
 
         <div className="cms-row">
           <div className="cms-field">
             <label>Web address</label>
-            <input className="cms-input" value={form.slug} disabled={!isNew}
+            <input className="cms-input" value={form.slug} disabled={!createMode}
               onChange={(e) => { set('slug', slugify(e.target.value)); setSlugDirty(true); }} />
-            <p className="cms-hint">/blog/{form.slug || '…'}{!isNew && ' · fixed after the post is created'}</p>
+            <p className="cms-hint">/blog/{form.slug || '…'}{!createMode && ' · fixed after the post is created'}</p>
           </div>
           <div className="cms-field">
             <label>Category</label>
