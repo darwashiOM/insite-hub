@@ -333,6 +333,12 @@ export async function adminListForms() {
     .sort((a, b) => (a.name || '').localeCompare(b.name || ''));
 }
 
+// Published forms as picker options for the "form" page section: [{ slug, name }].
+export async function adminListPublishedForms() {
+  const forms = await adminListForms();
+  return forms.filter((f) => f.published).map((f) => ({ slug: f.slug, name: f.name || f.slug }));
+}
+
 export async function adminGetForm(slug) {
   const s = await getDoc(doc(db, 'forms', slug));
   return s.exists() ? { id: s.id, ...s.data() } : null;

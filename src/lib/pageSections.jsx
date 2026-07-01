@@ -5,6 +5,8 @@ import CTABand from '../components/sections/CTABand';
 import SplitFeature from '../components/sections/SplitFeature';
 import PullQuote from '../components/sections/PullQuote';
 import FaqSection from '../components/sections/FaqSection';
+import LogoStrip from '../components/sections/LogoStrip';
+import FormSectionBlock from '../components/FormSectionBlock';
 
 /*
  * The "kit of ready-made sections" (Mercy's S3). Each section type wraps a real
@@ -87,6 +89,22 @@ export const SECTION_KIT = {
       { key: 'items', label: 'Questions & answers', type: 'faqlist' },
     ],
     render: (d) => <FaqSection heading={d.heading} items={d.items} />,
+  },
+  logoStrip: {
+    label: 'Logo strip',
+    fields: [
+      { key: 'heading', label: 'Heading (e.g. “Trusted by”)', type: 'text' },
+      { key: 'logos', label: 'Logos', type: 'logolist' },
+    ],
+    render: (d) => <LogoStrip heading={d.heading} logos={d.logos} />,
+  },
+  form: {
+    label: 'Form',
+    fields: [
+      { key: 'heading', label: 'Heading', type: 'text' },
+      { key: 'formSlug', label: 'Which form', type: 'formpicker' },
+    ],
+    render: (d) => <FormSectionBlock heading={d.heading} slug={d.formSlug} />,
   },
 };
 

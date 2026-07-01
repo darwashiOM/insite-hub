@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { adminUploadImage, adminListPageDestinations } from '../lib/adminBlog';
+import { adminUploadImage, adminListPageDestinations, adminListPublishedForms } from '../lib/adminBlog';
 import { NAV_DESTINATIONS } from '../content/navConfig';
 
 // Built-in destinations + published landing pages, loaded once and cached across
@@ -16,11 +16,25 @@ function usePageDestinations() {
   return dests;
 }
 
+// Published forms for the "form" section picker, loaded once and cached.
+let formCache = null;
+function usePublishedForms() {
+  const [forms, setForms] = useState(formCache || []);
+  useEffect(() => {
+    if (formCache) return;
+    adminListPublishedForms()
+      .then((list) => { formCache = list; setForms(list); })
+      .catch(() => {});
+  }, []);
+  return forms;
+}
+
 // Renders the right input for one section field, by type. `value`/`onChange`
 // own the field's stored value.
 export default function SectionFieldEditor({ field, value, onChange }) {
   const [busy, setBusy] = useState(false);
   const destinations = usePageDestinations();
+  const forms = usePublishedForms();
   const upload = async (file) => {
     if (!file) return;
     setBusy(true);
@@ -108,6 +122,45 @@ export default function SectionFieldEditor({ field, value, onChange }) {
           </div>
         ))}
         <div className="cms-addrow"><button className="cms-btn cms-btn-sm" onClick={() => onChange([...items, { question: '', answer: '' }])}>+ Add question</button></div>
+      </div>
+    );
+  }
+  if (field.type === 'formpicker') {
+    return (
+      <div className="cms-field"><label>{field.label}</label>
+        <select className="cms-select" value={value || ''} onChange={(e) => onChange(e.target.value)}>
+          <option value="">— choose a form —</option>
+          {forms.map((f) => <option key={f.slug} value={f.slug}>{f.name}</option>)}
+        </select>
+        {!forms.length && <p className="cms-hint">No published forms yet — create one in the Forms tab first.</p>}
+      </div>
+    );
+  }
+  if (field.type === 'logolist') {
+    const items = Array.isArray(value) ? value : [];
+    const setItem = (i, patch) => onChange(items.map((c, j) => (j === i ? { ...c, ...patch } : c)));
+    const uploadLogo = async (i, file) => {
+      if (!file) return;
+      setBusy(true);
+      try { setItem(i, { image: await adminUploadImage(file) }); }
+      catch (e) { window.alert('Upload failed: ' + (e.message || e)); }
+      finally { setBusy(false); }
+    };
+    return (
+      <div className="cms-field"><label>{field.label}</label>
+        {items.map((c, i) => (
+          <div className="cms-block" key={i}>
+            <div className="cms-field"><label>Logo image</label>
+              <input className="cms-input" placeholder="Image URL" value={c.image || ''} onChange={(e) => setItem(i, { image: e.target.value })} />
+              <input type="file" accept="image/png,image/jpeg,image/gif,image/webp" style={{ marginTop: 8 }} onChange={(e) => uploadLogo(i, e.target.files[0])} />
+              {c.image && <img className="cms-thumb-prev" src={c.image} alt="" />}
+            </div>
+            <div className="cms-field"><label>Name (for alt text)</label><input className="cms-input" value={c.name || ''} onChange={(e) => setItem(i, { name: e.target.value })} /></div>
+            <div className="cms-block-head"><div className="cms-block-spacer" /><button className="cms-iconbtn" title="Remove" onClick={() => onChange(items.filter((_, j) => j !== i))}>✕</button></div>
+          </div>
+        ))}
+        {busy && <span className="cms-hint">Uploading…</span>}
+        <div className="cms-addrow"><button className="cms-btn cms-btn-sm" onClick={() => onChange([...items, { image: '', name: '' }])}>+ Add logo</button></div>
       </div>
     );
   }
