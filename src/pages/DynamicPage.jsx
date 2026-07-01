@@ -15,10 +15,11 @@ export default function DynamicPage({ setPage }) {
 
   useEffect(() => {
     if (!page) return;
+    const url = (page.canonical && page.canonical.trim()) || `${SITE_URL}/${slug}`;
     document.title = `${page.metaTitle || page.title || 'Proxa Labs'} · Proxa Labs`;
     const meta = document.querySelector('meta[name="description"]');
     if (meta && page.description) meta.content = page.description;
-    setSocialCards({ title: page.metaTitle || page.title, description: page.description, image: page.ogImage, url: `${SITE_URL}/${slug}` });
+    setSocialCards({ title: page.metaTitle || page.title, description: page.description, image: page.ogImage, url });
     let robots = document.head.querySelector('meta[name="robots"]');
     if (page.noindex) {
       if (!robots) { robots = document.createElement('meta'); robots.setAttribute('name', 'robots'); document.head.appendChild(robots); }
@@ -26,6 +27,12 @@ export default function DynamicPage({ setPage }) {
     } else if (robots) {
       robots.setAttribute('content', 'index, follow');
     }
+
+    // Page-level structured data (marketer-chosen type). Defaults to nothing extra.
+    setJsonLd('ld-page', page.structuredType ? {
+      '@context': 'https://schema.org', '@type': page.structuredType,
+      name: page.metaTitle || page.title, description: page.description || undefined, url,
+    } : null);
 
     // FAQPage structured data from any FAQ sections (helps AI tools quote answers).
     const faqs = (page.sections || [])
@@ -37,7 +44,28 @@ export default function DynamicPage({ setPage }) {
       '@type': 'FAQPage',
       mainEntity: faqs.map((f) => ({ '@type': 'Question', name: f.question, acceptedAnswer: { '@type': 'Answer', text: f.answer } })),
     } : null);
-    return () => setJsonLd('ld-faq', null);
+
+    // Per-page custom code (admin-authored — trusted). Injected into the head,
+    // removed on navigation so it doesn't leak onto the next page.
+    let custom = null;
+    if (page.customCode && page.customCode.trim()) {
+      custom = document.createElement('div');
+      custom.id = 'cms-page-custom';
+      custom.innerHTML = page.customCode;
+      // Re-create <script> nodes so they actually execute (innerHTML scripts don't run).
+      custom.querySelectorAll('script').forEach((old) => {
+        const s = document.createElement('script');
+        for (const a of old.attributes) s.setAttribute(a.name, a.value);
+        s.textContent = old.textContent;
+        old.replaceWith(s);
+      });
+      document.head.appendChild(custom);
+    }
+    return () => {
+      setJsonLd('ld-faq', null);
+      setJsonLd('ld-page', null);
+      if (custom) custom.remove();
+    };
   }, [page, slug]);
 
   if (loading) return <div style={{ minHeight: '60vh' }} />;

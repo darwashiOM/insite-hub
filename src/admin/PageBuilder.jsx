@@ -5,7 +5,7 @@ import SectionFieldEditor from './SectionFieldEditor';
 import SectionRenderer from '../components/SectionRenderer';
 import VersionHistory from './VersionHistory';
 
-const BLANK = { slug: '', title: '', description: '', metaTitle: '', noindex: false, sections: [], published: false };
+const BLANK = { slug: '', title: '', description: '', metaTitle: '', ogImage: '', canonical: '', structuredType: '', customCode: '', noindex: false, sections: [], published: false };
 
 const fromPage = (p) => ({
   ...BLANK, ...(p || {}),
@@ -60,6 +60,8 @@ export default function PageBuilder({ page, onDone, onCancel }) {
     try {
       await adminSavePage({
         slug, title, description: form.description.trim(), metaTitle: form.metaTitle.trim(),
+        ogImage: form.ogImage.trim(), canonical: form.canonical.trim(),
+        structuredType: form.structuredType, customCode: form.customCode,
         noindex: !!form.noindex, sections: form.sections, published: !!form.published,
       }, isNew);
       setSavedJson(JSON.stringify(form));
@@ -150,6 +152,31 @@ export default function PageBuilder({ page, onDone, onCancel }) {
               <input type="checkbox" checked={form.noindex} onChange={(e) => set('noindex', e.target.checked)} /> Hide from search engines
             </label>
           </div>
+        </div>
+        <div className="cms-row">
+          <div className="cms-field">
+            <label>Social share image (optional)</label>
+            <input className="cms-input" placeholder="Image URL" value={form.ogImage} onChange={(e) => set('ogImage', e.target.value)} />
+          </div>
+          <div className="cms-field">
+            <label>Canonical URL (optional)</label>
+            <input className="cms-input" placeholder="Only if this duplicates another page" value={form.canonical} onChange={(e) => set('canonical', e.target.value)} />
+          </div>
+        </div>
+        <div className="cms-field">
+          <label>Structured-data type (helps AI/search label the page)</label>
+          <select className="cms-select" style={{ maxWidth: 260 }} value={form.structuredType} onChange={(e) => set('structuredType', e.target.value)}>
+            <option value="">Auto (WebPage + any FAQ)</option>
+            <option value="Article">Article</option>
+            <option value="AboutPage">About page</option>
+            <option value="ContactPage">Contact page</option>
+            <option value="CollectionPage">Collection / listing page</option>
+          </select>
+        </div>
+        <div className="cms-field">
+          <label>Custom code (advanced, optional)</label>
+          <textarea className="cms-textarea" style={{ minHeight: 60, fontFamily: 'monospace', fontSize: 13 }} value={form.customCode} onChange={(e) => set('customCode', e.target.value)} placeholder="e.g. a tracking pixel or a schema snippet" />
+          <p className="cms-hint">Added to this page only. Leave blank unless you know what to put here.</p>
         </div>
 
         <div className="cms-toolbar">
