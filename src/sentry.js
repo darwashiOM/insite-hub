@@ -13,8 +13,8 @@ if (dsn) {
     tracesSampleRate: Number(import.meta.env.VITE_SENTRY_TRACES_SAMPLE_RATE ?? 0.1),
     tracePropagationTargets: [
       /^\//,
-      /^https:\/\/www\.insitehub\.com/,
-      /^https:\/\/insitehub\.com/,
+      /^https:\/\/www\.proxalabs\.com/,
+      /^https:\/\/proxalabs\.com/,
       /^https:\/\/submitcontact-/,
       /^https:\/\/submitnewsletter-/,
     ],

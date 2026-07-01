@@ -319,6 +319,37 @@ exports.getContent = onRequest(async (req, res) => {
 });
 
 // ---------------------------------------------------------------------------
+// Dynamic sitemap: reads published content live, so it's always current the
+// moment a marketer publishes (no rebuild). Served at /sitemap.xml via a Hosting
+// rewrite. noindex items are excluded.
+// ---------------------------------------------------------------------------
+const SITEMAP_STATIC = [
+  "/", "/platform", "/advisory", "/ai-literacy", "/insitex-lms", "/content-development",
+  "/the-lab", "/about", "/announcements", "/resources", "/newsletter", "/contact",
+  "/blog", "/case-studies", "/videos",
+];
+exports.getSitemap = onRequest(async (req, res) => {
+  try {
+    const db = admin.firestore();
+    const origin = (process.env.SITE_URL || "https://www.proxalabs.com").replace(/\/+$/, "");
+    const urls = [...SITEMAP_STATIC];
+    for (const [col, prefix] of [["articles", "/blog/"], ["caseStudies", "/case-studies/"]]) {
+      const snap = await db.collection(col).where("published", "==", true).get();
+      snap.forEach((d) => { if (!d.data().noindex) urls.push(prefix + (d.data().slug || d.id)); });
+    }
+    const pages = await db.collection("pages").where("published", "==", true).get();
+    pages.forEach((d) => { if (!d.data().noindex) urls.push("/" + (d.data().slug || d.id)); });
+    const body = urls.map((u) => `  <url><loc>${origin}${u}</loc></url>`).join("\n");
+    res.set("Content-Type", "application/xml");
+    res.set("Cache-Control", "public, max-age=300, s-maxage=300");
+    res.status(200).send(`<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${body}\n</urlset>\n`);
+  } catch (err) {
+    console.error("getSitemap failed:", err);
+    res.status(500).send("");
+  }
+});
+
+// ---------------------------------------------------------------------------
 // CMS forms: accept a submission for a marketer-built form, validate against the
 // form definition, store it (admin SDK — clients can't write submissions directly),
 // email a notification, and return a gated download link if the form gates a file.
@@ -361,6 +392,24 @@ function escapeHtml(v) {
   return String(v == null ? "" : v)
     .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+}
+
+// Turn a stored gated-file download URL into a short-lived signed URL so the gate
+// is time-limited + revocable (files live in the non-public files/ path). Falls
+// back to the stored URL if signing isn't available, so the gate never breaks.
+async function signedGatedUrl(downloadUrl) {
+  try {
+    const m = /\/o\/([^?]+)/.exec(downloadUrl || "");
+    if (!m) return downloadUrl;
+    const objectPath = decodeURIComponent(m[1]);
+    const [url] = await admin.storage().bucket("insite-hub-web-blog").file(objectPath).getSignedUrl({
+      version: "v4", action: "read", expires: Date.now() + 15 * 60 * 1000,
+    });
+    return url;
+  } catch (e) {
+    console.error("signed gated URL failed, using stored URL:", e.message || e);
+    return downloadUrl;
+  }
 }
 
 exports.submitForm = onRequest(async (req, res) => {
@@ -433,7 +482,7 @@ exports.submitForm = onRequest(async (req, res) => {
     }
 
     const out = { success: true };
-    if (form.gated && form.gatedFileUrl) out.download = form.gatedFileUrl;
+    if (form.gated && form.gatedFileUrl) out.download = await signedGatedUrl(form.gatedFileUrl);
     res.status(200).json(out);
   } catch (err) {
     console.error("submitForm failed:", err);

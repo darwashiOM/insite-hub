@@ -122,6 +122,23 @@ service cloud.firestore {
       allow update, delete: if false;
     }
 
+    // Custom content-TYPE definitions (the schema a marketer defines). Public read
+    // (the generic list/detail pages need the schema to render); admin-only write
+    // (defining a type is a structural/settings action).
+    match /contentTypes/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+      match /versions/{versionId} { allow read, write: if isStaff(); }
+    }
+
+    // Entries of custom content types. Public reads published; staff (admin/editor)
+    // read drafts + write.
+    match /content/{id} {
+      allow read: if resource.data.published == true || isStaff();
+      allow create, update, delete: if isStaff();
+      match /versions/{versionId} { allow read, write: if isStaff(); }
+    }
+
     // Everything else (incl. server-only login-attempt records) is denied to clients.
     match /{document=**} {
       allow read, write: if false;

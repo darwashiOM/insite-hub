@@ -20,6 +20,7 @@ import AdminPagesEditor from './AdminPagesEditor';
 import NavEditor from './NavEditor';
 import RedirectsEditor from './RedirectsEditor';
 import ActivityView from './ActivityView';
+import ContentTypesManager from './ContentTypesManager';
 
 // Admin shell: Blog | Case studies | Videos | Forms | Authors | Site pages | Navigation.
 export default function AdminDashboard({ role, onLogout }) {
@@ -130,6 +131,7 @@ export default function AdminDashboard({ role, onLogout }) {
           <button className={'cms-tab' + (tab === 'authors' ? ' on' : '')} onClick={() => switchTab('authors')}>Authors</button>
           <button className={'cms-tab' + (tab === 'media' ? ' on' : '')} onClick={() => switchTab('media')}>Media</button>
           {isAdmin && <>
+            <button className={'cms-tab' + (tab === 'types' ? ' on' : '')} onClick={() => switchTab('types')}>Content types</button>
             <button className={'cms-tab' + (tab === 'pages' ? ' on' : '')} onClick={() => switchTab('pages')}>Site pages</button>
             <button className={'cms-tab' + (tab === 'nav' ? ' on' : '')} onClick={() => switchTab('nav')}>Navigation</button>
             <button className={'cms-tab' + (tab === 'redirects' ? ' on' : '')} onClick={() => switchTab('redirects')}>Redirects</button>
@@ -155,6 +157,8 @@ export default function AdminDashboard({ role, onLogout }) {
       <div className="cms-wrap">
         {tab === 'activity' ? (
           <ActivityView />
+        ) : tab === 'types' ? (
+          <ContentTypesManager />
         ) : tab === 'nav' ? (
           <NavEditor onDirtyChange={setNavDirty} />
         ) : tab === 'redirects' ? (

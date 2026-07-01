@@ -43,6 +43,7 @@ const VideoGalleryPage = lazyWithReload(() => import('./pages/VideoGalleryPage')
 const CmsFormPage = lazyWithReload(() => import('./pages/CmsFormPage'));
 const DynamicPage = lazyWithReload(() => import('./pages/DynamicPage'));
 const SearchPage = lazyWithReload(() => import('./pages/SearchPage'));
+const GenericDetailPage = lazyWithReload(() => import('./pages/GenericDetailPage'));
 const AdminPage = lazyWithReload(() => import('./admin/AdminPage'));
 
 const PAGE_TITLES = {
@@ -67,6 +68,7 @@ const PAGE_TITLES = {
   form: "Proxa Labs",
   search: "Search · Proxa Labs",
   dynamicPage: "Proxa Labs",
+  contentDetail: "Proxa Labs",
   admin: "CMS · Proxa Labs",
   notfound: "Page not found · Proxa Labs",
 };
@@ -93,6 +95,7 @@ const DESCS = {
   form: "Proxa Labs.",
   search: "Search Proxa Labs.",
   dynamicPage: "Proxa Labs.",
+  contentDetail: "Proxa Labs.",
   admin: "Proxa Labs content management.",
   notfound: "The page you're looking for doesn't exist or has moved.",
 };
@@ -119,6 +122,7 @@ const PAGES = {
   futureproof: FutureProofPage, blog: BlogIndexPage, article: ArticlePage,
   caseStudies: CaseStudiesIndexPage, caseStudy: CaseStudyPage,
   videos: VideoGalleryPage, form: CmsFormPage, dynamicPage: DynamicPage, search: SearchPage,
+  contentDetail: GenericDetailPage,
   admin: AdminPage, notfound: NotFoundPage,
 };
 
@@ -155,9 +159,11 @@ const pageFromLocation = () => {
   if (normalized.startsWith("/case-studies/") && normalized !== "/case-studies") return "caseStudy";
   if (normalized.startsWith("/forms/") && normalized !== "/forms") return "form";
   if (PATH_PAGES[normalized]) return PATH_PAGES[normalized];
+  // /<type>/<slug> (two clean segments) is a custom content-type entry.
+  if (/^\/[a-z0-9][a-z0-9-]*\/[a-z0-9][a-z0-9-]*$/.test(normalized)) return "contentDetail";
   // A single clean segment (e.g. /ai-readiness-day) might be a marketer-built CMS
-  // page — try to resolve it. Anything else (multi-segment junk, scanner noise
-  // like /wp-login.php) goes straight to not-found, with no Firestore read.
+  // page or a content-type list — DynamicPage resolves it. Anything else
+  // (multi-segment junk, scanner noise like /wp-login.php) is not-found.
   return /^\/[a-z0-9][a-z0-9-]*$/.test(normalized) ? "dynamicPage" : "notfound";
 };
 
@@ -300,7 +306,7 @@ export default function App() {
   const Page = PAGES[page] || HomePage;
   // For the dynamic article page, key by pathname so it remounts (re-fetches)
   // when navigating between articles.
-  const pageKey = (page === "article" || page === "caseStudy" || page === "form" || page === "dynamicPage") ? window.location.pathname : page;
+  const pageKey = (page === "article" || page === "caseStudy" || page === "form" || page === "dynamicPage" || page === "contentDetail") ? window.location.pathname : page;
 
   // The admin is a standalone full-screen app — no marketing nav/footer.
   if (page === "admin") {

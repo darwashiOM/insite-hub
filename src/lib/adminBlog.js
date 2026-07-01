@@ -4,7 +4,7 @@ import { auth, storage } from './firebaseAuth';
 import { signInWithCustomToken, signOut, onAuthStateChanged } from 'firebase/auth';
 import {
   collection, getDocs, getDocsFromServer, doc, getDoc, setDoc, serverTimestamp,
-  writeBatch, runTransaction, query, orderBy, limit,
+  writeBatch, runTransaction, query, where, orderBy, limit,
   addDoc, updateDoc, deleteDoc,
 } from 'firebase/firestore';
 import { ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
@@ -97,6 +97,55 @@ export async function adminListActivity() {
   const snap = await getDocs(query(collection(db, 'auditLog'), orderBy('at', 'desc'), limit(200)));
   return snap.docs.map((d) => ({ id: d.id, ...d.data() }));
 }
+
+// --- Custom content types (schema-driven) + their entries -------------------
+export async function adminListContentTypes() {
+  const snap = await getDocs(collection(db, 'contentTypes'));
+  return snap.docs.map((d) => ({ id: d.id, ...d.data() })).sort((a, b) => (a.label || '').localeCompare(b.label || ''));
+}
+export async function adminGetContentType(key) {
+  const s = await getDoc(doc(db, 'contentTypes', key));
+  return s.exists() ? { id: s.id, ...s.data() } : null;
+}
+export async function adminSaveContentType(type, isNew = false) {
+  const { id: _id, ...data } = type;
+  if (!data.key) throw new Error('A type key is required.');
+  const ref = doc(db, 'contentTypes', data.key);
+  if (isNew) { const ex = await getDoc(ref); if (ex.exists()) throw new Error(`A content type "${data.key}" already exists.`); }
+  await saveWithHistory(ref, data);
+  return data.key;
+}
+export async function adminDeleteContentType(key) {
+  await deleteDoc(doc(db, 'contentTypes', key));
+  logActivity('delete', 'contentTypes', key);
+}
+export const adminListContentTypeVersions = (key) => listVersions(doc(db, 'contentTypes', key));
+export const adminRestoreContentTypeVersion = (key, vid) => restoreVersion(doc(db, 'contentTypes', key), vid);
+
+const entryDocId = (typeKey, slug) => `${typeKey}__${slug}`;
+export async function adminListEntries(typeKey) {
+  const snap = await getDocs(query(collection(db, 'content'), where('typeKey', '==', typeKey)));
+  return snap.docs.map((d) => ({ id: d.id, ...d.data() })).sort((a, b) => (a.order || 0) - (b.order || 0) || (a.title || '').localeCompare(b.title || ''));
+}
+export async function adminSaveEntry(entry, isNew = false) {
+  const { id: _id, ...data } = entry;
+  if (!data.typeKey || !data.slug) throw new Error('A type and web address are required.');
+  const ref = doc(db, 'content', entryDocId(data.typeKey, data.slug));
+  if (isNew) { const ex = await getDoc(ref); if (ex.exists()) throw new Error('An entry already exists at that address.'); }
+  await saveWithHistory(ref, data);
+  return ref.id;
+}
+export async function adminDeleteEntry(id) {
+  const ref = doc(db, 'content', id);
+  const versions = await getDocs(collection(ref, 'versions'));
+  const batch = writeBatch(db);
+  versions.docs.forEach((d) => batch.delete(d.ref));
+  batch.delete(ref);
+  await batch.commit();
+  logActivity('delete', 'content', id);
+}
+export const adminListEntryVersions = (id) => listVersions(doc(db, 'content', id));
+export const adminRestoreEntryVersion = (id, vid) => restoreVersion(doc(db, 'content', id), vid);
 
 async function pruneVersions(ref, keep = KEEP_VERSIONS) {
   const snap = await getDocs(query(collection(ref, 'versions'), orderBy('archivedAt', 'desc')));

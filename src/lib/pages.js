@@ -11,7 +11,9 @@ export function usePage(slug) {
     let alive = true;
     getDoc(doc(db, 'pages', slug))
       .then((s) => { if (alive) { setPageData(s.exists() && s.data().published ? { id: s.id, ...s.data() } : null); setLoading(false); } })
-      .catch(() => { if (alive) { setError(true); setLoading(false); } });
+      // A missing/draft page reads back as permission-denied under the rules — that's
+      // a not-found, not a load failure (let the caller fall through to its resolver).
+      .catch((e) => { if (alive) { if (e && e.code === 'permission-denied') setPageData(null); else setError(true); setLoading(false); } });
     return () => { alive = false; };
   }, [slug]);
   return { page, loading, error };

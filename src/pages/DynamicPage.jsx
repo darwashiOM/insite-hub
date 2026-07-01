@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { usePage } from '../lib/pages';
 import SectionRenderer from '../components/SectionRenderer';
+import ContentTypeList from '../components/ContentTypeList';
 import { setJsonLd, setSocialCards } from '../lib/jsonLd';
 import { SITE_URL } from '../lib/site';
 
@@ -84,20 +85,9 @@ export default function DynamicPage({ setPage }) {
     );
   }
 
-  if (!page) {
-    return (
-      <div className="proxa-article">
-        <section className="shell blog-index">
-          <h1 className="blog-title">Page not found</h1>
-          <p className="blog-sub">The page you’re looking for doesn’t exist or has moved.</p>
-          <button onClick={() => setPage('home')}
-            style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', font: 'inherit', color: 'var(--coral-deep, #e06a3f)', fontWeight: 600 }}>
-            ← Back home
-          </button>
-        </section>
-      </div>
-    );
-  }
+  // No built page at this slug — it may be a custom content-type list (or a real
+  // not-found, which ContentTypeList renders).
+  if (!page) return <ContentTypeList slug={slug} setPage={setPage} />;
 
   // A hero section already renders the page's <h1>. If the page has no hero,
   // emit the title as an h1 so every indexable page has exactly one main heading.

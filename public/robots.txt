@@ -2,4 +2,4 @@ User-agent: *
 Allow: /
 Disallow: /noonewillfindthis
 
-Sitemap: https://www.insitehub.com/sitemap.xml
+Sitemap: https://www.proxalabs.com/sitemap.xml

@@ -1,0 +1,7 @@
+.entry-list { display: flex; flex-direction: column; gap: 14px; margin-top: 24px; }
+.entry-card { display: flex; flex-direction: column; gap: 6px; text-align: left; padding: 20px 22px; border: 1px solid #e3e5ea; border-radius: 12px; background: #fff; cursor: pointer; transition: border-color .15s, box-shadow .15s; }
+.entry-card:hover { border-color: #e06a3f; box-shadow: 0 4px 16px rgba(12,18,24,.06); }
+.entry-card-title { font-weight: 700; font-size: 1.1rem; color: #0c1218; }
+.entry-card-sub { color: #46525f; font-size: .98rem; line-height: 1.5; }
+.entry-rt a { color: #e06a3f; }
+.entry-rt ul, .entry-rt ol { padding-left: 22px; margin: 10px 0; }

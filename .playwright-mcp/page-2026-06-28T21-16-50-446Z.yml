@@ -1,0 +1,282 @@
+- generic [ref=e2]:
+  - navigation [ref=e3]:
+    - generic:
+      - img "Proxa Labs"
+    - generic [ref=e4]:
+      - button "Book a Demo" [ref=e5] [cursor=pointer]
+      - button "Menu" [ref=e6] [cursor=pointer]
+  - main [ref=e10]:
+    - generic [ref=e12]:
+      - generic [ref=e13]:
+        - generic [ref=e14]: FOR COMMERCIAL L&D LEADERS IN BIOPHARMA
+        - heading "The AI commercial learning partner built for biopharma. Not adapted for it." [level=1] [ref=e15]:
+          - generic [ref=e16]:
+            - text: The AI commercial learning partner
+            - emphasis [ref=e17]: built for biopharma
+            - text: . Not adapted for it.
+        - paragraph [ref=e18]: "Most platforms were built for enterprise sales and retrofitted for pharma. Proxa Labs was built for biopharma from day one: advisory methodology, AI literacy programming, and a closed-loop platform designed around the constraints you actually operate in: MLR review, launch timelines, federated commercial structures."
+        - button "See the Platform" [ref=e20] [cursor=pointer]
+      - generic [ref=e22]:
+        - generic [ref=e23]: The Closed Loop · Intelligent Commercial Readiness
+        - img "Proxa Labs closed-loop diagram Four-product oval cycle showing Forge building content, Cue delivering learning, Stage assessing readiness, and Trace verifying competency." [ref=e24]:
+          - generic [ref=e26]: Intelligent Commercial
+          - generic [ref=e27]: Readiness
+          - generic [ref=e30]: content published
+          - generic [ref=e33]: readiness reached
+          - generic [ref=e36]: competency demonstrated
+          - generic [ref=e39]: gap → rebuild
+          - generic [ref=e40] [cursor=pointer]:
+            - generic [ref=e43]: Forge
+            - generic [ref=e44]: Builds MLR-compliant content
+          - generic [ref=e45] [cursor=pointer]:
+            - generic [ref=e48]: Cue
+            - generic [ref=e49]: Delivers adaptive learning
+          - generic [ref=e50] [cursor=pointer]:
+            - generic [ref=e53]: Stage
+            - generic [ref=e54]: Assesses in live HCP roleplay
+          - generic [ref=e55] [cursor=pointer]:
+            - generic [ref=e58]: Trace
+            - generic [ref=e59]: Verifies behavioral competency
+        - generic [ref=e60]:
+          - generic [ref=e61]: Forge is active
+          - generic [ref=e62]: AI agents generate MLR-compliant content from your PI, CSRs, and brand assets, with every claim cited automatically.
+    - generic [ref=e68]:
+      - heading "Trusted across biopharma and health systems" [level=2] [ref=e69]
+      - generic [ref=e70]:
+        - generic [ref=e71]: AbbVie
+        - generic [ref=e72]: Allergan
+        - generic [ref=e73]: Amgen
+        - generic [ref=e74]: AstraZeneca
+        - generic [ref=e75]: Bayer
+        - generic [ref=e76]: Biogen
+        - generic [ref=e77]: BMS
+        - generic [ref=e78]: Genentech
+        - generic [ref=e79]: GSK
+        - generic [ref=e80]: Janssen
+        - generic [ref=e81]: Merck
+        - generic [ref=e82]: Novartis
+        - generic [ref=e83]: Novo Nordisk
+        - generic [ref=e84]: Pfizer
+        - generic [ref=e85]: Roche
+        - generic [ref=e86]: Sanofi
+        - generic [ref=e87]: Takeda
+        - generic [ref=e88]: Teva
+        - generic [ref=e89]: Gilead
+        - generic [ref=e90]: Mass General
+        - generic [ref=e91]: Penn Medicine
+        - generic [ref=e92]: MD Anderson
+    - generic [ref=e94]:
+      - generic [ref=e95]:
+        - generic [ref=e96]: 80–95%
+        - generic [ref=e97]: of pharma AI pilots never scale or deliver measurable value
+        - generic [ref=e98]: "Source: Saama / Forbes, 2025"
+      - generic [ref=e99]:
+        - generic [ref=e100]: 11 mo
+        - generic [ref=e101]: average ramp to full rep productivity in biopharma
+        - generic [ref=e102]: "Source: Salesforce State of Sales, 2024"
+      - generic [ref=e103]:
+        - generic [ref=e104]: 84%
+        - generic [ref=e105]: of pharma reps missed quota last year
+        - generic [ref=e106]: "Source: Salesforce State of Sales, 2024"
+      - generic [ref=e107]:
+        - generic [ref=e108]: 25 yrs
+        - generic [ref=e109]: practitioner experience behind the Proxa Labs methodology
+        - generic [ref=e110]: Proxa Labs
+    - generic [ref=e112]:
+      - generic [ref=e113]:
+        - img [ref=e115]
+        - generic [ref=e118]:
+          - generic [ref=e120]: New
+          - generic [ref=e121]: AI Literacy Program — the prerequisite every AI deployment needs.
+          - generic [ref=e122]: Build AI fluency across every role before tools go live. Teams that understand AI adopt it. Teams that don't, resist it.
+      - button "See the Program" [ref=e124] [cursor=pointer]
+    - generic [ref=e126]:
+      - generic [ref=e127]:
+        - generic [ref=e128]: Four Principles for Evaluating Any AI Partner
+        - heading "How do you know if AI is actually working in your organization?" [level=2] [ref=e129]
+        - paragraph [ref=e130]:
+          - text: Most biopharma L&D leaders can't answer that question with confidence because the data that matters isn't in the dashboard.
+          - text: These four principles are how Proxa Labs diagnoses whether AI is actually delivering, and how our practitioners have built 25 years of award-winning work around them.
+      - generic [ref=e131]:
+        - generic [ref=e132]:
+          - img [ref=e134]
+          - generic [ref=e137]: 01 — Methodology
+          - generic [ref=e138]: We diagnose before we prescribe.
+          - generic [ref=e139]: "Every engagement starts with the question your organization actually needs answered: what will determine whether any AI implementation succeeds or fails here? Most vendors skip this. We never do."
+        - generic [ref=e140]:
+          - img [ref=e142]
+          - generic [ref=e145]: 02 — Compliance
+          - generic [ref=e146]: Their compliance story is a retrofit. Ours is not.
+          - generic [ref=e147]: MLR review, GxP validation, and compressed launch windows are the operating conditions Proxa Labs was designed around from day one.
+        - generic [ref=e148]:
+          - img [ref=e150]
+          - generic [ref=e153]: 03 — Insider
+          - generic [ref=e154]: We don't need you to explain pharma to us.
+          - generic [ref=e155]: Proxa Labs' practitioners have operated inside the environments they now advise. The failure modes are already known. That's 25 years of practitioner experience, not a talking point.
+        - generic [ref=e156]:
+          - img [ref=e158]
+          - generic [ref=e160]: 04 — Experiment
+          - generic [ref=e161]: You don't commit until you have evidence.
+          - generic [ref=e162]: Proxa Labs' model inverts the typical vendor sequence. We run structured experiments to test fit in your environment before you stake your credibility on it.
+    - generic [ref=e164]:
+      - generic [ref=e165]:
+        - generic [ref=e166]: The AI Platform
+        - heading "Four products. One closed loop." [level=2] [ref=e167]
+        - paragraph [ref=e168]: Content published in Forge → delivered by Cue → assessed by Stage → verified in Trace. Every gap automatically restarts the loop.
+      - generic [ref=e169]:
+        - generic [ref=e170]:
+          - img [ref=e172]
+          - generic [ref=e175]: Forge
+          - generic [ref=e176]: Agentic content creation.
+          - generic [ref=e177]: AI agents build MLR-compliant training from your PI, CSRs, and brand assets. Hours, not months.
+        - generic [ref=e178]:
+          - img [ref=e180]
+          - generic [ref=e185]: Cue
+          - generic [ref=e186]: AI-powered adaptive learning.
+          - generic [ref=e187]: Personalized pathways that close knowledge gaps in real time, ensuring reps are field-ready.
+        - generic [ref=e188]:
+          - img [ref=e190]
+          - generic [ref=e195]: Stage
+          - generic [ref=e196]: AI roleplay + compliance guard.
+          - generic [ref=e197]: Live HCP conversations with AI physician avatars. ComplianceGuard monitors every message in real time.
+        - generic [ref=e198]:
+          - img [ref=e200]
+          - generic [ref=e204]: Trace
+          - generic [ref=e205]: Demonstrated field readiness.
+          - generic [ref=e206]: Certification earned through behavioral competency — not attendance. 10-year audit trail.
+    - generic [ref=e208]:
+      - generic [ref=e209]: "\""
+      - generic [ref=e210]:
+        - generic [ref=e211]:
+          - paragraph [ref=e212]: We had been trying to make AI work for 18 months. Two pilots, two postmortems, and a CCO who was starting to ask whether L&D could actually lead this. What Proxa Labs did differently was refuse to let us skip the hard part — defining what success actually looked like before we built anything. We walked into our budget review with evidence, not a pitch deck.
+          - generic [ref=e214]:
+            - generic [ref=e215]: Sarah Chen
+            - generic [ref=e216]: VP, Commercial Learning & Development
+            - generic [ref=e217]: Mid-Size Oncology Biopharma · Series C
+        - generic [ref=e218]:
+          - generic [ref=e219]:
+            - generic [ref=e220]: 23%
+            - generic [ref=e221]: improvement in manager-assessed call quality
+          - generic [ref=e222]:
+            - generic [ref=e223]: "0"
+            - generic [ref=e224]: MLR compliance flags across all sessions
+          - generic [ref=e225]:
+            - generic [ref=e226]: 3 wks
+            - generic [ref=e227]: from pilot conclusion to CCO approval
+          - generic [ref=e228]:
+            - generic [ref=e229]: 6 mo
+            - generic [ref=e230]: full AI roadmap funded and in execution
+    - generic [ref=e232]:
+      - generic [ref=e233]:
+        - generic [ref=e234]: When to Call Us
+        - heading "Built for the commercial L&D leader who's done with pilots that go nowhere." [level=2] [ref=e235]
+        - paragraph [ref=e236]: If any of these sound like your situation, you're in the right place.
+      - generic [ref=e237]:
+        - generic [ref=e238]:
+          - img [ref=e240]
+          - generic [ref=e243]: You have an AI mandate with no clear path forward
+          - generic [ref=e244]: Your CCO wants results. Your IT and compliance teams want governance. Your budget requires ROI. You're navigating all three without a methodology.
+        - generic [ref=e245]:
+          - img [ref=e247]
+          - generic [ref=e250]: You've run a pilot that didn't scale
+          - generic [ref=e251]: It worked in the demo. It looked good in the pilot report. And then it died at the governance gate or got quietly deprioritized.
+        - generic [ref=e252]:
+          - img [ref=e254]
+          - generic [ref=e258]: You have a launch in 6–9 months and content isn't ready
+          - generic [ref=e259]: The commercial team needs field-ready reps. The content pipeline is behind. MLR review adds 60 days on a good day.
+        - generic [ref=e260]:
+          - img [ref=e262]
+          - generic [ref=e265]: You're evaluating AI vendors and can't tell who to trust
+          - generic [ref=e266]: Every vendor says they're built for biopharma. Every demo looks polished. You've been burned before.
+        - generic [ref=e267]:
+          - img [ref=e269]
+          - generic [ref=e272]: Your L&D team is measuring completion, not performance
+          - generic [ref=e273]: You know the CCO scorecard tracks rep readiness, call quality, and launch execution speed — not module completion.
+        - generic [ref=e274]:
+          - img [ref=e276]
+          - generic [ref=e281]: You're building AI capability from scratch
+          - generic [ref=e282]: No existing platform. No governance framework. No internal AI literacy. You need a structured starting point.
+    - generic [ref=e284]:
+      - generic [ref=e285]:
+        - generic [ref=e286]: For Every Stage of the Journey
+        - heading "From where you are to AI-ready." [level=2] [ref=e287]
+        - paragraph [ref=e288]: Four-plus years of InsiteX enterprise learning infrastructure in biopharma. A closed-loop AI platform built on top of it. You decide when and how fast to move.
+      - generic [ref=e289]:
+        - generic [ref=e290]:
+          - generic [ref=e291]: "01"
+          - generic [ref=e292]:
+            - generic [ref=e293]: Start where you are
+            - generic [ref=e294]: InsiteX LMS or traditional content. Proven, compliant, built for pharma.
+        - generic [ref=e296]:
+          - generic [ref=e297]: "02"
+          - generic [ref=e298]:
+            - generic [ref=e299]: Assess your AI readiness
+            - generic [ref=e300]: Advisory team maps your constraints before recommending anything. No technology pitch.
+        - generic [ref=e302]:
+          - generic [ref=e303]: "03"
+          - generic [ref=e304]:
+            - generic [ref=e305]: Build AI literacy across your team
+            - generic [ref=e306]: Equip every role — reps, managers, medical affairs — with the fluency to adopt AI tools effectively.
+        - generic [ref=e308]:
+          - generic [ref=e309]: "04"
+          - generic [ref=e310]:
+            - generic [ref=e311]: Experiment before committing
+            - generic [ref=e312]: Structured pilots generate evidence in your environment before you scale.
+        - generic [ref=e314]:
+          - generic [ref=e315]: "05"
+          - generic [ref=e316]:
+            - generic [ref=e317]: Deploy with confidence
+            - generic [ref=e318]: Forge, Cue, and Stage built to survive your governance environment.
+    - generic [ref=e319]:
+      - generic:
+        - img
+      - generic [ref=e320]:
+        - heading "The mandate is clear. The path forward isn't always." [level=2] [ref=e321]:
+          - text: The mandate is clear.
+          - emphasis [ref=e322]: The path forward isn't always.
+        - paragraph [ref=e323]: Proxa Labs works with commercial L&D leaders who have been told to deliver on AI but haven't found a partner who understands what that actually requires in a biopharma environment. Start with a conversation. We'll tell you what we'd look at first.
+        - button "Book a Consult" [ref=e325] [cursor=pointer]
+  - contentinfo [ref=e326]:
+    - generic [ref=e327]:
+      - generic [ref=e328]:
+        - generic [ref=e329]:
+          - generic:
+            - img "Proxa Labs"
+          - paragraph [ref=e330]: The AI-native platform and implementation partner built for the organizational complexity of biopharma commercial learning — not adapted for it.
+          - generic [ref=e331]:
+            - button "Book a Demo" [ref=e332] [cursor=pointer]
+            - button "Book a Consult" [ref=e333] [cursor=pointer]
+        - generic [ref=e334]:
+          - generic [ref=e335]: Platform
+          - generic [ref=e336] [cursor=pointer]: AI Platform
+          - generic [ref=e337] [cursor=pointer]: InsiteX LMS
+        - generic [ref=e338]:
+          - generic [ref=e339]: Solutions
+          - generic [ref=e340] [cursor=pointer]: AI Literacy
+          - generic [ref=e341] [cursor=pointer]: Advisory
+          - generic [ref=e342] [cursor=pointer]: Content
+        - generic [ref=e343]:
+          - generic [ref=e344]: The Lab
+          - generic [ref=e345] [cursor=pointer]: Overview
+        - generic [ref=e346]:
+          - generic [ref=e347]: Resources
+          - generic [ref=e348] [cursor=pointer]: Frameworks & Guides
+          - generic [ref=e349] [cursor=pointer]: Research
+        - generic [ref=e350]:
+          - generic [ref=e351]: About
+          - generic [ref=e352] [cursor=pointer]: About Proxa Labs
+      - generic [ref=e354]:
+        - generic [ref=e355]:
+          - generic [ref=e356]: Headquarters
+          - generic [ref=e357]: Newark, Delaware
+          - generic [ref=e358]: Proxa Labs LLC · 591 Collaboration Way, Suite 613
+        - generic [ref=e359]:
+          - generic [ref=e360]: Credentials
+          - generic [ref=e362]: SOC 2 in progress
+      - generic [ref=e364]:
+        - generic [ref=e365]: © 2026 Proxa Labs LLC · Proxa Labs LLC is a Delaware limited liability company
+        - generic [ref=e366]:
+          - link "Privacy Policy" [ref=e367] [cursor=pointer]:
+            - /url: /privacy
+          - link "Terms" [ref=e368] [cursor=pointer]:
+            - /url: /terms

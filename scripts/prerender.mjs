@@ -18,7 +18,6 @@ const require = createRequire(import.meta.url);
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const DIST = join(ROOT, 'dist');
 const PORT = 5055;
-const ORIGIN = process.env.PRERENDER_ORIGIN || 'https://www.insitehub.com';
 
 // Indexable static marketing routes (mirrors App.jsx PAGE_PATHS minus NOINDEX_PAGES).
 const STATIC_ROUTES = [
@@ -111,14 +110,6 @@ function writeRoute(route, html) {
   writeFileSync(join(dir, 'index.html'), html);
 }
 
-function writeSitemap(routes) {
-  const urls = routes
-    .map((r) => `  <url><loc>${ORIGIN}${r}</loc></url>`)
-    .join('\n');
-  writeFileSync(join(DIST, 'sitemap.xml'),
-    `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls}\n</urlset>\n`);
-}
-
 (async () => {
   if (!existsSync(join(DIST, 'index.html'))) {
     console.error('No dist/index.html — run `vite build` first.');
@@ -129,7 +120,6 @@ function writeSitemap(routes) {
   console.log(`Prerendering ${routes.length} routes...`);
   const browser = await chromium.launch();
   let skipped = 0;
-  const sitemap = [];
   for (const route of routes) {
     const { html, errors } = await snapshot(browser, route.path);
     const textLen = html.replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim().length;
@@ -137,10 +127,10 @@ function writeSitemap(routes) {
     console.log(`  ${route.path} — ${textLen} chars${errors.length ? ' ⚠ ' + errors.length + ' page errors' : ''}${ok ? '' : ' ⚠ SKIPPED (thin/error — keeping the SPA fallback)'}`);
     if (!ok) { skipped++; continue; } // never bake an error/not-found page into a 200
     writeRoute(route.path, html);
-    if (!route.noindex) sitemap.push(route.path); // noindex pages stay out of the sitemap
   }
-  writeSitemap(sitemap);
+  // The sitemap is served live by the getSitemap Cloud Function (/sitemap.xml),
+  // so it's always current without a rebuild — nothing to write here.
   await browser.close();
   await new Promise((r) => server.close(r));
-  console.log(`Done — ${routes.length - skipped} routes prerendered, ${sitemap.length} in sitemap${skipped ? `, ${skipped} skipped (left as SPA fallback)` : ''}.`);
+  console.log(`Done — ${routes.length - skipped} routes prerendered${skipped ? `, ${skipped} skipped (left as SPA fallback)` : ''}.`);
 })();
