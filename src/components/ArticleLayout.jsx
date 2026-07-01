@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import DOMPurify from 'dompurify';
+import Breadcrumbs from './Breadcrumbs';
 import './ArticleLayout.css';
 
 const SYMBOL = '/assets/blog/proxa-symbol.png';
@@ -18,7 +19,7 @@ const clean = (html) => ({ __html: DOMPurify.sanitize(html || '') });
  * (IntersectionObserver), LinkedIn + copy-link share. Mobile TOC is a native
  * <details> accordion (no JS).
  */
-export default function ArticleLayout({ article }) {
+export default function ArticleLayout({ article, setPage }) {
   const rootRef = useRef(null);
   const [copied, setCopied] = useState(false);
 
@@ -83,6 +84,11 @@ export default function ArticleLayout({ article }) {
       <section className="shell">
         <div className="pa-hero">
           <div className="hero-content">
+            <Breadcrumbs go={setPage} items={[
+              { name: 'Home', page: 'home' },
+              { name: 'Blog', page: 'blog' },
+              { name: article.title || 'Article' },
+            ]} />
             <p className="eyebrow"><img src={SYMBOL} alt="Proxa Labs" />{article.pillar}</p>
             <h1>{article.title}</h1>
             <div className="byline">

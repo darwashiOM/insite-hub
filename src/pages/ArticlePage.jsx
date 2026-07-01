@@ -91,5 +91,5 @@ export default function ArticlePage({ setPage }) {
     );
   }
 
-  return <ArticleLayout article={article} />;
+  return <ArticleLayout article={article} setPage={setPage} />;
 }

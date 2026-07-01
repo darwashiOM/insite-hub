@@ -32,6 +32,7 @@ export default function AdminPagesEditor({ onDirtyChange }) {
   const [status, setStatus] = useState('');
   const [filter, setFilter] = useState('');
   const [onlyCustom, setOnlyCustom] = useState(false);
+  const [seo, setSeo] = useState({ seoTitle: '', seoDescription: '', seoImage: '', seoNoindex: false });
 
   const fields = MANIFEST[pageId]?.fields || [];
 
@@ -42,6 +43,7 @@ export default function AdminPagesEditor({ onDirtyChange }) {
       if (!alive) return;
       const ov = data || {};
       setSaved(ov);
+      setSeo({ seoTitle: ov.seoTitle || '', seoDescription: ov.seoDescription || '', seoImage: ov.seoImage || '', seoNoindex: !!ov.seoNoindex });
       setValues(Object.fromEntries(fields.map((f) =>
         [f.key, ov[f.key] != null && ov[f.key] !== '' ? ov[f.key] : f.default])));
     }).catch(() => {
@@ -53,7 +55,9 @@ export default function AdminPagesEditor({ onDirtyChange }) {
   }, [pageId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const savedEff = (f) => (saved[f.key] != null && saved[f.key] !== '' ? saved[f.key] : f.default);
-  const dirty = !!values && fields.some((f) => String(values[f.key] ?? '') !== String(savedEff(f)));
+  const savedSeo = { seoTitle: saved.seoTitle || '', seoDescription: saved.seoDescription || '', seoImage: saved.seoImage || '', seoNoindex: !!saved.seoNoindex };
+  const dirty = !!values && (fields.some((f) => String(values[f.key] ?? '') !== String(savedEff(f))) || JSON.stringify(seo) !== JSON.stringify(savedSeo));
+  const setSeoField = (k, v) => setSeo((s) => ({ ...s, [k]: v }));
 
   useEffect(() => { onDirtyChange?.(dirty); }, [dirty, onDirtyChange]);
   useEffect(() => {
@@ -84,9 +88,14 @@ export default function AdminPagesEditor({ onDirtyChange }) {
       const v = (values[f.key] ?? '').toString();
       if (v.trim() && v !== f.default) data[f.key] = v; // store only real changes
     });
+    if (seo.seoTitle.trim()) data.seoTitle = seo.seoTitle.trim();
+    if (seo.seoDescription.trim()) data.seoDescription = seo.seoDescription.trim();
+    if (seo.seoImage.trim()) data.seoImage = seo.seoImage.trim();
+    if (seo.seoNoindex) data.seoNoindex = true;
     try {
       await adminSavePageContent(pageId, data);
       setSaved(data);
+      setSeo({ seoTitle: data.seoTitle || '', seoDescription: data.seoDescription || '', seoImage: data.seoImage || '', seoNoindex: !!data.seoNoindex });
       // Re-sync the fields to exactly what was saved so "• changed" badges clear
       // and any box cleared-to-empty (which can't be saved) reverts to its default.
       setValues(Object.fromEntries(fields.map((f) =>
@@ -106,6 +115,7 @@ export default function AdminPagesEditor({ onDirtyChange }) {
     const ov = (await adminRestorePageVersion(id, vid)) || {};
     if (id !== pageId) return; // switched pages mid-restore; the [pageId] effect owns state now
     setSaved(ov);
+    setSeo({ seoTitle: ov.seoTitle || '', seoDescription: ov.seoDescription || '', seoImage: ov.seoImage || '', seoNoindex: !!ov.seoNoindex });
     setValues(Object.fromEntries(fields.map((f) =>
       [f.key, ov[f.key] != null && ov[f.key] !== '' ? ov[f.key] : f.default])));
     setStatus('saved');
@@ -202,6 +212,25 @@ export default function AdminPagesEditor({ onDirtyChange }) {
               })}
             </div>
           ))}
+
+          {!filter && !onlyCustom && (
+            <>
+              <div className="cms-section-h">Search &amp; sharing (SEO)</div>
+              <div className="cms-field">
+                <label>Search title (browser tab + Google)</label>
+                <input className="cms-input" placeholder="Defaults to the built-in page title" value={seo.seoTitle} onChange={(e) => setSeoField('seoTitle', e.target.value)} />
+              </div>
+              <div className="cms-field">
+                <label>Search description</label>
+                <textarea className="cms-textarea" style={{ minHeight: 56 }} placeholder="The summary shown in Google + link previews" value={seo.seoDescription} onChange={(e) => setSeoField('seoDescription', e.target.value)} />
+              </div>
+              <div className="cms-field">
+                <label>Social share image</label>
+                <input className="cms-input" placeholder="Image URL (defaults to the site image)" value={seo.seoImage} onChange={(e) => setSeoField('seoImage', e.target.value)} />
+              </div>
+              <label className="cms-check"><input type="checkbox" checked={seo.seoNoindex} onChange={(e) => setSeoField('seoNoindex', e.target.checked)} /> Hide this page from search engines</label>
+            </>
+          )}
 
           <div className="cms-toolbar">
             <div className="cms-savemsg">

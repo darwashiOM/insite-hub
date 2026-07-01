@@ -24,6 +24,15 @@ export function useRedirects() {
   return (data && data.redirects && Array.isArray(data.redirects.rules)) ? data.redirects.rules : [];
 }
 
+// Per-page SEO overrides for the fixed marketing pages (seoTitle/seoDescription/
+// seoImage/seoNoindex on the page's siteContent doc). Returns the stable content
+// object so App's meta effect can fall back to the in-code defaults.
+const EMPTY_SEO = {};
+export function usePageSeo(pageId) {
+  const data = useJson(CONTENT_URL, CONTENT_CACHE_KEY);
+  return (data && data[pageId]) || EMPTY_SEO;
+}
+
 // Header dropdown menus (Platform / Solutions / Resources), CMS-overridable.
 // Reads from the same cached content payload, falling back to the in-code defaults.
 export function useNavMenus() {

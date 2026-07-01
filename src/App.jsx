@@ -17,7 +17,7 @@ import ContactPage from './pages/ContactPage';
 import FutureProofPage from './pages/FutureProofPage';
 import NotFoundPage from './pages/NotFoundPage';
 import ErrorBoundary from './components/ErrorBoundary';
-import { prefetchContent, useRedirects } from './lib/content';
+import { prefetchContent, useRedirects, usePageSeo } from './lib/content';
 import { trackPageView } from './analytics';
 import { SITE_URL, OG_IMAGE } from './lib/site';
 import { setJsonLd, buildOrgLd } from './lib/jsonLd';
@@ -195,9 +195,13 @@ export default function App() {
   // Site-wide Organization + WebSite structured data (one-time).
   useEffect(() => { setJsonLd('ld-org', buildOrgLd()); }, []);
 
+  const pageSeo = usePageSeo(page);
   useEffect(() => {
-    const title = PAGE_TITLES[page] || PAGE_TITLES.home;
-    const desc = DESCS[page] || DESCS.home;
+    // Per-page SEO override (editable in the Site pages editor) wins over the
+    // in-code default. Content pages set their own meta later from their data.
+    const title = (pageSeo.seoTitle && pageSeo.seoTitle.trim()) || PAGE_TITLES[page] || PAGE_TITLES.home;
+    const desc = (pageSeo.seoDescription && pageSeo.seoDescription.trim()) || DESCS[page] || DESCS.home;
+    const ogImage = (pageSeo.seoImage && pageSeo.seoImage.trim()) || OG_IMAGE;
     // Slug-based routes (blog post, case study, form, built page) have no PAGE_PATHS
     // entry — use the real pathname so canonical/og:url aren't defaulted to "/".
     const slugRoute = page === "article" || page === "caseStudy" || page === "form" || page === "dynamicPage";
@@ -213,14 +217,14 @@ export default function App() {
     upsertMeta("property", "og:title", title);
     upsertMeta("property", "og:description", desc);
     upsertMeta("property", "og:url", canonical);
-    upsertMeta("property", "og:image", OG_IMAGE);
+    upsertMeta("property", "og:image", ogImage);
     upsertMeta("name", "twitter:card", "summary_large_image");
     upsertMeta("name", "twitter:title", title);
     upsertMeta("name", "twitter:description", desc);
-    upsertMeta("name", "twitter:image", OG_IMAGE);
+    upsertMeta("name", "twitter:image", ogImage);
 
     let robots = document.querySelector('meta[name="robots"]');
-    if (NOINDEX_PAGES.has(page)) {
+    if (NOINDEX_PAGES.has(page) || pageSeo.seoNoindex) {
       if (!robots) { robots = document.createElement('meta'); robots.name = "robots"; document.head.appendChild(robots); }
       robots.content = "noindex, nofollow";
     } else if (robots) {
@@ -231,7 +235,7 @@ export default function App() {
     window.setTimeout(() => {
       if (!scrollToHash(hash)) window.scrollTo(0, 0);
     }, 0);
-  }, [page]);
+  }, [page, pageSeo]);
 
   // Fire a GA4 page_view on every navigation (SPA — no full page loads).
   useEffect(() => {
