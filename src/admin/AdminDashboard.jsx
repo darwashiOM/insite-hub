@@ -19,9 +19,11 @@ import MediaLibrary from './MediaLibrary';
 import AdminPagesEditor from './AdminPagesEditor';
 import NavEditor from './NavEditor';
 import RedirectsEditor from './RedirectsEditor';
+import ActivityView from './ActivityView';
 
 // Admin shell: Blog | Case studies | Videos | Forms | Authors | Site pages | Navigation.
-export default function AdminDashboard({ onLogout }) {
+export default function AdminDashboard({ role, onLogout }) {
+  const isAdmin = role !== 'editor'; // editors manage content but not design/settings
   const [tab, setTab] = useState('blog');
   const [articles, setArticles] = useState(null);
   const [authors, setAuthors] = useState(null);
@@ -127,9 +129,12 @@ export default function AdminDashboard({ onLogout }) {
           <button className={'cms-tab' + (tab === 'landing' ? ' on' : '')} onClick={() => switchTab('landing')}>Landing pages</button>
           <button className={'cms-tab' + (tab === 'authors' ? ' on' : '')} onClick={() => switchTab('authors')}>Authors</button>
           <button className={'cms-tab' + (tab === 'media' ? ' on' : '')} onClick={() => switchTab('media')}>Media</button>
-          <button className={'cms-tab' + (tab === 'pages' ? ' on' : '')} onClick={() => switchTab('pages')}>Site pages</button>
-          <button className={'cms-tab' + (tab === 'nav' ? ' on' : '')} onClick={() => switchTab('nav')}>Navigation</button>
-          <button className={'cms-tab' + (tab === 'redirects' ? ' on' : '')} onClick={() => switchTab('redirects')}>Redirects</button>
+          {isAdmin && <>
+            <button className={'cms-tab' + (tab === 'pages' ? ' on' : '')} onClick={() => switchTab('pages')}>Site pages</button>
+            <button className={'cms-tab' + (tab === 'nav' ? ' on' : '')} onClick={() => switchTab('nav')}>Navigation</button>
+            <button className={'cms-tab' + (tab === 'redirects' ? ' on' : '')} onClick={() => switchTab('redirects')}>Redirects</button>
+            <button className={'cms-tab' + (tab === 'activity' ? ' on' : '')} onClick={() => switchTab('activity')}>Activity</button>
+          </>}
         </div>
         <div style={{ display: 'flex', gap: 10 }}>
           {tab === 'blog' && <button className="cms-btn cms-btn-primary" onClick={() => setView('new')}>+ New article</button>}
@@ -148,7 +153,9 @@ export default function AdminDashboard({ onLogout }) {
       </div>
 
       <div className="cms-wrap">
-        {tab === 'nav' ? (
+        {tab === 'activity' ? (
+          <ActivityView />
+        ) : tab === 'nav' ? (
           <NavEditor onDirtyChange={setNavDirty} />
         ) : tab === 'redirects' ? (
           <RedirectsEditor onDirtyChange={setRedirectsDirty} />

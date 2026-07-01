@@ -1,102 +1,113 @@
 rules_version = '2';
 
 // Proxa Labs CMS — content store.
-// Public can read PUBLISHED articles only. All writes require an authenticated
-// admin session (custom token with claim admin:true, minted by the adminLogin
-// Cloud Function after the password check). The admin SDK in Cloud Functions
-// bypasses these rules, so login-attempt tracking needs no client allowance.
+// Public can read PUBLISHED content only. Writes require an authenticated staff
+// session (custom token minted by adminLogin). Two roles: admin (token.admin ==
+// true) has full control; editor (token.role == 'editor') can manage CONTENT but
+// not design/settings (siteContent). The admin SDK in Cloud Functions bypasses
+// these rules, so login-attempt tracking needs no client allowance.
 service cloud.firestore {
   match /databases/{database}/documents {
 
     function isAdmin() {
       return request.auth != null && request.auth.token.admin == true;
     }
+    // Admin OR editor — anyone allowed to manage content.
+    function isStaff() {
+      return request.auth != null
+             && (request.auth.token.admin == true || request.auth.token.role == 'editor');
+    }
 
     match /articles/{id} {
       // get + list. Public list queries must be filtered to published == true;
-      // admins may read drafts too.
-      allow read: if resource.data.published == true || isAdmin();
-      allow create, update, delete: if isAdmin();
-
-      // Version snapshots — admin only (never exposed to the public).
+      // staff may read drafts too.
+      allow read: if resource.data.published == true || isStaff();
+      allow create, update, delete: if isStaff();
       match /versions/{versionId} {
-        allow read, write: if isAdmin();
+        allow read, write: if isStaff();
       }
     }
 
-    // CMS-built pages (kit-of-sections) — public reads published ones; admin writes.
+    // CMS-built pages (kit-of-sections) — public reads published ones; staff writes.
     match /pages/{id} {
-      allow read: if resource.data.published == true || isAdmin();
-      allow create, update, delete: if isAdmin();
+      allow read: if resource.data.published == true || isStaff();
+      allow create, update, delete: if isStaff();
       match /versions/{versionId} {
-        allow read, write: if isAdmin();
+        allow read, write: if isStaff();
       }
     }
 
-    // Case studies — public reads published ones; admin reads drafts + writes.
+    // Case studies — public reads published ones; staff reads drafts + writes.
     match /caseStudies/{id} {
-      allow read: if resource.data.published == true || isAdmin();
-      allow create, update, delete: if isAdmin();
+      allow read: if resource.data.published == true || isStaff();
+      allow create, update, delete: if isStaff();
       match /versions/{versionId} {
-        allow read, write: if isAdmin();
+        allow read, write: if isStaff();
       }
     }
 
-    // Video library — public reads published ones; admin reads drafts + writes.
+    // Video library — public reads published ones; staff reads drafts + writes.
     match /videos/{id} {
-      allow read: if resource.data.published == true || isAdmin();
-      allow create, update, delete: if isAdmin();
+      allow read: if resource.data.published == true || isStaff();
+      allow create, update, delete: if isStaff();
       match /versions/{versionId} {
-        allow read, write: if isAdmin();
+        allow read, write: if isStaff();
       }
     }
 
-    // Media library — admin-only (the public uses the image URLs directly, not
-    // this catalog of metadata).
+    // Media library — staff-only (the public uses the image URLs directly).
     match /media/{id} {
-      allow read, write: if isAdmin();
+      allow read, write: if isStaff();
     }
 
-    // Author records — admin-only (their fields are denormalized into published
+    // Author records — staff-only (their fields are denormalized into published
     // articles, so the public never needs to read this collection directly).
     match /authors/{id} {
-      allow read, write: if isAdmin();
+      allow read, write: if isStaff();
       match /versions/{versionId} {
-        allow read, write: if isAdmin();
+        allow read, write: if isStaff();
       }
     }
 
-    // Full form definitions are ADMIN-ONLY — they hold server-only fields
+    // Full form definitions are STAFF-ONLY — they hold server-only fields
     // (notifyEmail, gatedFileUrl). The public renders a form from the stripped
     // formsPublic mirror instead; submitForm (admin SDK) reads this full doc.
     match /forms/{id} {
-      allow read, write: if isAdmin();
+      allow read, write: if isStaff();
       match /versions/{versionId} {
-        allow read, write: if isAdmin();
+        allow read, write: if isStaff();
       }
     }
 
     // Public form-render mirror — safe subset (no notifyEmail / gatedFileUrl).
     match /formsPublic/{id} {
-      allow read: if resource.data.published == true || isAdmin();
-      allow write: if isAdmin();
+      allow read: if resource.data.published == true || isStaff();
+      allow write: if isStaff();
     }
 
-    // Form submissions — admin-only reads; NO client writes (the submitForm Cloud
+    // Form submissions — staff-only reads; NO client writes (the submitForm Cloud
     // Function writes them via the admin SDK, which bypasses these rules).
     match /formSubmissions/{id} {
-      allow read, delete: if isAdmin();
+      allow read, delete: if isStaff();
       allow create, update: if false;
     }
 
-    // Page content overrides (editable marketing copy). Publicly readable; admin-only writes.
+    // Page content overrides + nav + redirects + per-page SEO = DESIGN/SETTINGS.
+    // Publicly readable; ADMIN-only writes (editors can't touch the design).
     match /siteContent/{page} {
       allow read: if true;
       allow write: if isAdmin();
-
       match /versions/{versionId} {
         allow read, write: if isAdmin();
       }
+    }
+
+    // Activity log (who changed what, when). Staff append; only admins read it;
+    // never editable/deletable so the record can't be tampered with.
+    match /auditLog/{id} {
+      allow create: if isStaff();
+      allow read: if isAdmin();
+      allow update, delete: if false;
     }
 
     // Everything else (incl. server-only login-attempt records) is denied to clients.

@@ -43,9 +43,19 @@ export function adminLogout() {
   return signOut(auth);
 }
 
-// Calls cb(true|false) on auth changes; returns the unsubscribe fn.
+// Calls cb({ loggedIn, role }) on auth changes; returns the unsubscribe fn.
+// role is 'admin' (full control) or 'editor' (content only).
+let currentRole = null;
 export function onAdminAuth(cb) {
-  return onAuthStateChanged(auth, (user) => cb(!!user && user.uid === 'site-admin'));
+  return onAuthStateChanged(auth, async (user) => {
+    if (!user || (user.uid !== 'site-admin' && user.uid !== 'site-editor')) {
+      currentRole = null; cb({ loggedIn: false, role: null }); return;
+    }
+    let role = user.uid === 'site-admin' ? 'admin' : 'editor';
+    try { const t = await user.getIdTokenResult(); if (t.claims.role) role = t.claims.role; } catch { /* fall back to uid */ }
+    currentRole = role;
+    cb({ loggedIn: true, role });
+  });
 }
 
 // --- Versioned saves --------------------------------------------------------
@@ -71,6 +81,21 @@ async function saveWithHistory(ref, data) {
   });
   // Trim old snapshots best-effort; a prune failure must never fail the save.
   pruneVersions(ref).catch(() => {});
+  logActivity('edit', ref.parent.id, ref.id);
+}
+
+// --- Activity log (who changed what, when) ----------------------------------
+async function logActivity(action, collectionName, docId) {
+  try {
+    await addDoc(collection(db, 'auditLog'), {
+      action, collection: collectionName, docId: docId || '',
+      actor: currentRole || 'admin', at: serverTimestamp(),
+    });
+  } catch { /* non-critical — never fail the underlying action */ }
+}
+export async function adminListActivity() {
+  const snap = await getDocs(query(collection(db, 'auditLog'), orderBy('at', 'desc'), limit(200)));
+  return snap.docs.map((d) => ({ id: d.id, ...d.data() }));
 }
 
 async function pruneVersions(ref, keep = KEEP_VERSIONS) {

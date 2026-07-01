@@ -255,13 +255,21 @@ exports.adminLogin = onRequest({ secrets: [ADMIN_PASSWORD] }, async (req, res) =
     const db = admin.firestore();
     const now = Date.now();
     const password = (req.body && req.body.password) || "";
-    const ok = password.length > 0 && constantTimeEqual(password, ADMIN_PASSWORD.value());
+    // Two roles via two shared passwords: the admin password (full control) and an
+    // optional editor password (content only — set EDITOR_PASSWORD to enable it).
+    const editorPw = process.env.EDITOR_PASSWORD || "";
+    const isAdminPw = password.length > 0 && constantTimeEqual(password, ADMIN_PASSWORD.value());
+    const isEditorPw = !isAdminPw && editorPw.length > 0 && password.length > 0 && constantTimeEqual(password, editorPw);
+    const ok = isAdminPw || isEditorPw;
 
     // Check the password BEFORE any lockout gate: a correct password must ALWAYS
     // succeed (the attacker never has it, so blocking a correct login during a
     // lockout protects nothing and would let attackers DoS the real admin).
     if (ok) {
-      const token = await admin.auth().createCustomToken("site-admin", { admin: true });
+      const uid = isAdminPw ? "site-admin" : "site-editor";
+      const token = await admin.auth().createCustomToken(uid, {
+        admin: isAdminPw, role: isAdminPw ? "admin" : "editor",
+      });
       // Best-effort: clear this IP's failure counter (non-critical to auth).
       db.collection("adminLoginAttempts").doc(clientIp(req))
         .set({ count: 0, first: now, lockedUntil: 0 }, { merge: true }).catch(() => {});
