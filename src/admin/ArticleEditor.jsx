@@ -130,9 +130,12 @@ export default function ArticleEditor({ article, authors = [], knownTopics = [],
     });
     const toc = headings.filter((h) => h.text).map((h) => ({ id: h.id, label: h.navLabel || h.text }));
     const tags = String(form.tags || '').split(',').map((t) => t.trim()).filter(Boolean);
-    // A future publish time only applies while unpublished; publishing now clears it.
+    // A publish time only applies while unpublished; publishing now clears it. Keep
+    // it even if the time has already passed (e.g. an incidental re-save after the
+    // scheduled moment) — the scheduler publishes a past-due time on its next run,
+    // so we don't silently drop the schedule and turn the post into a plain draft.
     const scheduledMs = (!form.published && form.publishAt) ? Date.parse(form.publishAt) : NaN;
-    const isScheduled = !Number.isNaN(scheduledMs) && scheduledMs > Date.now();
+    const isScheduled = !Number.isNaN(scheduledMs);
     return {
       slug, pillar: form.pillar.trim(), topic: form.topic.trim(), tags, featured: !!form.featured,
       title, description: form.description.trim(),

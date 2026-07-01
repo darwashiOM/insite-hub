@@ -42,7 +42,12 @@ export default function NavEditor({ onDirtyChange }) {
   const update = (key, fn) => setMenus((m) => ({ ...m, [key]: fn(m[key]) }));
   const setItem = (key, i, patch) => update(key, (list) => list.map((it, j) => (j === i ? { ...it, ...patch } : it)));
   const addItem = (key) => update(key, (list) => [...list, { label: 'New item', page: NAV_DESTINATIONS[0].page }]);
-  const removeItem = (key, i) => update(key, (list) => list.filter((_, j) => j !== i));
+  const removeItem = (key, i) => {
+    const it = menus[key]?.[i];
+    const named = it && String(it.label || '').trim() && it.label !== 'New item';
+    if (named && !window.confirm(`Remove the "${it.label}" menu item?`)) return;
+    update(key, (list) => list.filter((_, j) => j !== i));
+  };
   const moveItem = (key, i, dir) => update(key, (list) => {
     const j = i + dir;
     if (j < 0 || j >= list.length) return list;

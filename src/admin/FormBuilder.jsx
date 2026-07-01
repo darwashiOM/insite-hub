@@ -51,7 +51,12 @@ export default function FormBuilder({ form, onDone, onCancel }) {
   const set = (k, v) => setData((d) => ({ ...d, [k]: v }));
   const setField = (i, patch) => setData((d) => ({ ...d, fields: d.fields.map((f, j) => (j === i ? { ...f, ...patch } : f)) }));
   const addField = () => setData((d) => ({ ...d, fields: [...d.fields, { label: 'New field', type: 'text', required: false, options: '' }] }));
-  const removeField = (i) => setData((d) => ({ ...d, fields: d.fields.filter((_, j) => j !== i) }));
+  const removeField = (i) => {
+    const f = data.fields[i];
+    const named = f && String(f.label || '').trim() && f.label !== 'New field';
+    if (named && !window.confirm(`Remove the "${f.label}" field?`)) return;
+    setData((d) => ({ ...d, fields: d.fields.filter((_, j) => j !== i) }));
+  };
   const moveField = (i, dir) => setData((d) => {
     const j = i + dir;
     if (j < 0 || j >= d.fields.length) return d;

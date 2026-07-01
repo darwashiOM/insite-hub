@@ -34,7 +34,12 @@ export default function CaseStudyEditor({ caseStudy, onDone, onCancel }) {
   const set = (k, v) => setForm((f) => ({ ...f, [k]: v }));
   const setStat = (i, patch) => setForm((f) => ({ ...f, stats: f.stats.map((s, j) => (j === i ? { ...s, ...patch } : s)) }));
   const addStat = () => setForm((f) => ({ ...f, stats: [...f.stats, { value: '', label: '' }] }));
-  const removeStat = (i) => setForm((f) => ({ ...f, stats: f.stats.filter((_, j) => j !== i) }));
+  const removeStat = (i) => {
+    const s = form.stats[i];
+    const filled = s && (String(s.value || '').trim() || String(s.label || '').trim());
+    if (filled && !window.confirm('Remove this stat?')) return;
+    setForm((f) => ({ ...f, stats: f.stats.filter((_, j) => j !== i) }));
+  };
 
   const upload = async (file) => {
     if (!file) return;

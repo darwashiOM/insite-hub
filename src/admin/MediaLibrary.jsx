@@ -33,10 +33,16 @@ export default function MediaLibrary() {
   };
 
   const setAlt = (id, alt) => setMedia((m) => m.map((x) => (x.id === id ? { ...x, alt } : x)));
-  const saveAlt = (id, alt) => { adminUpdateMediaAlt(id, alt).catch(() => {}); };
+  const errMsg = (e) => (/permission/i.test(e?.message || '') ? 'Your session timed out — log out and back in, then try again.' : (e?.message || String(e)));
+  const saveAlt = async (id, alt) => {
+    try { await adminUpdateMediaAlt(id, alt); }
+    catch (e) { setStatus('Alt text didn’t save: ' + errMsg(e)); }
+  };
   const remove = async (m) => {
     if (!window.confirm('Remove this image from the library? It stays available wherever it’s already used.')) return;
-    await adminDeleteMedia(m.id); refresh();
+    setStatus('');
+    try { await adminDeleteMedia(m.id); await refresh(); }
+    catch (e) { setStatus('Remove failed: ' + errMsg(e)); }
   };
   const copyUrl = (m) => { if (navigator.clipboard) navigator.clipboard.writeText(m.url); setCopiedId(m.id); setTimeout(() => setCopiedId(''), 1500); };
 

@@ -37,6 +37,7 @@ export default function AdminDashboard({ onLogout }) {
   const [formsSub, setFormsSub] = useState('forms'); // 'forms' | 'submissions'
   const [pagesDirty, setPagesDirty] = useState(false);
   const [navDirty, setNavDirty] = useState(false);
+  const [redirectsDirty, setRedirectsDirty] = useState(false);
 
   const load = useCallback(() => Promise.all([
     adminListArticles().catch(() => []),
@@ -60,6 +61,7 @@ export default function AdminDashboard({ onLogout }) {
     if (t === tab) return;
     if (tab === 'pages' && pagesDirty && !window.confirm('You have unsaved changes on this page. Discard them?')) return;
     if (tab === 'nav' && navDirty && !window.confirm('You have unsaved navigation changes. Discard them?')) return;
+    if (tab === 'redirects' && redirectsDirty && !window.confirm('You have unsaved redirect changes. Discard them?')) return;
     setTab(t);
   };
 
@@ -137,7 +139,7 @@ export default function AdminDashboard({ onLogout }) {
         {tab === 'nav' ? (
           <NavEditor onDirtyChange={setNavDirty} />
         ) : tab === 'redirects' ? (
-          <RedirectsEditor />
+          <RedirectsEditor onDirtyChange={setRedirectsDirty} />
         ) : tab === 'media' ? (
           <MediaLibrary />
         ) : tab === 'pages' ? (

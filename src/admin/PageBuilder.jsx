@@ -34,7 +34,12 @@ export default function PageBuilder({ page, onDone, onCancel }) {
 
   const set = (k, v) => setForm((f) => ({ ...f, [k]: v }));
   const addSection = () => setForm((f) => ({ ...f, sections: [...f.sections, { type: addType, data: {} }] }));
-  const removeSection = (i) => setForm((f) => ({ ...f, sections: f.sections.filter((_, j) => j !== i) }));
+  const removeSection = (i) => {
+    const s = form.sections[i];
+    const hasContent = s && Object.values(s.data || {}).some((v) => (Array.isArray(v) ? v.length : String(v || '').trim()));
+    if (hasContent && !window.confirm('Delete this section? Its content will be lost.')) return;
+    setForm((f) => ({ ...f, sections: f.sections.filter((_, j) => j !== i) }));
+  };
   const moveSection = (i, dir) => setForm((f) => {
     const j = i + dir;
     if (j < 0 || j >= f.sections.length) return f;

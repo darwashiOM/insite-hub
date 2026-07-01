@@ -7,7 +7,7 @@ import VersionHistory from './VersionHistory';
 
 // Marketer-managed redirects, stored at siteContent/redirects and delivered to
 // the live site via getContent (App.jsx applies them on load).
-export default function RedirectsEditor() {
+export default function RedirectsEditor({ onDirtyChange }) {
   const [rules, setRules] = useState(null);
   const [saved, setSaved] = useState('[]');
   const [busy, setBusy] = useState(false);
@@ -29,6 +29,7 @@ export default function RedirectsEditor() {
   }, []);
 
   const dirty = !!rules && JSON.stringify(rules) !== saved;
+  useEffect(() => { onDirtyChange?.(dirty); }, [dirty, onDirtyChange]);
   useEffect(() => {
     const h = (e) => { if (dirty) { e.preventDefault(); e.returnValue = ''; } };
     window.addEventListener('beforeunload', h);
