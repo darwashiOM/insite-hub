@@ -42,6 +42,7 @@ const CaseStudyPage = lazyWithReload(() => import('./pages/CaseStudyPage'));
 const VideoGalleryPage = lazyWithReload(() => import('./pages/VideoGalleryPage'));
 const CmsFormPage = lazyWithReload(() => import('./pages/CmsFormPage'));
 const DynamicPage = lazyWithReload(() => import('./pages/DynamicPage'));
+const SearchPage = lazyWithReload(() => import('./pages/SearchPage'));
 const AdminPage = lazyWithReload(() => import('./admin/AdminPage'));
 
 const PAGE_TITLES = {
@@ -64,6 +65,7 @@ const PAGE_TITLES = {
   caseStudy: "Case Study · Proxa Labs",
   videos: "Videos · Proxa Labs",
   form: "Proxa Labs",
+  search: "Search · Proxa Labs",
   dynamicPage: "Proxa Labs",
   admin: "CMS · Proxa Labs",
   notfound: "Page not found · Proxa Labs",
@@ -89,13 +91,14 @@ const DESCS = {
   caseStudy: "A Proxa Labs case study — challenge, approach, and results.",
   videos: "Short, practical videos on AI in biopharma commercial learning — strategy, evidence, and the field.",
   form: "Proxa Labs.",
+  search: "Search Proxa Labs.",
   dynamicPage: "Proxa Labs.",
   admin: "Proxa Labs content management.",
   notfound: "The page you're looking for doesn't exist or has moved.",
 };
 
 // Campaign / placeholder / private pages that should not be indexed.
-const NOINDEX_PAGES = new Set(["futureproof", "admin", "notfound"]);
+const NOINDEX_PAGES = new Set(["futureproof", "admin", "notfound", "search"]);
 
 function upsertMeta(attr, key, content) {
   let el = document.head.querySelector(`meta[${attr}="${key}"]`);
@@ -115,7 +118,7 @@ const PAGES = {
   resources: ResourcesPage, newsletter: NewsletterPage, contact: ContactPage,
   futureproof: FutureProofPage, blog: BlogIndexPage, article: ArticlePage,
   caseStudies: CaseStudiesIndexPage, caseStudy: CaseStudyPage,
-  videos: VideoGalleryPage, form: CmsFormPage, dynamicPage: DynamicPage,
+  videos: VideoGalleryPage, form: CmsFormPage, dynamicPage: DynamicPage, search: SearchPage,
   admin: AdminPage, notfound: NotFoundPage,
 };
 
@@ -133,6 +136,7 @@ const PAGE_PATHS = {
   newsletter: "/newsletter",
   contact: "/contact",
   futureproof: "/future-proof-your-organization",
+  search: "/search",
   blog: "/blog",
   caseStudies: "/case-studies",
   videos: "/videos",
