@@ -5,7 +5,7 @@ import { signInWithCustomToken, signOut, onAuthStateChanged } from 'firebase/aut
 import {
   collection, getDocs, getDocsFromServer, doc, getDoc, setDoc, serverTimestamp,
   writeBatch, runTransaction, query, where, orderBy, limit,
-  addDoc, updateDoc, deleteDoc,
+  addDoc, updateDoc, deleteDoc, deleteField,
 } from 'firebase/firestore';
 import { ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
 
@@ -506,6 +506,36 @@ export async function adminSaveForm(form, isNew = false) {
   await setDoc(doc(db, 'formsPublic', slug), publicData);
   return slug;
 }
+
+// --- Trash (soft delete) --------------------------------------------------
+// Trashing unpublishes the item and stamps deletedAt; it disappears from the
+// public site and the normal admin lists but is one click from restored. Only
+// "Delete forever" (the existing adminDelete*) actually destroys data.
+async function trashDoc(colName, id) {
+  await updateDoc(doc(db, colName, id), {
+    deletedAt: Date.now(), published: false, status: 'draft', publishAt: deleteField(),
+    updatedAt: serverTimestamp(),
+  });
+  logActivity('trash', colName, id);
+}
+async function restoreDoc(colName, id) {
+  await updateDoc(doc(db, colName, id), { deletedAt: deleteField(), updatedAt: serverTimestamp() });
+  logActivity('restore', colName, id);
+}
+export const adminTrashArticle = (slug) => trashDoc('articles', slug);
+export const adminTrashCaseStudy = (slug) => trashDoc('caseStudies', slug);
+export const adminTrashVideo = (slug) => trashDoc('videos', slug);
+export const adminTrashPage = (slug) => trashDoc('pages', slug);
+export async function adminTrashForm(slug) {
+  // forms mirror a stripped copy to formsPublic — remove it so the form stops working live
+  await trashDoc('forms', slug);
+  await deleteDoc(doc(db, 'formsPublic', slug)).catch(() => {});
+}
+export const adminRestoreArticle = (slug) => restoreDoc('articles', slug);
+export const adminRestoreCaseStudy = (slug) => restoreDoc('caseStudies', slug);
+export const adminRestoreVideo = (slug) => restoreDoc('videos', slug);
+export const adminRestorePage = (slug) => restoreDoc('pages', slug);
+export const adminRestoreForm = (slug) => restoreDoc('forms', slug); // restored as a draft — republish to re-mirror
 
 export async function adminDeleteForm(slug) {
   const ref = doc(db, 'forms', slug);

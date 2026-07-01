@@ -7,6 +7,8 @@ import {
   adminListForms, adminDeleteForm,
   adminListPages, adminDeletePage,
   adminDuplicatePage, adminDuplicateArticle, adminDuplicateCaseStudy, adminDuplicateVideo,
+  adminTrashArticle, adminTrashCaseStudy, adminTrashVideo, adminTrashForm, adminTrashPage,
+  adminRestoreArticle, adminRestoreCaseStudy, adminRestoreVideo, adminRestoreForm, adminRestorePage,
 } from '../lib/adminBlog';
 import ArticleEditor from './ArticleEditor';
 import AuthorEditor from './AuthorEditor';
@@ -36,6 +38,30 @@ const TAB_INTRO = {
   activity: 'A history of what changed, and when.',
 };
 
+const itemStatus = (x) => (x.deletedAt ? 'trash' : x.published ? 'published' : x.status === 'review' ? 'review' : 'draft');
+
+// Search box + status filter chips shown above each content list.
+function ListToolbar({ items, q, setQ, statusFilter, setStatusFilter, kind }) {
+  const counts = { all: 0, published: 0, draft: 0, review: 0, trash: 0 };
+  (items || []).forEach((x) => { const st = itemStatus(x); counts[st]++; if (st !== 'trash') counts.all++; });
+  const chips = [['all', 'All'], ['published', 'Published'], ['draft', 'Drafts'], ['review', 'In review'], ['trash', 'Trash']];
+  return (
+    <div className="cms-list-toolbar">
+      <input className="cms-input cms-list-search" placeholder={`Search ${kind}…`} aria-label={`Search ${kind}`}
+        value={q} onChange={(e) => setQ(e.target.value)} />
+      <div className="cms-chiprow">
+        {chips.map(([k, label]) => (
+          ((k === 'review' || k === 'trash') && !counts[k]) ? null : (
+            <button key={k} className={'cms-chip' + (statusFilter === k ? ' on' : '')} onClick={() => setStatusFilter(k)}>
+              {label} ({counts[k]})
+            </button>
+          )
+        ))}
+      </div>
+    </div>
+  );
+}
+
 // Admin shell: Blog | Case studies | Videos | Forms | Authors | Site pages | Navigation.
 export default function AdminDashboard({ role, onLogout }) {
   const isAdmin = role !== 'editor'; // editors manage content but not design/settings
@@ -53,6 +79,8 @@ export default function AdminDashboard({ role, onLogout }) {
   const [vidView, setVidView] = useState('list');
   const [formView, setFormView] = useState('list');
   const [formsSub, setFormsSub] = useState('forms'); // 'forms' | 'submissions'
+  const [q, setQ] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
   const [pagesDirty, setPagesDirty] = useState(false);
   const [navDirty, setNavDirty] = useState(false);
   const [redirectsDirty, setRedirectsDirty] = useState(false);
@@ -83,8 +111,32 @@ export default function AdminDashboard({ role, onLogout }) {
     if (tab === 'redirects' && redirectsDirty && !window.confirm('You have unsaved redirect changes. Discard them?')) return;
     if (tab === 'types' && typesDirty && !window.confirm('You have unsaved changes in the content-type editor. Discard them?')) return;
     if (tab === 'forms' && t !== 'forms') setFormsSub('forms'); // always re-enter Forms on the forms list
+    setQ(''); setStatusFilter('all');
     setTab(t);
   };
+
+  // Search + status filter applied to a content list. "All" hides trashed items;
+  // the Trash chip shows only them.
+  const filterList = (items) => (items || []).filter((x) => {
+    const st = itemStatus(x);
+    if (statusFilter === 'all' ? st === 'trash' : st !== statusFilter) return false;
+    const needle = q.trim().toLowerCase();
+    return !needle || (x.title || x.name || '').toLowerCase().includes(needle);
+  });
+  const noMatches = <p style={{ color: '#5c6370' }}>Nothing matches — clear the search or pick another filter.</p>;
+
+  const trashItem = (fn) => async (item) => { await fn(item.slug); refresh(); };
+  const restoreItem = (fn) => async (item) => { await fn(item.slug); refresh(); };
+  const trashArticle = trashItem(adminTrashArticle);
+  const trashCaseStudy = trashItem(adminTrashCaseStudy);
+  const trashVideo = trashItem(adminTrashVideo);
+  const trashForm = trashItem(adminTrashForm);
+  const trashPage = trashItem(adminTrashPage);
+  const restoreArticle = restoreItem(adminRestoreArticle);
+  const restoreCaseStudy = restoreItem(adminRestoreCaseStudy);
+  const restoreVideo = restoreItem(adminRestoreVideo);
+  const restoreForm = restoreItem(adminRestoreForm);
+  const restorePage = restoreItem(adminRestorePage);
 
   const logout = () => {
     if ((pagesDirty || navDirty || redirectsDirty || typesDirty)
@@ -92,12 +144,29 @@ export default function AdminDashboard({ role, onLogout }) {
     onLogout();
   };
 
-  const removeArticle = async (a) => { if (window.confirm(`Delete "${a.title}"? This cannot be undone.`)) { await adminDeleteArticle(a.slug); refresh(); } };
+  // Permanent deletes — only reachable from the Trash view (authors have no trash).
+  const removeArticle = async (a) => { if (window.confirm(`Permanently delete "${a.title}"? This cannot be undone.`)) { await adminDeleteArticle(a.slug); refresh(); } };
   const removeAuthor = async (a) => { if (window.confirm(`Delete author "${a.name}"? This cannot be undone.`)) { await adminDeleteAuthor(a.id); refresh(); } };
-  const removeCaseStudy = async (c) => { if (window.confirm(`Delete "${c.title}"? This cannot be undone.`)) { await adminDeleteCaseStudy(c.slug); refresh(); } };
-  const removeVideo = async (v) => { if (window.confirm(`Delete "${v.title}"? This cannot be undone.`)) { await adminDeleteVideo(v.slug); refresh(); } };
-  const removeForm = async (f) => { if (window.confirm(`Delete "${f.name}"? This cannot be undone.`)) { await adminDeleteForm(f.slug); refresh(); } };
-  const removePage = async (p) => { if (window.confirm(`Delete "${p.title}"? This cannot be undone.`)) { await adminDeletePage(p.slug); refresh(); } };
+  const removeCaseStudy = async (c) => { if (window.confirm(`Permanently delete "${c.title}"? This cannot be undone.`)) { await adminDeleteCaseStudy(c.slug); refresh(); } };
+  const removeVideo = async (v) => { if (window.confirm(`Permanently delete "${v.title}"? This cannot be undone.`)) { await adminDeleteVideo(v.slug); refresh(); } };
+  const removeForm = async (f) => { if (window.confirm(`Permanently delete "${f.name}"? This cannot be undone.`)) { await adminDeleteForm(f.slug); refresh(); } };
+  const removePage = async (p) => { if (window.confirm(`Permanently delete "${p.title}"? This cannot be undone.`)) { await adminDeletePage(p.slug); refresh(); } };
+
+  // Card action buttons: normal items get Edit/Duplicate/Trash; trashed ones get Restore/Delete forever.
+  const cardActions = (item, { onEdit, onDuplicate, onTrash, onRestore, onDeleteForever }) => (
+    item.deletedAt ? (
+      <>
+        <button className="cms-btn cms-btn-sm" onClick={onRestore}>Restore</button>
+        <button className="cms-btn cms-btn-sm cms-btn-danger" onClick={onDeleteForever}>Delete forever</button>
+      </>
+    ) : (
+      <>
+        <button className="cms-btn cms-btn-sm" onClick={onEdit}>Edit</button>
+        {onDuplicate && <button className="cms-btn cms-btn-sm" onClick={onDuplicate}>Duplicate</button>}
+        <button className="cms-btn cms-btn-sm cms-btn-danger" title="Moves to Trash — you can restore it" onClick={onTrash}>Trash</button>
+      </>
+    )
+  );
   const dupe = (fn) => async (item) => { try { await fn(item.slug); await refresh(); } catch (e) { window.alert('Duplicate failed: ' + (e.message || e)); } };
   const duplicateArticle = dupe(adminDuplicateArticle);
   const duplicateCaseStudy = dupe(adminDuplicateCaseStudy);
@@ -135,6 +204,7 @@ export default function AdminDashboard({ role, onLogout }) {
   const Loading = <p style={{ color: '#5c6370' }}>Loading…</p>;
   const badge = (d) => {
     const pub = d === true || (d && d.published);
+    if (d && d.deletedAt) return <span className="cms-badge cms-badge-draft">In trash</span>;
     if (pub) return <span className="cms-badge cms-badge-pub">Published</span>;
     if (d && d.publishAt) return <span className="cms-badge cms-badge-draft">Scheduled</span>;
     if (d && d.status === 'review') return <span className="cms-badge cms-badge-review">In review</span>;
@@ -180,7 +250,9 @@ export default function AdminDashboard({ role, onLogout }) {
 
       <div className="cms-wrap">
         {tab === 'start' ? (
-          <StartHere go={switchTab} isAdmin={isAdmin} />
+          <StartHere go={switchTab} isAdmin={isAdmin} stats={{
+            blog: articles, cs: caseStudies, videos, forms, landing: pages,
+          }} />
         ) : (
         <>
         {TAB_INTRO[tab] && <p className="cms-tab-intro">{TAB_INTRO[tab]}</p>}
@@ -202,8 +274,11 @@ export default function AdminDashboard({ role, onLogout }) {
           ) : forms === null ? Loading
           : forms.length === 0 ? <p style={{ color: '#5c6370' }}>No forms yet. Click “New form” to build one.</p>
           : (
+            <>
+            <ListToolbar items={forms} q={q} setQ={setQ} statusFilter={statusFilter} setStatusFilter={setStatusFilter} kind="forms" />
+            {filterList(forms).length === 0 ? noMatches : (
             <div className="cms-list">
-              {forms.map((f) => (
+              {filterList(forms).map((f) => (
                 <div className="cms-card" key={f.id}>
                   <div className="cms-card-main">
                     <p className="cms-card-title">{f.name || '(untitled)'}</p>
@@ -215,18 +290,21 @@ export default function AdminDashboard({ role, onLogout }) {
                     </p>
                   </div>
                   {badge(f)}
-                  <button className="cms-btn cms-btn-sm" onClick={() => setFormView(f.slug)}>Edit</button>
-                  <button className="cms-btn cms-btn-sm cms-btn-danger" onClick={() => removeForm(f)}>Delete</button>
+                  {cardActions(f, { onEdit: () => setFormView(f.slug), onTrash: () => trashForm(f), onRestore: () => restoreForm(f), onDeleteForever: () => removeForm(f) })}
                 </div>
               ))}
-            </div>
+            </div>)}
+            </>
           )
         ) : tab === 'landing' ? (
           pages === null ? Loading
           : pages.length === 0 ? <p style={{ color: '#5c6370' }}>No pages yet. Click “New page” to build one from sections.</p>
           : (
+            <>
+            <ListToolbar items={pages} q={q} setQ={setQ} statusFilter={statusFilter} setStatusFilter={setStatusFilter} kind="pages" />
+            {filterList(pages).length === 0 ? noMatches : (
             <div className="cms-list">
-              {pages.map((p) => (
+              {filterList(pages).map((p) => (
                 <div className="cms-card" key={p.id}>
                   <div className="cms-card-main">
                     <p className="cms-card-title">{p.title || '(untitled)'}</p>
@@ -236,12 +314,11 @@ export default function AdminDashboard({ role, onLogout }) {
                     </p>
                   </div>
                   {badge(p)}
-                  <button className="cms-btn cms-btn-sm" onClick={() => setPageView(p.slug)}>Edit</button>
-                  <button className="cms-btn cms-btn-sm" onClick={() => duplicatePage(p)}>Duplicate</button>
-                  <button className="cms-btn cms-btn-sm cms-btn-danger" onClick={() => removePage(p)}>Delete</button>
+                  {cardActions(p, { onEdit: () => setPageView(p.slug), onDuplicate: () => duplicatePage(p), onTrash: () => trashPage(p), onRestore: () => restorePage(p), onDeleteForever: () => removePage(p) })}
                 </div>
               ))}
-            </div>
+            </div>)}
+            </>
           )
         ) : tab === 'authors' ? (
           authors === null ? Loading
@@ -264,8 +341,11 @@ export default function AdminDashboard({ role, onLogout }) {
           caseStudies === null ? Loading
           : caseStudies.length === 0 ? <p style={{ color: '#5c6370' }}>No case studies yet. Click “New case study” to add one.</p>
           : (
+            <>
+            <ListToolbar items={caseStudies} q={q} setQ={setQ} statusFilter={statusFilter} setStatusFilter={setStatusFilter} kind="case studies" />
+            {filterList(caseStudies).length === 0 ? noMatches : (
             <div className="cms-list">
-              {caseStudies.map((c) => (
+              {filterList(caseStudies).map((c) => (
                 <div className="cms-card" key={c.id}>
                   <div className="cms-card-main">
                     <p className="cms-card-title">{c.title || '(untitled)'}</p>
@@ -275,19 +355,21 @@ export default function AdminDashboard({ role, onLogout }) {
                     </p>
                   </div>
                   {badge(c)}
-                  <button className="cms-btn cms-btn-sm" onClick={() => setCsView(c.slug)}>Edit</button>
-                  <button className="cms-btn cms-btn-sm" onClick={() => duplicateCaseStudy(c)}>Duplicate</button>
-                  <button className="cms-btn cms-btn-sm cms-btn-danger" onClick={() => removeCaseStudy(c)}>Delete</button>
+                  {cardActions(c, { onEdit: () => setCsView(c.slug), onDuplicate: () => duplicateCaseStudy(c), onTrash: () => trashCaseStudy(c), onRestore: () => restoreCaseStudy(c), onDeleteForever: () => removeCaseStudy(c) })}
                 </div>
               ))}
-            </div>
+            </div>)}
+            </>
           )
         ) : tab === 'videos' ? (
           videos === null ? Loading
           : videos.length === 0 ? <p style={{ color: '#5c6370' }}>No videos yet. Click “New video” to add one.</p>
           : (
+            <>
+            <ListToolbar items={videos} q={q} setQ={setQ} statusFilter={statusFilter} setStatusFilter={setStatusFilter} kind="videos" />
+            {filterList(videos).length === 0 ? noMatches : (
             <div className="cms-list">
-              {videos.map((v) => (
+              {filterList(videos).map((v) => (
                 <div className="cms-card" key={v.id}>
                   <div className="cms-card-main">
                     <p className="cms-card-title">{v.title || '(untitled)'}</p>
@@ -297,18 +379,20 @@ export default function AdminDashboard({ role, onLogout }) {
                     </p>
                   </div>
                   {badge(v)}
-                  <button className="cms-btn cms-btn-sm" onClick={() => setVidView(v.slug)}>Edit</button>
-                  <button className="cms-btn cms-btn-sm" onClick={() => duplicateVideo(v)}>Duplicate</button>
-                  <button className="cms-btn cms-btn-sm cms-btn-danger" onClick={() => removeVideo(v)}>Delete</button>
+                  {cardActions(v, { onEdit: () => setVidView(v.slug), onDuplicate: () => duplicateVideo(v), onTrash: () => trashVideo(v), onRestore: () => restoreVideo(v), onDeleteForever: () => removeVideo(v) })}
                 </div>
               ))}
-            </div>
+            </div>)}
+            </>
           )
         ) : articles === null ? Loading
         : articles.length === 0 ? <p style={{ color: '#5c6370' }}>No articles yet. Click “New article” to write the first one.</p>
         : (
+          <>
+          <ListToolbar items={articles} q={q} setQ={setQ} statusFilter={statusFilter} setStatusFilter={setStatusFilter} kind="posts" />
+          {filterList(articles).length === 0 ? noMatches : (
           <div className="cms-list">
-            {articles.map((a) => (
+            {filterList(articles).map((a) => (
               <div className="cms-card" key={a.id}>
                 <div className="cms-card-main">
                   <p className="cms-card-title">{a.title || '(untitled)'}</p>
@@ -320,12 +404,11 @@ export default function AdminDashboard({ role, onLogout }) {
                   </p>
                 </div>
                 {badge(a)}
-                <button className="cms-btn cms-btn-sm" onClick={() => setView(a.slug)}>Edit</button>
-                <button className="cms-btn cms-btn-sm" onClick={() => duplicateArticle(a)}>Duplicate</button>
-                <button className="cms-btn cms-btn-sm cms-btn-danger" onClick={() => removeArticle(a)}>Delete</button>
+                {cardActions(a, { onEdit: () => setView(a.slug), onDuplicate: () => duplicateArticle(a), onTrash: () => trashArticle(a), onRestore: () => restoreArticle(a), onDeleteForever: () => removeArticle(a) })}
               </div>
             ))}
-          </div>
+          </div>)}
+          </>
         )}
         </>
         )}

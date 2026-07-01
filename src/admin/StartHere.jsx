@@ -36,10 +36,22 @@ const groups = (isAdmin) => [
   },
 ];
 
-export default function StartHere({ go, isAdmin }) {
+export default function StartHere({ go, isAdmin, stats = {} }) {
+  // Live counts per content type (trashed items excluded).
+  const tally = (items) => {
+    if (!items) return null;
+    const live = items.filter((x) => !x.deletedAt);
+    return { published: live.filter((x) => x.published).length, drafts: live.filter((x) => !x.published).length };
+  };
+  const counts = Object.fromEntries(Object.entries(stats).map(([k, v]) => [k, tally(v)]));
+  const waiting = Object.values(counts).reduce((n, c) => n + (c ? c.drafts : 0), 0);
+
   return (
     <div className="cms-start">
       <p className="cms-start-lead">Welcome 👋 What would you like to do? Pick a task below — or use the tabs along the top anytime.</p>
+      {waiting > 0 && (
+        <p className="cms-start-attn">✍️ {waiting} item{waiting === 1 ? ' is' : 's are'} saved as drafts — not on the live site yet.</p>
+      )}
       {groups(isAdmin).map((g) => {
         const items = g.items.filter(Boolean);
         if (!items.length) return null;
@@ -47,13 +59,19 @@ export default function StartHere({ go, isAdmin }) {
           <div className="cms-start-group" key={g.title}>
             <h2 className="cms-start-h">{g.title}</h2>
             <div className="cms-start-grid">
-              {items.map((it) => (
-                <button className="cms-start-card" key={it.label} onClick={() => go(it.tab)}>
-                  <span className="cms-start-ico">{it.icon}</span>
-                  <span className="cms-start-title">{it.label}</span>
-                  <span className="cms-start-desc">{it.desc}</span>
-                </button>
-              ))}
+              {items.map((it) => {
+                const c = counts[it.tab];
+                return (
+                  <button className="cms-start-card" key={it.label} onClick={() => go(it.tab)}>
+                    <span className="cms-start-ico">{it.icon}</span>
+                    <span className="cms-start-title">{it.label}</span>
+                    <span className="cms-start-desc">{it.desc}</span>
+                    {c && (c.published + c.drafts) > 0 && (
+                      <span className="cms-start-count">{c.published} live{c.drafts ? ` · ${c.drafts} draft${c.drafts === 1 ? '' : 's'}` : ''}</span>
+                    )}
+                  </button>
+                );
+              })}
             </div>
           </div>
         );

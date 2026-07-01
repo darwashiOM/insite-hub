@@ -155,3 +155,13 @@
 .cms-start-ico { font-size: 22px; line-height: 1; margin-bottom: 5px; }
 .cms-start-title { font-weight: 700; font-size: 15px; color: var(--ink); }
 .cms-start-desc { color: var(--bd); font-size: 13px; line-height: 1.4; }
+.cms-start-count { color: #9aa2ad; font-size: 12px; font-weight: 600; margin-top: 4px; }
+.cms-start-attn { background: #fff8eb; border: 1px solid #f5d9a8; color: #7a5817; border-radius: 10px; padding: 10px 14px; font-size: 14px; margin: -10px 0 22px; display: inline-block; }
+
+/* Content-list search + filter chips */
+.cms-list-toolbar { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin: 0 0 16px; }
+.cms-list-search { max-width: 260px; }
+.cms-chiprow { display: flex; gap: 8px; flex-wrap: wrap; }
+.cms-chip { font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600; border-radius: 999px; padding: 7px 14px; border: 1px solid var(--br); background: var(--wh); color: var(--bd); cursor: pointer; transition: all .15s; }
+.cms-chip:hover { border-color: var(--ink); color: var(--ink); }
+.cms-chip.on { background: var(--ink); border-color: var(--ink); color: #fff; }
