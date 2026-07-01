@@ -8,13 +8,22 @@ import VersionHistory from './VersionHistory';
 
 const BLANK = {
   slug: '', title: '', description: '', videoUrl: '', thumbnail: '',
-  length: '', topic: '', date: '', transcript: '', published: false, order: 0,
+  length: '', topic: '', date: '', captions: '', transcript: '', published: false, order: 0, publishAt: '',
 };
+
+function toLocalDatetime(ms) {
+  const d = new Date(ms);
+  const pad = (n) => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
 
 export default function VideoEditor({ video, onDone, onCancel }) {
   const isNew = !video;
   const initial = useRef(null);
-  const [form, setForm] = useState(() => { const f = { ...BLANK, ...(video || {}) }; initial.current = JSON.stringify(f); return f; });
+  const [form, setForm] = useState(() => {
+    const f = { ...BLANK, ...(video || {}), publishAt: (video && video.publishAt) ? toLocalDatetime(video.publishAt) : '' };
+    initial.current = JSON.stringify(f); return f;
+  });
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const [okMsg, setOkMsg] = useState('');
@@ -46,12 +55,16 @@ export default function VideoEditor({ video, onDone, onCancel }) {
     if (!title) { setError('Please add a title.'); titleRef.current?.focus(); return; }
     const slug = form.slug.trim() || slugify(title);
     if (!slug) { setError('Please add a web address.'); return; }
+    const scheduledMs = (!form.published && form.publishAt) ? Date.parse(form.publishAt) : NaN;
+    const isScheduled = !Number.isNaN(scheduledMs);
     setBusy(true);
     try {
       await adminSaveVideo({
         slug, title, description: form.description.trim(), videoUrl: form.videoUrl.trim(),
         thumbnail: form.thumbnail.trim(), length: form.length.trim(), topic: form.topic.trim(),
-        date: form.date.trim(), transcript: form.transcript.trim(), published: !!form.published, order: Number(form.order) || 0,
+        date: form.date.trim(), captions: form.captions.trim(), transcript: form.transcript.trim(),
+        published: !!form.published, order: Number(form.order) || 0,
+        ...(isScheduled ? { publishAt: scheduledMs } : {}),
       }, isNew);
       initial.current = JSON.stringify(form);
       setOkMsg(form.published ? 'Saved ✓ — it’s live now.' : 'Saved as draft ✓');
@@ -147,9 +160,21 @@ export default function VideoEditor({ video, onDone, onCancel }) {
         </div>
 
         <div className="cms-field">
+          <label>Captions file (.vtt URL, optional)</label>
+          <input className="cms-input" placeholder="https://…/captions.vtt" value={form.captions} onChange={(e) => set('captions', e.target.value)} />
+          <p className="cms-hint">For directly-hosted videos — shows on-screen captions. (YouTube captions come from YouTube.)</p>
+        </div>
+
+        <div className="cms-field">
           <label>Transcript</label>
           <textarea className="cms-textarea" value={form.transcript} onChange={(e) => set('transcript', e.target.value)} />
           <p className="cms-hint">Shown under the video — helps search and AI tools find and quote it.</p>
+        </div>
+
+        <div className="cms-field">
+          <label>Schedule publish for later (optional)</label>
+          <input className="cms-input" type="datetime-local" style={{ maxWidth: 260 }} value={form.publishAt} disabled={form.published} onChange={(e) => set('publishAt', e.target.value)} />
+          <p className="cms-hint">{form.published ? 'Already published.' : 'Leave “Published” off and set a time — it goes live automatically.'}</p>
         </div>
 
         <div className="cms-toolbar">

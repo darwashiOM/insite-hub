@@ -18,7 +18,9 @@ function VideoCard({ video }) {
             <iframe className="vid-embed" src={`https://www.youtube.com/embed/${ytId}?autoplay=1`} title={video.title}
               allow="autoplay; encrypted-media; picture-in-picture" allowFullScreen />
           ) : video.videoUrl ? (
-            <video className="vid-embed" src={video.videoUrl} controls autoPlay />
+            <video className="vid-embed" src={video.videoUrl} controls autoPlay crossOrigin="anonymous">
+              {video.captions && <track kind="captions" src={video.captions} srcLang="en" label="English" default />}
+            </video>
           ) : (
             <div className="vid-noembed">No video source set.</div>
           )

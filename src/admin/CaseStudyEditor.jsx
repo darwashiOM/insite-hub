@@ -4,14 +4,26 @@ import {
   adminListCaseStudyVersions, adminRestoreCaseStudyVersion,
 } from '../lib/adminBlog';
 import VersionHistory from './VersionHistory';
+import CaseStudyLayout from '../components/CaseStudyLayout';
 
 const BLANK = {
   slug: '', title: '', client: '', industry: '', summary: '',
   challenge: '', solution: '', results: '',
   stats: [], heroImage: '', published: false, order: 0,
+  metaTitle: '', canonical: '', ogImage: '', noindex: false, publishAt: '',
 };
 
-const withStats = (cs) => ({ ...BLANK, ...(cs || {}), stats: ((cs && cs.stats) || []).map((s) => ({ ...s })) });
+function toLocalDatetime(ms) {
+  const d = new Date(ms);
+  const pad = (n) => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
+const withStats = (cs) => ({
+  ...BLANK, ...(cs || {}),
+  stats: ((cs && cs.stats) || []).map((s) => ({ ...s })),
+  publishAt: (cs && cs.publishAt) ? toLocalDatetime(cs.publishAt) : '',
+});
 
 export default function CaseStudyEditor({ caseStudy, onDone, onCancel }) {
   const isNew = !caseStudy;
@@ -21,6 +33,7 @@ export default function CaseStudyEditor({ caseStudy, onDone, onCancel }) {
   const [error, setError] = useState('');
   const [okMsg, setOkMsg] = useState('');
   const [slugDirty, setSlugDirty] = useState(!isNew);
+  const [previewOpen, setPreviewOpen] = useState(false);
   const titleRef = useRef(null);
 
   const dirty = JSON.stringify(form) !== initial.current;
@@ -55,6 +68,8 @@ export default function CaseStudyEditor({ caseStudy, onDone, onCancel }) {
     if (!title) { setError('Please add a title.'); titleRef.current?.focus(); return; }
     const slug = form.slug.trim() || slugify(title);
     if (!slug) { setError('Please add a web address.'); return; }
+    const scheduledMs = (!form.published && form.publishAt) ? Date.parse(form.publishAt) : NaN;
+    const isScheduled = !Number.isNaN(scheduledMs);
     setBusy(true);
     try {
       await adminSaveCaseStudy({
@@ -62,6 +77,8 @@ export default function CaseStudyEditor({ caseStudy, onDone, onCancel }) {
         challenge: form.challenge.trim(), solution: form.solution.trim(), results: form.results.trim(),
         stats: form.stats.map((s) => ({ value: (s.value || '').trim(), label: (s.label || '').trim() })).filter((s) => s.value || s.label),
         heroImage: form.heroImage.trim(), published: !!form.published, order: Number(form.order) || 0,
+        metaTitle: form.metaTitle.trim(), canonical: form.canonical.trim(), ogImage: form.ogImage.trim(), noindex: !!form.noindex,
+        ...(isScheduled ? { publishAt: scheduledMs } : {}),
       }, isNew);
       initial.current = JSON.stringify(form);
       setOkMsg(form.published ? 'Saved ✓ — it’s live now.' : 'Saved as draft ✓');
@@ -80,6 +97,7 @@ export default function CaseStudyEditor({ caseStudy, onDone, onCancel }) {
       <div className="cms-bar">
         <h1>{isNew ? 'New case study' : 'Edit case study'}</h1>
         <div style={{ display: 'flex', gap: 10 }}>
+          <button className="cms-btn" onClick={() => setPreviewOpen(true)} disabled={busy || !form.title.trim()}>Preview</button>
           <button className="cms-btn" onClick={cancel} disabled={busy}>Cancel</button>
           <button className="cms-btn cms-btn-primary" onClick={save} disabled={busy}>{busy ? 'Saving…' : 'Save'}</button>
         </div>
@@ -180,6 +198,31 @@ export default function CaseStudyEditor({ caseStudy, onDone, onCancel }) {
           <textarea className="cms-textarea" value={form.results} onChange={(e) => set('results', e.target.value)} />
         </div>
 
+        <div className="cms-section-h">Search &amp; sharing (optional)</div>
+        <div className="cms-field">
+          <label>Browser / search title</label>
+          <input className="cms-input" value={form.metaTitle} onChange={(e) => set('metaTitle', e.target.value)} />
+          <p className="cms-hint">Shown in the browser tab and Google. Defaults to the title.</p>
+        </div>
+        <div className="cms-row">
+          <div className="cms-field">
+            <label>Canonical URL</label>
+            <input className="cms-input" placeholder="Leave blank unless this duplicates another page" value={form.canonical} onChange={(e) => set('canonical', e.target.value)} />
+          </div>
+          <div className="cms-field">
+            <label>Social share image</label>
+            <input className="cms-input" placeholder="Image URL (defaults to the hero image)" value={form.ogImage} onChange={(e) => set('ogImage', e.target.value)} />
+          </div>
+        </div>
+        <label className="cms-check"><input type="checkbox" checked={form.noindex} onChange={(e) => set('noindex', e.target.checked)} /> Hide from search engines</label>
+
+        <div className="cms-section-h">Publishing</div>
+        <div className="cms-field">
+          <label>Schedule publish for later (optional)</label>
+          <input className="cms-input" type="datetime-local" style={{ maxWidth: 260 }} value={form.publishAt} disabled={form.published} onChange={(e) => set('publishAt', e.target.value)} />
+          <p className="cms-hint">{form.published ? 'Already published.' : 'Leave “Published” off and set a time — it goes live automatically.'}</p>
+        </div>
+
         <div className="cms-toolbar">
           <label className="cms-check">
             <input type="checkbox" checked={form.published} onChange={(e) => set('published', e.target.checked)} />
@@ -191,6 +234,18 @@ export default function CaseStudyEditor({ caseStudy, onDone, onCancel }) {
           <button className="cms-btn cms-btn-primary" onClick={save} disabled={busy}>{busy ? 'Saving…' : 'Save'}</button>
         </div>
       </div>
+
+      {previewOpen && (
+        <div className="cms-preview-overlay">
+          <div className="cms-preview-bar">
+            <span>Preview — how this case study will look. Nothing is saved.</span>
+            <button className="cms-btn cms-btn-sm" onClick={() => setPreviewOpen(false)}>Close preview</button>
+          </div>
+          <div className="cms-preview-body">
+            <CaseStudyLayout cs={form} setPage={() => {}} />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
