@@ -143,12 +143,12 @@ export default function ContactPage() {
           <label className="fl">Work Email *</label><input className="fi" type="email" placeholder="you@company.com" value={form.email} onChange={u("email")} />
           <label className="fl">Company</label><input className="fi" placeholder="Your organization" value={form.company} onChange={u("company")} />
           <label className="fl">Your Role</label>
-          <select className="fi" value={form.role} onChange={u("role")} style={{ appearance: "none" }}>
+          <select className="fi" aria-label="Your role" value={form.role} onChange={u("role")} style={{ appearance: "none" }}>
             <option value="">Select your role…</option>
             {["VP / Head of Commercial L&D","CLO","Director of Learning Technology","Head of Sales Force Effectiveness","Commercial IT / Digital","Other"].map(r => <option key={r}>{r}</option>)}
           </select>
           <label className="fl">I'm interested in… {selectedTrack && <span className="contact-prefill-note">Pre-filled from your track selection</span>}</label>
-          <select className="fi" value={form.interest} onChange={u("interest")} style={{ appearance: "none" }}>
+          <select className="fi" aria-label="I'm interested in" value={form.interest} onChange={u("interest")} style={{ appearance: "none" }}>
             <option value="">Select…</option>
             {["AI Platform demo","InsiteX LMS demo","Advisory consult","Content Development consult","Lab consult","AI Literacy consult","AI Readiness Framework","General inquiry"].map(i => <option key={i}>{i}</option>)}
           </select>
