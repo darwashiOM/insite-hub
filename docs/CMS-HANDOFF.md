@@ -9,6 +9,42 @@ deploy. It exists to satisfy Guiding Principle 5 ("built to hand off").
 
 ---
 
+## 0. Update — round-2 gap features + audit (2026-07-01)
+
+A second pass closed most of the "partial/missing" gaps from §3 below and then
+adversarially audited the new code (a 19-agent workflow: 11 issues found, all
+confirmed, **all fixed**). What's now added on top of the original build:
+
+- **Case studies & videos** reach full parity with the blog: per-item SEO
+  (search title, canonical, social image, hide-from-search), **schedule**, and
+  **live preview**; case studies emit Article + Breadcrumb structured data.
+- **Three-state workflow**: Draft / Ready for review / Published on every type.
+- **Two roles**: admin (everything) + **editor** (content only — no Site pages /
+  Navigation / Redirects / custom-code), via a second password `EDITOR_PASSWORD`.
+- **Activity log**: an append-only, admin-only record of every save + delete
+  (validated in the rules so it can't be forged), shown in an Activity tab.
+- **Page builder**: linkable from nav + CTA buttons; social image + canonical +
+  structured-data-type + admin-only custom-code; **Form**, **Logo strip** and
+  **Formatted text** section blocks; **duplicate** any page/post.
+- **Rich-text editor** (bold/italic/link/list) for post + section copy.
+- **Media**: uploads auto-downscale large photos; documents (PDF etc.) can live in
+  the library; video **captions** (.vtt).
+- **Visible breadcrumbs**; **per-page SEO for the fixed marketing pages** (baked
+  into the prerender); **site search**; **security headers**; **GTM** support.
+
+Audit fixes worth knowing: the scheduled-publish function now keeps `status` in
+sync with `published` (a scheduled post no longer silently unpublishes on the next
+edit); the prerender serves `/api/content` so marketer SEO overrides bake into the
+static HTML; custom-code is admin-only and no longer double-injected; built-page
+slugs can't collide with real routes.
+
+The rest of this document (the acceptance matrix, deploy runbook, needs-you list)
+still applies; where §3 said "partial/missing" for the items above, treat them as
+**built** now. Still outstanding: admin-form label a11y (internal-tool), a strict
+CSP (deferred for the custom-code slot), and the schema-driven content model.
+
+---
+
 ## 1. What it is
 
 A content management layer on top of the existing hand-built Proxa Labs site
@@ -127,6 +163,9 @@ None of these are doable by a non-technical person alone; all block full accepta
   also hardcodes `insitehub.com` and should be updated.
 - **OG share image** (~1200×630) → `VITE_OG_IMAGE`.
 - **`ADMIN_PASSWORD`** secret (the shared admin password).
+- **`EDITOR_PASSWORD`** secret (optional) — set it to enable the editor role /
+  second login; leave unset to keep admin-only. Bind it to the functions so it's
+  in `process.env` (e.g. `firebase functions:secrets:set EDITOR_PASSWORD`).
 - **SMTP creds** (`SMTP_EMAIL` / `SMTP_PASSWORD`) — form/contact notification email
   is fire-and-forget; a bad/missing config fails silently.
 - **Form CAPTCHA / App Check keys** — for the durable spam fix.
