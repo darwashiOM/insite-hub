@@ -39,9 +39,10 @@ jobs:
       - name: Build with Sentry release artifacts
         run: npm run build
 
-      # Deploy via the Firebase CLI (idempotent — always creates a fresh release, so
-      # it never fails with "version is already the current active version" the way
-      # action-hosting-deploy did when a build matched what was already live).
+      # Deploy via the Firebase CLI. If the exact same bytes are already live
+      # (manual deploys usually beat CI to it), Hosting refuses to re-release the
+      # active version — that means production already serves this build, so we
+      # treat it as success instead of a red X.
       - name: Deploy to Firebase Hosting
         run: |
           if [ "${FIREBASE_SERVICE_ACCOUNT:0:1}" = "{" ]; then
@@ -50,7 +51,14 @@ jobs:
             printf '%s' "$FIREBASE_SERVICE_ACCOUNT" | base64 -d > "$RUNNER_TEMP/sa.json"
           fi
           export GOOGLE_APPLICATION_CREDENTIALS="$RUNNER_TEMP/sa.json"
-          npx --yes firebase-tools@latest deploy --only hosting --project insite-hub-web --non-interactive
+          set -o pipefail
+          if ! npx --yes firebase-tools@latest deploy --only hosting --project insite-hub-web --non-interactive 2>&1 | tee deploy.log; then
+            if grep -q "is the current active version" deploy.log; then
+              echo "This exact build is already live — nothing new to release."
+            else
+              exit 1
+            fi
+          fi
         env:
           FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_INSITE_HUB_WEB }}
 
