@@ -1,11 +1,26 @@
-import { useState } from 'react';
-import { adminUploadImage } from '../lib/adminBlog';
+import { useState, useEffect } from 'react';
+import { adminUploadImage, adminListPageDestinations } from '../lib/adminBlog';
 import { NAV_DESTINATIONS } from '../content/navConfig';
+
+// Built-in destinations + published landing pages, loaded once and cached across
+// every button-picker on the page.
+let destCache = null;
+function usePageDestinations() {
+  const [dests, setDests] = useState(destCache || NAV_DESTINATIONS);
+  useEffect(() => {
+    if (destCache) return;
+    adminListPageDestinations()
+      .then((built) => { destCache = [...NAV_DESTINATIONS, ...built]; setDests(destCache); })
+      .catch(() => {});
+  }, []);
+  return dests;
+}
 
 // Renders the right input for one section field, by type. `value`/`onChange`
 // own the field's stored value.
 export default function SectionFieldEditor({ field, value, onChange }) {
   const [busy, setBusy] = useState(false);
+  const destinations = usePageDestinations();
   const upload = async (file) => {
     if (!file) return;
     setBusy(true);
@@ -32,7 +47,7 @@ export default function SectionFieldEditor({ field, value, onChange }) {
       <div className="cms-field"><label>{field.label}</label>
         <select className="cms-select" value={value || ''} onChange={(e) => onChange(e.target.value)}>
           <option value="">— choose a page —</option>
-          {NAV_DESTINATIONS.map((d) => <option key={d.page} value={d.page}>{d.label}</option>)}
+          {destinations.map((d) => <option key={d.page} value={d.page}>{d.label}</option>)}
         </select></div>
     );
   }

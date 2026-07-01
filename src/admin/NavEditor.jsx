@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import {
   adminGetPageContent, adminSavePageContent,
-  adminListPageVersions, adminRestorePageVersion,
+  adminListPageVersions, adminRestorePageVersion, adminListPageDestinations,
 } from '../lib/adminBlog';
 import { DEFAULT_MENUS, MENU_LABELS, NAV_DESTINATIONS, mergeMenus } from '../content/navConfig';
 import VersionHistory from './VersionHistory';
@@ -16,6 +16,9 @@ export default function NavEditor({ onDirtyChange }) {
   const [saved, setSaved] = useState(null);
   const [busy, setBusy] = useState(false);
   const [status, setStatus] = useState('');
+  // Built-in destinations + any published landing pages, so the marketer can link
+  // a menu item to a page they built.
+  const [destinations, setDestinations] = useState(NAV_DESTINATIONS);
 
   const loadInto = (data) => {
     const clone = JSON.parse(JSON.stringify(mergeMenus(data || {})));
@@ -28,6 +31,14 @@ export default function NavEditor({ onDirtyChange }) {
     adminGetPageContent('nav')
       .then((data) => { if (alive) loadInto(data); })
       .catch(() => { if (alive) loadInto({}); });
+    return () => { alive = false; };
+  }, []);
+
+  useEffect(() => {
+    let alive = true;
+    adminListPageDestinations()
+      .then((built) => { if (alive && built.length) setDestinations([...NAV_DESTINATIONS, ...built]); })
+      .catch(() => {});
     return () => { alive = false; };
   }, []);
 
@@ -105,7 +116,7 @@ export default function NavEditor({ onDirtyChange }) {
                 <div className="cms-field">
                   <label>Links to</label>
                   <select className="cms-select" value={it.page} onChange={(e) => setItem(key, i, { page: e.target.value })}>
-                    {NAV_DESTINATIONS.map((d) => <option key={d.page} value={d.page}>{d.label}</option>)}
+                    {destinations.map((d) => <option key={d.page} value={d.page}>{d.label}</option>)}
                   </select>
                 </div>
               </div>

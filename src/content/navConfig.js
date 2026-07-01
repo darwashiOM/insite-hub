@@ -38,8 +38,14 @@ export const NAV_DESTINATIONS = [
 
 const VALID_PAGES = new Set(NAV_DESTINATIONS.map((d) => d.page));
 
+// A nav item may point to a built-in destination OR a marketer-built landing page
+// (its slug, e.g. "ai-readiness-day"). Accept either; reject empty/garbage so a
+// bad override can't render a blank link.
+const isValidDestination = (page) => typeof page === 'string'
+  && (VALID_PAGES.has(page) || /^[a-z0-9][a-z0-9-]*$/.test(page));
+
 // Merge a saved override (may be partial / missing / malformed) onto the defaults.
-// Items are validated (real label + known destination) so a hand-edited or stale
+// Items are validated (real label + valid destination) so a hand-edited or stale
 // override can't render a blank or dead nav link; an emptied menu falls back to
 // the in-code default rather than rendering an empty dropdown.
 export function mergeMenus(override) {
@@ -48,7 +54,7 @@ export function mergeMenus(override) {
   for (const key of Object.keys(DEFAULT_MENUS)) {
     const items = Array.isArray(ov[key])
       ? ov[key]
-          .filter((it) => it && typeof it.label === 'string' && it.label.trim() && VALID_PAGES.has(it.page))
+          .filter((it) => it && typeof it.label === 'string' && it.label.trim() && isValidDestination(it.page))
           .map((it) => ({ label: it.label.trim(), page: it.page }))
       : [];
     out[key] = items.length ? items : DEFAULT_MENUS[key];

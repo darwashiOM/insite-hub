@@ -280,6 +280,13 @@ export async function adminDeletePage(slug) {
 export const adminListPageDocVersions = (slug) => listVersions(doc(db, 'pages', slug));
 export const adminRestorePageDocVersion = (slug, vid) => restoreVersion(doc(db, 'pages', slug), vid);
 
+// Published built pages as nav/CTA destinations: [{ page: slug, label: title }].
+// Lets the nav editor + section button-pickers link to marketer-built pages.
+export async function adminListPageDestinations() {
+  const pages = await adminListPages();
+  return pages.filter((p) => p.published).map((p) => ({ page: p.slug, label: p.title || p.slug }));
+}
+
 // --- Videos -----------------------------------------------------------------
 
 export async function adminListVideos() {
