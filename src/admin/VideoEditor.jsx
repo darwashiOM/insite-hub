@@ -5,6 +5,8 @@ import {
 } from '../lib/adminBlog';
 import { parseYouTubeId } from '../lib/videos';
 import VersionHistory from './VersionHistory';
+import StatusSelect from './StatusSelect';
+import { statusOf } from './status';
 
 const BLANK = {
   slug: '', title: '', description: '', videoUrl: '', thumbnail: '',
@@ -21,7 +23,7 @@ export default function VideoEditor({ video, onDone, onCancel }) {
   const isNew = !video;
   const initial = useRef(null);
   const [form, setForm] = useState(() => {
-    const f = { ...BLANK, ...(video || {}), publishAt: (video && video.publishAt) ? toLocalDatetime(video.publishAt) : '' };
+    const f = { ...BLANK, ...(video || {}), publishAt: (video && video.publishAt) ? toLocalDatetime(video.publishAt) : '', status: statusOf(video) };
     initial.current = JSON.stringify(f); return f;
   });
   const [busy, setBusy] = useState(false);
@@ -55,7 +57,8 @@ export default function VideoEditor({ video, onDone, onCancel }) {
     if (!title) { setError('Please add a title.'); titleRef.current?.focus(); return; }
     const slug = form.slug.trim() || slugify(title);
     if (!slug) { setError('Please add a web address.'); return; }
-    const scheduledMs = (!form.published && form.publishAt) ? Date.parse(form.publishAt) : NaN;
+    const published = form.status === 'published';
+    const scheduledMs = (!published && form.publishAt) ? Date.parse(form.publishAt) : NaN;
     const isScheduled = !Number.isNaN(scheduledMs);
     setBusy(true);
     try {
@@ -63,11 +66,11 @@ export default function VideoEditor({ video, onDone, onCancel }) {
         slug, title, description: form.description.trim(), videoUrl: form.videoUrl.trim(),
         thumbnail: form.thumbnail.trim(), length: form.length.trim(), topic: form.topic.trim(),
         date: form.date.trim(), captions: form.captions.trim(), transcript: form.transcript.trim(),
-        published: !!form.published, order: Number(form.order) || 0,
+        published, status: form.status, order: Number(form.order) || 0,
         ...(isScheduled ? { publishAt: scheduledMs } : {}),
       }, isNew);
       initial.current = JSON.stringify(form);
-      setOkMsg(form.published ? 'Saved ✓ — it’s live now.' : 'Saved as draft ✓');
+      setOkMsg(published ? 'Saved ✓ — it’s live now.' : form.status === 'review' ? 'Saved — ready for review ✓' : 'Saved as draft ✓');
       setBusy(false);
       setTimeout(() => onDone(), 800);
     } catch (e) {
@@ -97,7 +100,7 @@ export default function VideoEditor({ video, onDone, onCancel }) {
             load={() => adminListVideoVersions(video.slug)}
             onRestore={async (vid) => {
               const snap = await adminRestoreVideoVersion(video.slug, vid);
-              const f = { ...BLANK, ...snap };
+              const f = { ...BLANK, ...snap, publishAt: snap.publishAt ? toLocalDatetime(snap.publishAt) : '', status: statusOf(snap) };
               initial.current = JSON.stringify(f);
               setForm(f);
               setOkMsg('Restored ✓');
@@ -173,15 +176,12 @@ export default function VideoEditor({ video, onDone, onCancel }) {
 
         <div className="cms-field">
           <label>Schedule publish for later (optional)</label>
-          <input className="cms-input" type="datetime-local" style={{ maxWidth: 260 }} value={form.publishAt} disabled={form.published} onChange={(e) => set('publishAt', e.target.value)} />
-          <p className="cms-hint">{form.published ? 'Already published.' : 'Leave “Published” off and set a time — it goes live automatically.'}</p>
+          <input className="cms-input" type="datetime-local" style={{ maxWidth: 260 }} value={form.publishAt} disabled={form.status === 'published'} onChange={(e) => set('publishAt', e.target.value)} />
+          <p className="cms-hint">{form.status === 'published' ? 'Already published.' : 'Keep the status below on Draft/Review and set a time — it goes live automatically.'}</p>
         </div>
 
         <div className="cms-toolbar">
-          <label className="cms-check">
-            <input type="checkbox" checked={form.published} onChange={(e) => set('published', e.target.checked)} />
-            Published (visible on the public site)
-          </label>
+          <StatusSelect value={form.status} onChange={(v) => set('status', v)} />
           <div className="cms-toolbar-spacer" />
           {okMsg && <span className="cms-ok" style={{ marginRight: 12 }}>{okMsg}</span>}
           <button className="cms-btn" onClick={cancel} disabled={busy}>Cancel</button>

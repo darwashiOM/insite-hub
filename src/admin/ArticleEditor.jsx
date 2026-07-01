@@ -4,6 +4,8 @@ import {
   adminListArticleVersions, adminRestoreArticleVersion,
 } from '../lib/adminBlog';
 import VersionHistory from './VersionHistory';
+import StatusSelect from './StatusSelect';
+import { statusOf } from './status';
 import ArticleLayout from '../components/ArticleLayout';
 
 const BLANK = {
@@ -38,6 +40,7 @@ function fromArticle(a) {
     author: { ...BLANK.author, ...(a.author || {}) },
     tags: Array.isArray(a.tags) ? a.tags.join(', ') : (a.tags || ''),
     publishAt: a.publishAt ? toLocalDatetime(a.publishAt) : '',
+    status: statusOf(a),
     body: (a.body || []).map((b) =>
       b.type === 'h2' ? { ...b, navLabel: tocMap[b.id] && tocMap[b.id] !== b.text ? tocMap[b.id] : '' } : { ...b }
     ),
@@ -134,7 +137,8 @@ export default function ArticleEditor({ article, authors = [], knownTopics = [],
     // it even if the time has already passed (e.g. an incidental re-save after the
     // scheduled moment) — the scheduler publishes a past-due time on its next run,
     // so we don't silently drop the schedule and turn the post into a plain draft.
-    const scheduledMs = (!form.published && form.publishAt) ? Date.parse(form.publishAt) : NaN;
+    const published = form.status === 'published';
+    const scheduledMs = (!published && form.publishAt) ? Date.parse(form.publishAt) : NaN;
     const isScheduled = !Number.isNaN(scheduledMs);
     return {
       slug, pillar: form.pillar.trim(), topic: form.topic.trim(), tags, featured: !!form.featured,
@@ -148,7 +152,7 @@ export default function ArticleEditor({ article, authors = [], knownTopics = [],
       date: form.date.trim(), readTime: form.readTime.trim() || estimateReadTime(body),
       summary: form.summary.trim(), body, toc,
       related: form.related || [], thumb: form.thumb.trim(),
-      published: !!form.published, order: Number(form.order) || 0,
+      published, status: form.status, order: Number(form.order) || 0,
       ...(isScheduled ? { publishAt: scheduledMs } : {}),
     };
   };
@@ -168,6 +172,7 @@ export default function ArticleEditor({ article, authors = [], knownTopics = [],
       initial.current = JSON.stringify(form);
       setOkMsg(article.published ? 'Saved ✓ — it’s live now.'
         : article.publishAt ? `Saved ✓ — scheduled for ${new Date(article.publishAt).toLocaleString()}`
+        : form.status === 'review' ? 'Saved — ready for review ✓'
         : 'Saved as draft ✓');
       setBusy(false);
       setTimeout(() => onDone(), 900);
@@ -403,10 +408,7 @@ export default function ArticleEditor({ article, authors = [], knownTopics = [],
             <input type="checkbox" checked={form.featured} onChange={(e) => set('featured', e.target.checked)} />
             Featured
           </label>
-          <label className="cms-check">
-            <input type="checkbox" checked={form.published} onChange={(e) => set('published', e.target.checked)} />
-            Published (visible on the public site)
-          </label>
+          <StatusSelect value={form.status} onChange={(v) => set('status', v)} />
           <div className="cms-toolbar-spacer" />
           {okMsg && <span className="cms-ok" style={{ marginRight: 12 }}>{okMsg}</span>}
           {error && <span className="cms-err-inline" style={{ marginRight: 12 }}>{error}</span>}

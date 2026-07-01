@@ -5,6 +5,8 @@ import {
 } from '../lib/adminBlog';
 import VersionHistory from './VersionHistory';
 import CaseStudyLayout from '../components/CaseStudyLayout';
+import StatusSelect from './StatusSelect';
+import { statusOf } from './status';
 
 const BLANK = {
   slug: '', title: '', client: '', industry: '', summary: '',
@@ -23,6 +25,7 @@ const withStats = (cs) => ({
   ...BLANK, ...(cs || {}),
   stats: ((cs && cs.stats) || []).map((s) => ({ ...s })),
   publishAt: (cs && cs.publishAt) ? toLocalDatetime(cs.publishAt) : '',
+  status: statusOf(cs),
 });
 
 export default function CaseStudyEditor({ caseStudy, onDone, onCancel }) {
@@ -68,7 +71,8 @@ export default function CaseStudyEditor({ caseStudy, onDone, onCancel }) {
     if (!title) { setError('Please add a title.'); titleRef.current?.focus(); return; }
     const slug = form.slug.trim() || slugify(title);
     if (!slug) { setError('Please add a web address.'); return; }
-    const scheduledMs = (!form.published && form.publishAt) ? Date.parse(form.publishAt) : NaN;
+    const published = form.status === 'published';
+    const scheduledMs = (!published && form.publishAt) ? Date.parse(form.publishAt) : NaN;
     const isScheduled = !Number.isNaN(scheduledMs);
     setBusy(true);
     try {
@@ -76,12 +80,12 @@ export default function CaseStudyEditor({ caseStudy, onDone, onCancel }) {
         slug, title, client: form.client.trim(), industry: form.industry.trim(), summary: form.summary.trim(),
         challenge: form.challenge.trim(), solution: form.solution.trim(), results: form.results.trim(),
         stats: form.stats.map((s) => ({ value: (s.value || '').trim(), label: (s.label || '').trim() })).filter((s) => s.value || s.label),
-        heroImage: form.heroImage.trim(), published: !!form.published, order: Number(form.order) || 0,
+        heroImage: form.heroImage.trim(), published, status: form.status, order: Number(form.order) || 0,
         metaTitle: form.metaTitle.trim(), canonical: form.canonical.trim(), ogImage: form.ogImage.trim(), noindex: !!form.noindex,
         ...(isScheduled ? { publishAt: scheduledMs } : {}),
       }, isNew);
       initial.current = JSON.stringify(form);
-      setOkMsg(form.published ? 'Saved ✓ — it’s live now.' : 'Saved as draft ✓');
+      setOkMsg(published ? 'Saved ✓ — it’s live now.' : form.status === 'review' ? 'Saved — ready for review ✓' : 'Saved as draft ✓');
       setBusy(false);
       setTimeout(() => onDone(), 800);
     } catch (e) {
@@ -219,15 +223,12 @@ export default function CaseStudyEditor({ caseStudy, onDone, onCancel }) {
         <div className="cms-section-h">Publishing</div>
         <div className="cms-field">
           <label>Schedule publish for later (optional)</label>
-          <input className="cms-input" type="datetime-local" style={{ maxWidth: 260 }} value={form.publishAt} disabled={form.published} onChange={(e) => set('publishAt', e.target.value)} />
-          <p className="cms-hint">{form.published ? 'Already published.' : 'Leave “Published” off and set a time — it goes live automatically.'}</p>
+          <input className="cms-input" type="datetime-local" style={{ maxWidth: 260 }} value={form.publishAt} disabled={form.status === 'published'} onChange={(e) => set('publishAt', e.target.value)} />
+          <p className="cms-hint">{form.status === 'published' ? 'Already published.' : 'Keep the status below on Draft/Review and set a time — it goes live automatically.'}</p>
         </div>
 
         <div className="cms-toolbar">
-          <label className="cms-check">
-            <input type="checkbox" checked={form.published} onChange={(e) => set('published', e.target.checked)} />
-            Published (visible on the public site)
-          </label>
+          <StatusSelect value={form.status} onChange={(v) => set('status', v)} />
           <div className="cms-toolbar-spacer" />
           {okMsg && <span className="cms-ok" style={{ marginRight: 12 }}>{okMsg}</span>}
           <button className="cms-btn" onClick={cancel} disabled={busy}>Cancel</button>

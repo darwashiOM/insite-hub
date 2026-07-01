@@ -101,7 +101,13 @@ export default function AdminDashboard({ onLogout }) {
   }
 
   const Loading = <p style={{ color: '#5c6370' }}>Loading…</p>;
-  const badge = (pub) => <span className={'cms-badge ' + (pub ? 'cms-badge-pub' : 'cms-badge-draft')}>{pub ? 'Published' : 'Draft'}</span>;
+  const badge = (d) => {
+    const pub = d === true || (d && d.published);
+    if (pub) return <span className="cms-badge cms-badge-pub">Published</span>;
+    if (d && d.publishAt) return <span className="cms-badge cms-badge-draft">Scheduled</span>;
+    if (d && d.status === 'review') return <span className="cms-badge cms-badge-review">In review</span>;
+    return <span className="cms-badge cms-badge-draft">Draft</span>;
+  };
 
   return (
     <div className="cms-admin">
@@ -162,7 +168,7 @@ export default function AdminDashboard({ onLogout }) {
                         : <span>not published yet</span>}
                     </p>
                   </div>
-                  {badge(f.published)}
+                  {badge(f)}
                   <button className="cms-btn cms-btn-sm" onClick={() => setFormView(f.slug)}>Edit</button>
                   <button className="cms-btn cms-btn-sm cms-btn-danger" onClick={() => removeForm(f)}>Delete</button>
                 </div>
@@ -183,7 +189,7 @@ export default function AdminDashboard({ onLogout }) {
                       {p.published ? <a href={`/${p.slug}`} target="_blank" rel="noopener noreferrer">View live ↗</a> : <span>not published yet</span>}
                     </p>
                   </div>
-                  {badge(p.published)}
+                  {badge(p)}
                   <button className="cms-btn cms-btn-sm" onClick={() => setPageView(p.slug)}>Edit</button>
                   <button className="cms-btn cms-btn-sm cms-btn-danger" onClick={() => removePage(p)}>Delete</button>
                 </div>
@@ -221,7 +227,7 @@ export default function AdminDashboard({ onLogout }) {
                       {c.published ? <a href={`/case-studies/${c.slug}`} target="_blank" rel="noopener noreferrer">View live ↗</a> : <span>not published yet</span>}
                     </p>
                   </div>
-                  {badge(c.published)}
+                  {badge(c)}
                   <button className="cms-btn cms-btn-sm" onClick={() => setCsView(c.slug)}>Edit</button>
                   <button className="cms-btn cms-btn-sm cms-btn-danger" onClick={() => removeCaseStudy(c)}>Delete</button>
                 </div>
@@ -242,7 +248,7 @@ export default function AdminDashboard({ onLogout }) {
                       {v.published ? <a href="/videos" target="_blank" rel="noopener noreferrer">View gallery ↗</a> : <span>not published yet</span>}
                     </p>
                   </div>
-                  {badge(v.published)}
+                  {badge(v)}
                   <button className="cms-btn cms-btn-sm" onClick={() => setVidView(v.slug)}>Edit</button>
                   <button className="cms-btn cms-btn-sm cms-btn-danger" onClick={() => removeVideo(v)}>Delete</button>
                 </div>
@@ -264,7 +270,7 @@ export default function AdminDashboard({ onLogout }) {
                       : <span>not published yet</span>}
                   </p>
                 </div>
-                {a.published ? badge(true) : a.publishAt ? <span className="cms-badge cms-badge-draft">Scheduled</span> : badge(false)}
+                {badge(a)}
                 <button className="cms-btn cms-btn-sm" onClick={() => setView(a.slug)}>Edit</button>
                 <button className="cms-btn cms-btn-sm cms-btn-danger" onClick={() => removeArticle(a)}>Delete</button>
               </div>

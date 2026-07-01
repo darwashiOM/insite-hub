@@ -4,12 +4,15 @@ import { SECTION_KIT, SECTION_TYPES } from '../lib/pageSections';
 import SectionFieldEditor from './SectionFieldEditor';
 import SectionRenderer from '../components/SectionRenderer';
 import VersionHistory from './VersionHistory';
+import StatusSelect from './StatusSelect';
+import { statusOf } from './status';
 
 const BLANK = { slug: '', title: '', description: '', metaTitle: '', ogImage: '', canonical: '', structuredType: '', customCode: '', noindex: false, sections: [], published: false };
 
 const fromPage = (p) => ({
   ...BLANK, ...(p || {}),
   sections: ((p && p.sections) || []).map((s) => ({ type: s.type, data: { ...(s.data || {}) } })),
+  status: statusOf(p),
 });
 
 export default function PageBuilder({ page, onDone, onCancel }) {
@@ -62,10 +65,10 @@ export default function PageBuilder({ page, onDone, onCancel }) {
         slug, title, description: form.description.trim(), metaTitle: form.metaTitle.trim(),
         ogImage: form.ogImage.trim(), canonical: form.canonical.trim(),
         structuredType: form.structuredType, customCode: form.customCode,
-        noindex: !!form.noindex, sections: form.sections, published: !!form.published,
+        noindex: !!form.noindex, sections: form.sections, published: form.status === 'published', status: form.status,
       }, isNew);
       setSavedJson(JSON.stringify(form));
-      setOkMsg(form.published ? `Saved ✓ — live at /${slug}` : 'Saved as draft ✓');
+      setOkMsg(form.status === 'published' ? `Saved ✓ — live at /${slug}` : form.status === 'review' ? 'Saved — ready for review ✓' : 'Saved as draft ✓');
       setBusy(false);
       setTimeout(() => onDone(), 900);
     } catch (e) {
@@ -180,10 +183,7 @@ export default function PageBuilder({ page, onDone, onCancel }) {
         </div>
 
         <div className="cms-toolbar">
-          <label className="cms-check">
-            <input type="checkbox" checked={form.published} onChange={(e) => set('published', e.target.checked)} />
-            Published (live on the public site)
-          </label>
+          <StatusSelect value={form.status} onChange={(v) => set('status', v)} />
           <div className="cms-toolbar-spacer" />
           {okMsg && <span className="cms-ok" style={{ marginRight: 12 }}>{okMsg}</span>}
           <button className="cms-btn" onClick={cancel} disabled={busy}>Cancel</button>

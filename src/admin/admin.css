@@ -55,6 +55,7 @@
 .cms-badge { font-size: 11px; font-weight: 700; padding: 3px 9px; border-radius: 20px; text-transform: uppercase; letter-spacing: .04em; }
 .cms-badge-pub { background: rgba(156,169,121,.18); color: #5f6e3f; }
 .cms-badge-draft { background: #f0f0f2; color: var(--bd); }
+.cms-badge-review { background: rgba(224,106,63,.14); color: #b5502f; }
 
 /* editor */
 .cms-section-h { font-family: 'Manrope', sans-serif; font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; color: var(--bd); margin: 28px 0 12px; padding-top: 18px; border-top: 1px solid var(--br); }
