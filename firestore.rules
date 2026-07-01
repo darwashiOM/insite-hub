@@ -66,13 +66,20 @@ service cloud.firestore {
       }
     }
 
-    // Form definitions — public reads published forms (to render them); admin writes.
+    // Full form definitions are ADMIN-ONLY — they hold server-only fields
+    // (notifyEmail, gatedFileUrl). The public renders a form from the stripped
+    // formsPublic mirror instead; submitForm (admin SDK) reads this full doc.
     match /forms/{id} {
-      allow read: if resource.data.published == true || isAdmin();
-      allow create, update, delete: if isAdmin();
+      allow read, write: if isAdmin();
       match /versions/{versionId} {
         allow read, write: if isAdmin();
       }
+    }
+
+    // Public form-render mirror — safe subset (no notifyEmail / gatedFileUrl).
+    match /formsPublic/{id} {
+      allow read: if resource.data.published == true || isAdmin();
+      allow write: if isAdmin();
     }
 
     // Form submissions — admin-only reads; NO client writes (the submitForm Cloud

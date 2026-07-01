@@ -20,6 +20,15 @@ service firebase.storage {
                            && request.resource.contentType.matches('image/(png|jpe?g|gif|webp)')));
     }
 
+    // Gated / downloadable files (PDF whitepapers etc.). Admin uploads only, and
+    // not publicly listable — served only via the unguessable download-URL token
+    // that submitForm hands back after a valid submission, so the gate holds.
+    match /files/{allPaths=**} {
+      allow read: if false;
+      allow write: if isAdmin()
+                   && (request.resource == null || request.resource.size < 26 * 1024 * 1024);
+    }
+
     match /{allPaths=**} {
       allow read, write: if false;
     }

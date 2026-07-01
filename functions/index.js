@@ -83,6 +83,9 @@ exports.submitContact = onRequest(async (req, res) => {
     return;
   }
 
+  // Honeypot: a real user never fills this hidden field. Pretend success, store nothing.
+  if (req.body && req.body._hp) { res.status(200).json({ success: true }); return; }
+
   const { name, email, company, role, interest, message, track, source, asset } = req.body;
 
   if (!name || !email || !email.includes("@")) {
@@ -90,31 +93,38 @@ exports.submitContact = onRequest(async (req, res) => {
     return;
   }
 
+  // Rate limit so this endpoint can't be abused as an open email relay.
+  if (await enforceRateLimit(admin.firestore(), req, Date.now())) {
+    res.status(429).json({ error: "Too many submissions. Please try again later." }); return;
+  }
+
   // Lead-gen submissions (e.g. the Future-Proof gated landing page) carry a `source`
   // and an `asset` ("html" = viewed the article, "pdf" = downloaded the PDF).
   const isLead = source === "future-proof-landing";
   const assetLabel = asset === "html" ? "Viewed the HTML article" : asset === "pdf" ? "Downloaded the PDF" : asset;
   const trackLabel = { talk: "Ready to talk", learn: "Want to learn first", demo: "Ready for a demo" }[track] || track;
+  const sline = (s) => String(s == null ? "" : s).replace(/[\r\n]+/g, " ").trim(); // no header injection in subjects
 
+  // All user values escaped before they hit the notification-email HTML.
   const cell = (k, v) => `<tr><td style="padding:8px 16px 8px 0;font-weight:bold;color:#666;">${k}</td><td style="padding:8px 0;">${v}</td></tr>`;
   const rows = [];
   if (isLead) {
     rows.push(cell("Source", "Future-Proof landing page"));
-    if (asset) rows.push(cell("Asset", assetLabel));
+    if (asset) rows.push(cell("Asset", escapeHtml(assetLabel)));
   } else if (track) {
-    rows.push(cell("Track", trackLabel));
+    rows.push(cell("Track", escapeHtml(trackLabel)));
   }
-  rows.push(cell("Name", name));
-  rows.push(cell("Email", `<a href="mailto:${email}">${email}</a>`));
-  if (company) rows.push(cell("Company", company));
-  if (role) rows.push(cell("Role", role));
-  if (interest) rows.push(cell("Interest", interest));
-  if (message) rows.push(cell("Message", message));
+  rows.push(cell("Name", escapeHtml(name)));
+  rows.push(cell("Email", `<a href="mailto:${escapeHtml(email)}">${escapeHtml(email)}</a>`));
+  if (company) rows.push(cell("Company", escapeHtml(company)));
+  if (role) rows.push(cell("Role", escapeHtml(role)));
+  if (interest) rows.push(cell("Interest", escapeHtml(interest)));
+  if (message) rows.push(cell("Message", escapeHtml(message)));
 
   const heading = isLead ? "New Future-Proof Lead" : "New Proxa Labs Inquiry";
   const subject = isLead
-    ? `New Future-Proof lead: ${name}${asset ? ` (${asset})` : ""}`
-    : `New Proxa Labs inquiry from ${name}`;
+    ? `New Future-Proof lead: ${sline(name)}${asset ? ` (${sline(asset)})` : ""}`
+    : `New Proxa Labs inquiry from ${sline(name)}`;
 
   const html = `
     <h2>${heading}</h2>
@@ -145,11 +155,16 @@ exports.submitNewsletter = onRequest(async (req, res) => {
     res.status(405).json({ error: "Method not allowed" });
     return;
   }
+  if (req.body && req.body._hp) { res.status(200).json({ success: true }); return; }
   const { email, name, role, interests } = req.body;
   if (!email || !email.includes("@")) {
     res.status(400).json({ error: "Valid email is required." });
     return;
   }
+  if (await enforceRateLimit(admin.firestore(), req, Date.now())) {
+    res.status(429).json({ error: "Too many submissions. Please try again later." }); return;
+  }
+  const sline = (s) => String(s == null ? "" : s).replace(/[\r\n]+/g, " ").trim();
 
   const rows = [
     ["Email", email],
@@ -161,7 +176,7 @@ exports.submitNewsletter = onRequest(async (req, res) => {
   const html = `
     <h2>New Newsletter Subscriber</h2>
     <table style="border-collapse:collapse;font-family:sans-serif;font-size:14px;">
-      ${rows.map(([k, v]) => `<tr><td style="padding:8px 16px 8px 0;font-weight:bold;color:#666;">${k}</td><td style="padding:8px 0;">${v}</td></tr>`).join('')}
+      ${rows.map(([k, v]) => `<tr><td style="padding:8px 16px 8px 0;font-weight:bold;color:#666;">${k}</td><td style="padding:8px 0;">${escapeHtml(v)}</td></tr>`).join('')}
     </table>
   `;
 
@@ -171,7 +186,7 @@ exports.submitNewsletter = onRequest(async (req, res) => {
       from: getFromAddress(),
       to: getNotifyEmails(email),
       replyTo: email,
-      subject: name ? `New newsletter subscriber: ${name} <${email}>` : `New newsletter subscriber: ${email}`,
+      subject: name ? `New newsletter subscriber: ${sline(name)} <${sline(email)}>` : `New newsletter subscriber: ${sline(email)}`,
       html,
     });
     res.status(200).json({ success: true });
@@ -314,6 +329,26 @@ function rlNext(snap, now) {
   return { count: count + 1, first };
 }
 
+// Shared per-IP + global rate limit (one transaction so bursts can't race past
+// it). Returns true if over the limit. Used by every public email/form endpoint
+// so none is an open relay. The global cap bounds total volume even when the
+// per-IP key is forged on a direct call (App Check / CAPTCHA is the real fix).
+async function enforceRateLimit(db, req, now) {
+  const ipRef = db.collection("formRateLimit").doc(clientIp(req));
+  const gRef = db.collection("formRateLimit").doc("global-counter");
+  let limited = false;
+  await db.runTransaction(async (tx) => {
+    const [ipS, gS] = await Promise.all([tx.get(ipRef), tx.get(gRef)]);
+    const ipd = rlNext(ipS, now);
+    const gd = rlNext(gS, now);
+    if (ipd.count > FORM_MAX_PER_WINDOW || gd.count > FORM_GLOBAL_MAX) { limited = true; return; }
+    const expireAt = new Date(now + FORM_WINDOW_MS);
+    tx.set(ipRef, { ...ipd, expireAt }, { merge: true });
+    tx.set(gRef, { ...gd, expireAt }, { merge: true });
+  });
+  return limited;
+}
+
 function escapeHtml(v) {
   return String(v == null ? "" : v)
     .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
@@ -347,24 +382,11 @@ exports.submitForm = onRequest(async (req, res) => {
     }
     if (form.consentText && !body.consent) { res.status(400).json({ error: "Please accept to continue." }); return; }
 
-    // Rate limit: per-IP AND a global cap, in one transaction so concurrent bursts
-    // can't race past the limit. The global cap bounds total spam/email volume even
-    // if a caller forges the per-request IP (the per-IP key isn't trustworthy on a
-    // direct, non-Hosting call — a CAPTCHA / App Check is the real fix, see README).
-    const ip = clientIp(req);
-    const ipRef = db.collection("formRateLimit").doc(ip);
-    const gRef = db.collection("formRateLimit").doc("global-counter"); // not __x__ (Firestore reserves those)
-    let rateLimited = false;
-    await db.runTransaction(async (tx) => {
-      const [ipS, gS] = await Promise.all([tx.get(ipRef), tx.get(gRef)]);
-      const ipd = rlNext(ipS, now);
-      const gd = rlNext(gS, now);
-      if (ipd.count > FORM_MAX_PER_WINDOW || gd.count > FORM_GLOBAL_MAX) { rateLimited = true; return; }
-      const expireAt = new Date(now + FORM_WINDOW_MS); // for a Firestore TTL policy
-      tx.set(ipRef, { ...ipd, expireAt }, { merge: true });
-      tx.set(gRef, { ...gd, expireAt }, { merge: true });
-    });
-    if (rateLimited) { res.status(429).json({ error: "Too many submissions. Please try again later." }); return; }
+    // Rate limit (per-IP + global cap) — validated above first so a typo never
+    // burns budget and invalid spam never reaches the counter/store.
+    if (await enforceRateLimit(db, req, now)) {
+      res.status(429).json({ error: "Too many submissions. Please try again later." }); return;
+    }
 
     // Keep only fields the form defines + only known UTM keys (drop/cap everything
     // else to prevent arbitrary/oversized data being stored).

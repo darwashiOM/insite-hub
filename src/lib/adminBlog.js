@@ -3,7 +3,7 @@ import { dateTs } from './blog';
 import { auth, storage } from './firebaseAuth';
 import { signInWithCustomToken, signOut, onAuthStateChanged } from 'firebase/auth';
 import {
-  collection, getDocs, getDocsFromServer, doc, getDoc, serverTimestamp,
+  collection, getDocs, getDocsFromServer, doc, getDoc, setDoc, serverTimestamp,
   writeBatch, runTransaction, query, orderBy, limit,
   addDoc, updateDoc, deleteDoc,
 } from 'firebase/firestore';
@@ -172,6 +172,21 @@ export async function adminUploadImage(file) {
   return url;
 }
 
+const MAX_FILE_BYTES = 26 * 1024 * 1024;
+
+// Upload a downloadable/gated document (PDF, doc, etc.) to the non-public files/
+// path. Returns the tokened download URL (the gate secret). Not an image, so no
+// media-library record.
+export async function adminUploadFile(file) {
+  if (file.size >= MAX_FILE_BYTES) {
+    throw new Error('That file is too large — please use one under 25 MB.');
+  }
+  const safe = (file.name || 'file').replace(/[^a-zA-Z0-9._-]/g, '_');
+  const r = storageRef(storage, `files/${Date.now()}-${safe}`);
+  await uploadBytes(r, file, { contentType: file.type || 'application/octet-stream' });
+  return getDownloadURL(r);
+}
+
 // --- Media library ----------------------------------------------------------
 
 export async function adminListMedia() {
@@ -326,6 +341,12 @@ export async function adminSaveForm(form, isNew = false) {
     if (existing.exists()) throw new Error('A form already exists at that web address. Pick a different name or address.');
   }
   await saveWithHistory(ref, data);
+  // Public render mirror WITHOUT server-only fields (notifyEmail, gatedFileUrl) so
+  // an anonymous reader can't scrape the notify address or grab the gated file URL
+  // without submitting. The public form page reads formsPublic; submitForm (admin
+  // SDK) reads the full forms doc for the notify address + gated URL.
+  const { notifyEmail: _n, gatedFileUrl: _g, ...publicData } = data;
+  await setDoc(doc(db, 'formsPublic', slug), publicData);
   return slug;
 }
 
@@ -335,6 +356,7 @@ export async function adminDeleteForm(slug) {
   const batch = writeBatch(db);
   versions.docs.forEach((d) => batch.delete(d.ref));
   batch.delete(ref);
+  batch.delete(doc(db, 'formsPublic', slug));
   await batch.commit();
 }
 

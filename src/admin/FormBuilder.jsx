@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import {
-  adminSaveForm, slugify, adminUploadImage,
+  adminSaveForm, slugify, adminUploadFile,
   adminListFormVersions, adminRestoreFormVersion,
 } from '../lib/adminBlog';
 import VersionHistory from './VersionHistory';
@@ -62,7 +62,7 @@ export default function FormBuilder({ form, onDone, onCancel }) {
   const uploadGated = async (file) => {
     if (!file) return;
     setBusy(true); setError('');
-    try { set('gatedFileUrl', await adminUploadImage(file)); }
+    try { set('gatedFileUrl', await adminUploadFile(file)); }
     catch (e) { setError('Upload failed: ' + (e.message || e)); }
     finally { setBusy(false); }
   };
