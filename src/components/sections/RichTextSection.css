@@ -1,0 +1,8 @@
+.richtext-section { padding: 64px 24px; background: #fff; }
+.richtext-section-inner { max-width: 760px; margin: 0 auto; }
+.richtext-section-h { font-weight: 800; color: #0c1218; font-size: clamp(1.5rem, 3vw, 2rem); letter-spacing: -.02em; margin: 0 0 20px; }
+.richtext-section-body { color: #34404b; font-size: 1.08rem; line-height: 1.7; }
+.richtext-section-body p { margin: 0 0 16px; }
+.richtext-section-body a { color: #e06a3f; }
+.richtext-section-body ul, .richtext-section-body ol { margin: 12px 0; padding-left: 24px; }
+.richtext-section-body li { margin: 6px 0; }

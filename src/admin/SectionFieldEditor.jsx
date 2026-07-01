@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { adminUploadImage, adminListPageDestinations, adminListPublishedForms } from '../lib/adminBlog';
 import { NAV_DESTINATIONS } from '../content/navConfig';
+import RichText from './RichText';
 
 // Built-in destinations + published landing pages, loaded once and cached across
 // every button-picker on the page.
@@ -122,6 +123,13 @@ export default function SectionFieldEditor({ field, value, onChange }) {
           </div>
         ))}
         <div className="cms-addrow"><button className="cms-btn cms-btn-sm" onClick={() => onChange([...items, { question: '', answer: '' }])}>+ Add question</button></div>
+      </div>
+    );
+  }
+  if (field.type === 'richtext') {
+    return (
+      <div className="cms-field"><label>{field.label}</label>
+        <RichText value={value || ''} onChange={onChange} placeholder="Type here — select text to format" />
       </div>
     );
   }

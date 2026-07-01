@@ -7,6 +7,7 @@ import PullQuote from '../components/sections/PullQuote';
 import FaqSection from '../components/sections/FaqSection';
 import LogoStrip from '../components/sections/LogoStrip';
 import FormSectionBlock from '../components/FormSectionBlock';
+import RichTextSection from '../components/sections/RichTextSection';
 
 /*
  * The "kit of ready-made sections" (Mercy's S3). Each section type wraps a real
@@ -42,6 +43,14 @@ export const SECTION_KIT = {
       <SplitFeature eyebrow={d.eyebrow} heading={d.heading} body={d.body} reverse={!!d.reverse}
         visual={d.image ? <img src={d.image} alt="" style={{ width: '100%', borderRadius: 16, display: 'block' }} /> : null} />
     ),
+  },
+  richText: {
+    label: 'Formatted text',
+    fields: [
+      { key: 'heading', label: 'Heading (optional)', type: 'text' },
+      { key: 'body', label: 'Text', type: 'richtext' },
+    ],
+    render: (d) => <RichTextSection heading={d.heading} body={d.body} />,
   },
   cards: {
     label: 'Feature cards',

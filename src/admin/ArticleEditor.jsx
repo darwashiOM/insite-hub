@@ -6,6 +6,7 @@ import {
 import VersionHistory from './VersionHistory';
 import StatusSelect from './StatusSelect';
 import { statusOf } from './status';
+import RichText from './RichText';
 import ArticleLayout from '../components/ArticleLayout';
 
 const BLANK = {
@@ -344,10 +345,12 @@ export default function ArticleEditor({ article, authors = [], knownTopics = [],
                   </div>
                 )}
               </>
+            ) : b.type === 'quote' ? (
+              <textarea className="cms-textarea" placeholder="Quote text"
+                value={b.text || ''} onChange={(e) => setBlock(i, { text: e.target.value })} />
             ) : (
-              <textarea className="cms-textarea" placeholder={b.type === 'quote' ? 'Quote text' : 'Paragraph text'}
-                value={b.type === 'quote' ? (b.text || '') : (b.html || '')}
-                onChange={(e) => setBlock(i, b.type === 'quote' ? { text: e.target.value } : { html: e.target.value })} />
+              <RichText value={b.html || ''} placeholder="Paragraph text — select to make bold/italic, add a link or a list"
+                onChange={(v) => setBlock(i, { html: v })} />
             )}
           </div>
         ))}

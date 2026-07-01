@@ -1,0 +1,8 @@
+.richtext { border: 1px solid #d9dce1; border-radius: 8px; overflow: hidden; background: #fff; }
+.richtext-toolbar { display: flex; gap: 2px; padding: 6px; background: #f7f8fa; border-bottom: 1px solid #e6e8ec; }
+.richtext-btn { background: #fff; border: 1px solid #e0e3e8; border-radius: 5px; padding: 3px 9px; font-size: 13px; cursor: pointer; color: #46525f; }
+.richtext-btn:hover { background: #eef0f3; }
+.richtext-area { border: none !important; border-radius: 0; min-height: 90px; padding: 12px 14px; outline: none; line-height: 1.6; }
+.richtext-area:empty::before { content: attr(data-placeholder); color: #a6adb6; }
+.richtext-area a { color: #e06a3f; }
+.richtext-area ul { margin: 8px 0; padding-left: 22px; }
