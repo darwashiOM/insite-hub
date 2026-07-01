@@ -4,6 +4,7 @@ import { SECTION_KIT, SECTION_TYPES } from '../lib/pageSections';
 import SectionFieldEditor from './SectionFieldEditor';
 import SectionRenderer from '../components/SectionRenderer';
 import VersionHistory from './VersionHistory';
+import SeoPreview, { CharCount } from './SeoPreview';
 import StatusSelect from './StatusSelect';
 import { statusOf } from './status';
 
@@ -143,19 +144,25 @@ export default function PageBuilder({ page, isAdmin = true, onDone, onCancel }) 
         <div className="cms-field">
           <label>Search description</label>
           <textarea className="cms-textarea" style={{ minHeight: 56 }} value={form.description} onChange={(e) => set('description', e.target.value)} />
+          <CharCount value={form.description} max={160} />
           <p className="cms-hint">Shown in Google results and link previews.</p>
         </div>
         <div className="cms-row">
           <div className="cms-field">
             <label>Browser / search title (optional)</label>
-            <input className="cms-input" value={form.metaTitle} onChange={(e) => set('metaTitle', e.target.value)} />
+            <input className="cms-input" value={form.metaTitle} onChange={(e) => set('metaTitle', e.target.value)}
+              placeholder={form.title ? `${form.title} · Proxa Labs` : 'Uses the page title'} />
+            <CharCount value={form.metaTitle} max={60} />
           </div>
           <div className="cms-field">
             <label className="cms-check" style={{ marginTop: 28 }}>
               <input type="checkbox" checked={form.noindex} onChange={(e) => set('noindex', e.target.checked)} /> Hide from search engines
             </label>
+            {form.noindex && <p className="cms-noindex-warn">⚠ Google will drop this page. Leave off unless you’re sure.</p>}
           </div>
         </div>
+        <SeoPreview title={form.metaTitle || (form.title ? `${form.title} · Proxa Labs` : '')}
+          description={form.description} path={`/${form.slug || '…'}`} />
         <div className="cms-row">
           <div className="cms-field">
             <label>Social share image (optional)</label>

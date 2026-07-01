@@ -6,6 +6,7 @@ import {
 import VersionHistory from './VersionHistory';
 import { useDraftBackup, useSaveShortcut, useFadingMessage } from './useEditorSafety';
 import RestoreBanner from './RestoreBanner';
+import SeoPreview, { CharCount } from './SeoPreview';
 import StatusSelect from './StatusSelect';
 import { statusOf } from './status';
 import RichText from './RichText';
@@ -290,24 +291,31 @@ export default function ArticleEditor({ article, authors = [], knownTopics = [],
           <label>Search &amp; share preview text</label>
           <textarea className="cms-textarea" style={{ minHeight: 64 }} value={form.description}
             onChange={(e) => set('description', e.target.value)} />
+          <CharCount value={form.description} max={160} />
           <p className="cms-hint">Shown in Google results and link previews. ~1–2 sentences.</p>
         </div>
 
         <div className="cms-section-h">Search &amp; sharing (optional)</div>
         <div className="cms-field">
           <label>Browser / search title</label>
-          <input className="cms-input" value={form.metaTitle} onChange={(e) => set('metaTitle', e.target.value)} />
+          <input className="cms-input" value={form.metaTitle} onChange={(e) => set('metaTitle', e.target.value)}
+            placeholder={form.title ? `${form.title} · Proxa Labs` : 'Uses the title'} />
+          <CharCount value={form.metaTitle} max={60} />
           <p className="cms-hint">Overrides the title in the browser tab and Google. Leave blank to use the headline.</p>
         </div>
+        <SeoPreview title={form.metaTitle || (form.title ? `${form.title} · Proxa Labs` : '')}
+          description={form.description} path={`/blog/${form.slug || '…'}`} />
         <div className="cms-row">
           <div className="cms-field">
             <label>Canonical URL</label>
             <input className="cms-input" value={form.canonical} onChange={(e) => set('canonical', e.target.value)} />
-            <p className="cms-hint">Only if this post duplicates another page. Leave blank otherwise.</p>
+            {form.canonical.trim() && !/^https?:\/\//.test(form.canonical.trim())
+              ? <p className="cms-hint cms-count-over">Must be a full address starting with https://</p>
+              : <p className="cms-hint">Only if this post duplicates another page. Leave blank otherwise.</p>}
           </div>
           <div className="cms-field">
             <label>Social share image</label>
-            <input className="cms-input" placeholder="Image URL" value={form.ogImage} onChange={(e) => set('ogImage', e.target.value)} />
+            <input className="cms-input" placeholder={form.thumb ? 'Uses the thumbnail image' : 'Image URL'} value={form.ogImage} onChange={(e) => set('ogImage', e.target.value)} />
             <p className="cms-hint">For link previews. Falls back to the hero image.</p>
           </div>
         </div>
@@ -316,6 +324,7 @@ export default function ArticleEditor({ article, authors = [], knownTopics = [],
             <input type="checkbox" checked={form.noindex} onChange={(e) => set('noindex', e.target.checked)} />
             Hide this post from search engines (no-index)
           </label>
+          {form.noindex && <p className="cms-noindex-warn">⚠ Google and other search engines will drop this post. Leave off unless you’re sure.</p>}
         </div>
 
         <div className="cms-field">

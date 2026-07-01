@@ -6,6 +6,7 @@ import RichText from './RichText';
 import VersionHistory from './VersionHistory';
 import { useDraftBackup, useSaveShortcut, useFadingMessage } from './useEditorSafety';
 import RestoreBanner from './RestoreBanner';
+import SeoPreview, { CharCount } from './SeoPreview';
 import EntryLayout from '../components/EntryLayout';
 
 const from = (type, entry) => ({
@@ -142,14 +143,19 @@ export default function ContentEntryEditor({ type, entry, onCancel, onDirty }) {
 
         <div className="cms-section-h">Search &amp; sharing (optional)</div>
         <div className="cms-field"><label>Browser / search title</label>
-          <input className="cms-input" value={form.metaTitle} onChange={(e) => set('metaTitle', e.target.value)} /></div>
-        <div className="cms-row">
-          <div className="cms-field"><label>Search description</label>
-            <input className="cms-input" value={form.description} onChange={(e) => set('description', e.target.value)} /></div>
-          <div className="cms-field"><label>Social share image</label>
-            <input className="cms-input" placeholder="Image URL" value={form.ogImage} onChange={(e) => set('ogImage', e.target.value)} /></div>
-        </div>
+          <input className="cms-input" value={form.metaTitle} onChange={(e) => set('metaTitle', e.target.value)}
+            placeholder={form.title ? `${form.title} · Proxa Labs` : 'Uses the title'} />
+          <CharCount value={form.metaTitle} max={60} /></div>
+        <div className="cms-field"><label>Search description</label>
+          <textarea className="cms-textarea" style={{ minHeight: 56 }} value={form.description} onChange={(e) => set('description', e.target.value)} />
+          <CharCount value={form.description} max={160} />
+          <p className="cms-hint">Shown in Google results and link previews.</p></div>
+        <SeoPreview title={form.metaTitle || (form.title ? `${form.title} · Proxa Labs` : '')}
+          description={form.description || form.summary} path={`/${type.key}/${form.slug || '…'}`} />
+        <div className="cms-field"><label>Social share image</label>
+          <input className="cms-input" placeholder="Image URL" value={form.ogImage} onChange={(e) => set('ogImage', e.target.value)} /></div>
         <label className="cms-check"><input type="checkbox" checked={form.noindex} onChange={(e) => set('noindex', e.target.checked)} /> Hide from search engines</label>
+        {form.noindex && <p className="cms-noindex-warn">⚠ Google and other search engines will drop this page. Leave off unless you’re sure.</p>}
 
         <div className="cms-toolbar">
           <StatusSelect value={form.status} onChange={(v) => set('status', v)} />

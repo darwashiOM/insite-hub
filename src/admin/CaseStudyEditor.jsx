@@ -6,6 +6,7 @@ import {
 import VersionHistory from './VersionHistory';
 import { useDraftBackup, useSaveShortcut, useFadingMessage } from './useEditorSafety';
 import RestoreBanner from './RestoreBanner';
+import SeoPreview, { CharCount } from './SeoPreview';
 import CaseStudyLayout from '../components/CaseStudyLayout';
 import StatusSelect from './StatusSelect';
 import { statusOf } from './status';
@@ -223,13 +224,18 @@ export default function CaseStudyEditor({ caseStudy, onCancel }) {
         <div className="cms-section-h">Search &amp; sharing (optional)</div>
         <div className="cms-field">
           <label>Browser / search title</label>
-          <input className="cms-input" value={form.metaTitle} onChange={(e) => set('metaTitle', e.target.value)} />
+          <input className="cms-input" value={form.metaTitle} onChange={(e) => set('metaTitle', e.target.value)}
+            placeholder={form.title ? `${form.title} · Proxa Labs` : 'Uses the title'} />
+          <CharCount value={form.metaTitle} max={60} />
           <p className="cms-hint">Shown in the browser tab and Google. Defaults to the title.</p>
         </div>
+        <SeoPreview title={form.metaTitle || (form.title ? `${form.title} · Proxa Labs` : '')}
+          description={form.summary} path={`/case-studies/${form.slug || '…'}`} />
         <div className="cms-row">
           <div className="cms-field">
             <label>Canonical URL</label>
             <input className="cms-input" placeholder="Leave blank unless this duplicates another page" value={form.canonical} onChange={(e) => set('canonical', e.target.value)} />
+            {form.canonical.trim() && !/^https?:\/\//.test(form.canonical.trim()) && <p className="cms-hint cms-count-over">Must be a full address starting with https://</p>}
           </div>
           <div className="cms-field">
             <label>Social share image</label>
@@ -237,6 +243,7 @@ export default function CaseStudyEditor({ caseStudy, onCancel }) {
           </div>
         </div>
         <label className="cms-check"><input type="checkbox" checked={form.noindex} onChange={(e) => set('noindex', e.target.checked)} /> Hide from search engines</label>
+        {form.noindex && <p className="cms-noindex-warn">⚠ Google and other search engines will drop this page. Leave off unless you’re sure.</p>}
 
         <div className="cms-section-h">Publishing</div>
         <div className="cms-field">
