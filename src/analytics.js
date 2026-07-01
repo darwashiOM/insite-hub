@@ -1,8 +1,9 @@
-// GA4 analytics. No-ops unless VITE_GA4_MEASUREMENT_ID is set, so dev/preview
-// stay clean and the build works fine before the GA4 property exists.
+// GA4 analytics. Active in production builds (Proxa Labs Web stream, G-Y4K353NB4T);
+// no-ops in dev so local work doesn't pollute the property. Override with
+// VITE_GA4_MEASUREMENT_ID if the stream ever changes.
 // We send page_view manually on each route change (this is a client-rendered
 // SPA), so automatic page_view is turned off in the config call below.
-const GA_ID = import.meta.env.VITE_GA4_MEASUREMENT_ID;
+const GA_ID = import.meta.env.VITE_GA4_MEASUREMENT_ID || (import.meta.env.PROD ? 'G-Y4K353NB4T' : '');
 // Optional Google Tag Manager container (set VITE_GTM_ID). Lets marketing add
 // tracking/marketing tags later without a developer. GA4 + GTM can coexist.
 const GTM_ID = import.meta.env.VITE_GTM_ID;
@@ -11,6 +12,9 @@ let started = false;
 
 export function initAnalytics() {
   if (!GA_ID || started) return;
+  // Never track localhost — keeps the dev server and the prerender crawler (which
+  // loads the production build on a local static server) out of the analytics.
+  if (/^(localhost$|127\.|\[?::1)/.test(window.location.hostname)) return;
   started = true;
 
   const s = document.createElement('script');
