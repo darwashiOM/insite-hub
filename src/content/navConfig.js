@@ -39,10 +39,11 @@ export const NAV_DESTINATIONS = [
 const VALID_PAGES = new Set(NAV_DESTINATIONS.map((d) => d.page));
 
 // A nav item may point to a built-in destination OR a marketer-built landing page
-// (its slug, e.g. "ai-readiness-day"). Accept either; reject empty/garbage so a
-// bad override can't render a blank link.
+// (its slug, e.g. "ai-readiness-day"). Accept either; reject empty/garbage and the
+// app's own internal routing keys so a nav link can't surface admin/search/etc.
+const RESERVED_KEYS = new Set(['admin', 'search', 'notfound', 'dynamicPage', 'article', 'caseStudy', 'form']);
 const isValidDestination = (page) => typeof page === 'string'
-  && (VALID_PAGES.has(page) || /^[a-z0-9][a-z0-9-]*$/.test(page));
+  && (VALID_PAGES.has(page) || (/^[a-z0-9][a-z0-9-]*$/.test(page) && !RESERVED_KEYS.has(page)));
 
 // Merge a saved override (may be partial / missing / malformed) onto the defaults.
 // Items are validated (real label + valid destination) so a hand-edited or stale

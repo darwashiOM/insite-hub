@@ -56,11 +56,30 @@ async function dynamicRoutes() {
   }
 }
 
+// The marketing pages fetch /api/content for their SEO/copy overrides. In prod
+// that's a Cloud Function; here we serve the same payload (all siteContent docs)
+// so per-page SEO overrides actually get baked into the snapshot.
+async function buildContentPayload() {
+  try {
+    const admin = require('firebase-admin');
+    if (!admin.apps.length) admin.initializeApp({ projectId: 'insite-hub-web' });
+    const snap = await admin.firestore().collection('siteContent').get();
+    const out = {};
+    snap.forEach((d) => { out[d.id] = d.data(); });
+    return out;
+  } catch { return {}; }
+}
+
 // Serve dist, but always return index.html for page routes so every route renders
 // the SPA fresh (ignoring any per-route file written earlier this run).
-function startServer() {
+function startServer(contentJson) {
   const server = http.createServer((req, res) => {
     const p = decodeURIComponent(req.url.split('?')[0]);
+    if (p === '/api/content') {
+      res.writeHead(200, { 'content-type': 'application/json' });
+      res.end(contentJson);
+      return;
+    }
     const ext = extname(p);
     let filePath = (ext && MIME[ext]) ? join(DIST, p) : join(DIST, 'index.html');
     if (!existsSync(filePath)) filePath = join(DIST, 'index.html');
@@ -105,7 +124,7 @@ function writeSitemap(routes) {
     console.error('No dist/index.html — run `vite build` first.');
     process.exit(1);
   }
-  const server = await startServer();
+  const server = await startServer(JSON.stringify(await buildContentPayload()));
   const routes = [...STATIC_ROUTES.map((p) => ({ path: p, noindex: false })), ...(await dynamicRoutes())];
   console.log(`Prerendering ${routes.length} routes...`);
   const browser = await chromium.launch();

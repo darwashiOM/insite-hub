@@ -105,7 +105,7 @@ export default function AdminDashboard({ role, onLogout }) {
   }
   if (tab === 'landing' && pageView !== 'list') {
     const editing = pageView === 'new' ? null : pages?.find((p) => p.slug === pageView) || null;
-    return <PageBuilder page={editing} onDone={() => { setPageView('list'); refresh(); }} onCancel={() => setPageView('list')} />;
+    return <PageBuilder page={editing} isAdmin={isAdmin} onDone={() => { setPageView('list'); refresh(); }} onCancel={() => setPageView('list')} />;
   }
 
   const Loading = <p style={{ color: '#5c6370' }}>Loading…</p>;

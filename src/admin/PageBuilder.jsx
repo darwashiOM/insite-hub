@@ -15,7 +15,7 @@ const fromPage = (p) => ({
   status: statusOf(p),
 });
 
-export default function PageBuilder({ page, onDone, onCancel }) {
+export default function PageBuilder({ page, isAdmin = true, onDone, onCancel }) {
   const isNew = !page;
   const [form, setForm] = useState(() => fromPage(page));
   const [savedJson, setSavedJson] = useState(() => JSON.stringify(fromPage(page)));
@@ -176,11 +176,13 @@ export default function PageBuilder({ page, onDone, onCancel }) {
             <option value="CollectionPage">Collection / listing page</option>
           </select>
         </div>
-        <div className="cms-field">
-          <label>Custom code (advanced, optional)</label>
-          <textarea className="cms-textarea" style={{ minHeight: 60, fontFamily: 'monospace', fontSize: 13 }} value={form.customCode} onChange={(e) => set('customCode', e.target.value)} placeholder="e.g. a tracking pixel or a schema snippet" />
-          <p className="cms-hint">Added to this page only. Leave blank unless you know what to put here.</p>
-        </div>
+        {isAdmin && (
+          <div className="cms-field">
+            <label>Custom code (advanced, optional)</label>
+            <textarea className="cms-textarea" style={{ minHeight: 60, fontFamily: 'monospace', fontSize: 13 }} value={form.customCode} onChange={(e) => set('customCode', e.target.value)} placeholder="e.g. a tracking pixel or a schema snippet" />
+            <p className="cms-hint">Added to this page only, and runs as code. Admins only.</p>
+          </div>
+        )}
 
         <div className="cms-toolbar">
           <StatusSelect value={form.status} onChange={(v) => set('status', v)} />

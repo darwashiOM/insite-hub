@@ -29,9 +29,15 @@ service cloud.firestore {
     }
 
     // CMS-built pages (kit-of-sections) — public reads published ones; staff writes.
+    // customCode injects executable script into the page head, so only an ADMIN may
+    // set or change it; an editor must leave it empty (create) or unchanged (update).
     match /pages/{id} {
       allow read: if resource.data.published == true || isStaff();
-      allow create, update, delete: if isStaff();
+      allow create: if isStaff()
+                    && (isAdmin() || !('customCode' in request.resource.data) || request.resource.data.customCode == '');
+      allow update: if isStaff()
+                    && (isAdmin() || request.resource.data.customCode == resource.data.customCode);
+      allow delete: if isStaff();
       match /versions/{versionId} {
         allow read, write: if isStaff();
       }
@@ -103,9 +109,15 @@ service cloud.firestore {
     }
 
     // Activity log (who changed what, when). Staff append; only admins read it;
-    // never editable/deletable so the record can't be tampered with.
+    // never editable/deletable. The create is validated so an editor can't forge
+    // the actor, backdate the entry, or add extra fields.
     match /auditLog/{id} {
-      allow create: if isStaff();
+      allow create: if isStaff()
+                    && request.resource.data.actor == (request.auth.token.admin == true ? 'admin' : 'editor')
+                    && request.resource.data.at == request.time
+                    && request.resource.data.keys().hasOnly(['action', 'collection', 'docId', 'actor', 'at'])
+                    && request.resource.data.action is string
+                    && request.resource.data.collection is string;
       allow read: if isAdmin();
       allow update, delete: if false;
     }

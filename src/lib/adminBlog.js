@@ -167,6 +167,7 @@ export async function adminDeleteArticle(slug) {
   versions.docs.forEach((d) => batch.delete(d.ref));
   batch.delete(ref);
   await batch.commit();
+  logActivity('delete', 'articles', slug);
 }
 
 // Upload an image to Storage under blog/ and return its public download URL.
@@ -180,7 +181,9 @@ const MAX_IMAGE_DIM = 2000;
 async function downscaleImage(file) {
   if (!/image\/(jpeg|png|webp)/.test(file.type) || file.size < 400 * 1024) return file;
   try {
-    const bitmap = await createImageBitmap(file);
+    // from-image bakes in the EXIF orientation so phone photos aren't rotated
+    // sideways once we re-encode (which drops the EXIF tag).
+    const bitmap = await createImageBitmap(file, { imageOrientation: 'from-image' });
     const big = bitmap.width > MAX_IMAGE_DIM || bitmap.height > MAX_IMAGE_DIM;
     if (!big && file.size < 1.5 * 1024 * 1024) { bitmap.close?.(); return file; }
     const scale = Math.min(1, MAX_IMAGE_DIM / Math.max(bitmap.width, bitmap.height));
@@ -299,6 +302,7 @@ export async function adminDeleteCaseStudy(slug) {
   versions.docs.forEach((d) => batch.delete(d.ref));
   batch.delete(ref);
   await batch.commit();
+  logActivity('delete', 'caseStudies', slug);
 }
 
 export const adminListCaseStudyVersions = (slug) => listVersions(doc(db, 'caseStudies', slug));
@@ -317,10 +321,19 @@ export async function adminGetPage(slug) {
   return s.exists() ? { id: s.id, ...s.data() } : null;
 }
 
+// Slugs that would collide with a hardcoded site route (so /slug resolves to the
+// built-in page on reload instead of the built page).
+const RESERVED_SLUGS = new Set([
+  'platform', 'advisory', 'ai-literacy', 'insitex-lms', 'content-development', 'the-lab',
+  'about', 'announcements', 'resources', 'newsletter', 'contact', 'future-proof-your-organization',
+  'search', 'blog', 'case-studies', 'videos', 'noonewillfindthis', 'admin', 'api', 'assets',
+]);
+
 export async function adminSavePage(page, isNew = false) {
   const { id: _id, ...data } = page;
   const slug = data.slug;
   if (!slug) throw new Error('A web address is required.');
+  if (RESERVED_SLUGS.has(slug)) throw new Error(`“/${slug}” is a reserved site address — pick a different one.`);
   const ref = doc(db, 'pages', slug);
   if (isNew) {
     const existing = await getDoc(ref);
@@ -337,6 +350,7 @@ export async function adminDeletePage(slug) {
   versions.docs.forEach((d) => batch.delete(d.ref));
   batch.delete(ref);
   await batch.commit();
+  logActivity('delete', 'pages', slug);
 }
 
 export const adminListPageDocVersions = (slug) => listVersions(doc(db, 'pages', slug));
@@ -354,7 +368,9 @@ export async function adminListPageDestinations() {
 async function duplicateDoc(col, slug, save) {
   const s = await getDoc(doc(db, col, slug));
   if (!s.exists()) throw new Error('That item no longer exists.');
-  const { publishAt: _pa, ...data } = s.data();
+  // Drop fields a copy must not inherit: the schedule, the canonical (which would
+  // point the copy back at the original), and any custom code/scripts.
+  const { publishAt: _pa, canonical: _c, customCode: _cc, ...data } = s.data();
   let newSlug = `${slug}-copy`, n = 2;
   while ((await getDoc(doc(db, col, newSlug))).exists()) newSlug = `${slug}-copy-${n++}`;
   await save({ ...data, slug: newSlug, title: `${data.title || 'Untitled'} (copy)`, published: false, status: 'draft' }, true);
@@ -398,6 +414,7 @@ export async function adminDeleteVideo(slug) {
   versions.docs.forEach((d) => batch.delete(d.ref));
   batch.delete(ref);
   await batch.commit();
+  logActivity('delete', 'videos', slug);
 }
 
 export const adminListVideoVersions = (slug) => listVersions(doc(db, 'videos', slug));
@@ -449,6 +466,7 @@ export async function adminDeleteForm(slug) {
   batch.delete(ref);
   batch.delete(doc(db, 'formsPublic', slug));
   await batch.commit();
+  logActivity('delete', 'forms', slug);
 }
 
 export const adminListFormVersions = (slug) => listVersions(doc(db, 'forms', slug));
@@ -488,6 +506,7 @@ export async function adminDeleteAuthor(id) {
   versions.docs.forEach((d) => batch.delete(d.ref));
   batch.delete(ref);
   await batch.commit();
+  logActivity('delete', 'authors', id);
 }
 
 export const adminListAuthorVersions = (id) => listVersions(doc(db, 'authors', id));

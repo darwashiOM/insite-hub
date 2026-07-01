@@ -457,7 +457,9 @@ async function publishDueContent() {
     const batch = db.batch();
     snap.forEach((d) => {
       const upd = { publishAt: FieldValue.delete() };
-      if (!d.data().published) { upd.published = true; count += 1; }
+      // Set status in lockstep with published so the editor's status<->published
+      // invariant holds; otherwise a later edit-save would silently unpublish it.
+      if (!d.data().published) { upd.published = true; upd.status = "published"; count += 1; }
       batch.update(d.ref, upd);
     });
     await batch.commit();

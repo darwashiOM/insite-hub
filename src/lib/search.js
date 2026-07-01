@@ -11,7 +11,8 @@ export function useSearchIndex() {
     const load = async (col, map) => {
       try {
         const snap = await getDocs(query(collection(db, col), where('published', '==', true)));
-        return snap.docs.map((d) => map({ id: d.id, ...d.data() }));
+        // Respect the per-item "hide from search engines" flag on the site search too.
+        return snap.docs.filter((d) => !d.data().noindex).map((d) => map({ id: d.id, ...d.data() }));
       } catch { return []; }
     };
     Promise.all([

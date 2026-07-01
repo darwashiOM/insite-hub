@@ -48,6 +48,9 @@ export default function DynamicPage({ setPage }) {
     // Per-page custom code (admin-authored — trusted). Injected into the head,
     // removed on navigation so it doesn't leak onto the next page.
     let custom = null;
+    // Remove any prior copy first — the prerender bakes one into the static head,
+    // so without this the client would inject (and re-run) a second one.
+    document.getElementById('cms-page-custom')?.remove();
     if (page.customCode && page.customCode.trim()) {
       custom = document.createElement('div');
       custom.id = 'cms-page-custom';

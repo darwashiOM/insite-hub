@@ -397,7 +397,7 @@ export default function ArticleEditor({ article, authors = [], knownTopics = [],
             onChange={(e) => upload(e.target.files[0], (url) => setAuthor('headshot', url))} />
         </div>
 
-        {!form.published && (
+        {form.status !== 'published' && (
           <div className="cms-field">
             <label>Schedule publish for later (optional)</label>
             <input className="cms-input" type="datetime-local" style={{ maxWidth: 260 }} value={form.publishAt} onChange={(e) => set('publishAt', e.target.value)} />

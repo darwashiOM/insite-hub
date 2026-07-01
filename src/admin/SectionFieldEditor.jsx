@@ -5,27 +5,30 @@ import RichText from './RichText';
 
 // Built-in destinations + published landing pages, loaded once and cached across
 // every button-picker on the page.
+// Cache serves an instant initial value; we still refetch on mount so a page/form
+// published moments ago shows up without a hard refresh.
 let destCache = null;
 function usePageDestinations() {
   const [dests, setDests] = useState(destCache || NAV_DESTINATIONS);
   useEffect(() => {
-    if (destCache) return;
+    let alive = true;
     adminListPageDestinations()
-      .then((built) => { destCache = [...NAV_DESTINATIONS, ...built]; setDests(destCache); })
+      .then((built) => { destCache = [...NAV_DESTINATIONS, ...built]; if (alive) setDests(destCache); })
       .catch(() => {});
+    return () => { alive = false; };
   }, []);
   return dests;
 }
 
-// Published forms for the "form" section picker, loaded once and cached.
 let formCache = null;
 function usePublishedForms() {
   const [forms, setForms] = useState(formCache || []);
   useEffect(() => {
-    if (formCache) return;
+    let alive = true;
     adminListPublishedForms()
-      .then((list) => { formCache = list; setForms(list); })
+      .then((list) => { formCache = list; if (alive) setForms(list); })
       .catch(() => {});
+    return () => { alive = false; };
   }, []);
   return forms;
 }
