@@ -1,5 +1,7 @@
 import { useEffect, useState, useCallback, useRef } from 'react';
-import { adminListMedia, adminUploadImage, adminUpdateMediaAlt, adminDeleteMedia } from '../lib/adminBlog';
+import { adminListMedia, adminUploadImage, adminUploadMediaFile, adminUpdateMediaAlt, adminDeleteMedia } from '../lib/adminBlog';
+
+const isImage = (m) => !m.isFile && (m.contentType || '').startsWith('image/');
 
 // Central image library: upload, browse, search, give alt text, and copy a link to reuse.
 export default function MediaLibrary() {
@@ -9,6 +11,7 @@ export default function MediaLibrary() {
   const [status, setStatus] = useState('');
   const [copiedId, setCopiedId] = useState('');
   const fileRef = useRef(null);
+  const docRef = useRef(null);
 
   const refresh = useCallback(async () => { setMedia(await adminListMedia().catch(() => [])); }, []);
   useEffect(() => {
@@ -29,6 +32,21 @@ export default function MediaLibrary() {
     } finally {
       setBusy(false);
       if (fileRef.current) fileRef.current.value = '';
+    }
+  };
+
+  const uploadDocs = async (files) => {
+    if (!files || !files.length) return;
+    setBusy(true); setStatus('');
+    try {
+      for (const f of files) await adminUploadMediaFile(f);
+      await refresh();
+      setStatus(`Uploaded ${files.length} file${files.length === 1 ? '' : 's'} ✓`);
+    } catch (e) {
+      setStatus('Upload failed: ' + errMsg(e));
+    } finally {
+      setBusy(false);
+      if (docRef.current) docRef.current.value = '';
     }
   };
 
@@ -62,6 +80,8 @@ export default function MediaLibrary() {
         <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
           {status && <span className="cms-hint">{status}</span>}
           <input ref={fileRef} type="file" accept="image/png,image/jpeg,image/gif,image/webp" multiple style={{ display: 'none' }} onChange={(e) => upload([...e.target.files])} />
+          <input ref={docRef} type="file" accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.csv,.zip" multiple style={{ display: 'none' }} onChange={(e) => uploadDocs([...e.target.files])} />
+          <button className="cms-btn" onClick={() => docRef.current?.click()} disabled={busy}>+ Upload files</button>
           <button className="cms-btn cms-btn-primary" onClick={() => fileRef.current?.click()} disabled={busy}>{busy ? 'Uploading…' : '+ Upload images'}</button>
         </div>
       </div>
@@ -79,10 +99,19 @@ export default function MediaLibrary() {
         <div className="cms-media-grid">
           {shown.map((m) => (
             <div className="cms-media-item" key={m.id}>
-              <div className="cms-media-thumb" style={{ backgroundImage: `url(${m.url})` }} />
-              <input className="cms-input cms-media-alt" placeholder="Alt text (describe the image)" value={m.alt || ''}
-                onChange={(e) => setAlt(m.id, e.target.value)} onBlur={(e) => saveAlt(m.id, e.target.value)} />
-              {!m.alt && <p className="cms-media-warn">⚠ Add alt text</p>}
+              {isImage(m) ? (
+                <>
+                  <div className="cms-media-thumb" style={{ backgroundImage: `url(${m.url})` }} />
+                  <input className="cms-input cms-media-alt" placeholder="Alt text (describe the image)" value={m.alt || ''}
+                    onChange={(e) => setAlt(m.id, e.target.value)} onBlur={(e) => saveAlt(m.id, e.target.value)} />
+                  {!m.alt && <p className="cms-media-warn">⚠ Add alt text</p>}
+                </>
+              ) : (
+                <>
+                  <div className="cms-media-thumb cms-media-file"><span aria-hidden="true">📄</span></div>
+                  <p className="cms-media-filename" title={m.filename}>{m.filename || 'File'}</p>
+                </>
+              )}
               <div className="cms-media-actions">
                 <button className="cms-btn cms-btn-sm" onClick={() => copyUrl(m)}>{copiedId === m.id ? 'Copied ✓' : 'Copy link'}</button>
                 <button className="cms-btn cms-btn-sm cms-btn-danger" onClick={() => remove(m)}>Remove</button>

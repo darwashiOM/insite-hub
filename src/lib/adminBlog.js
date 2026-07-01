@@ -147,6 +147,30 @@ export async function adminDeleteArticle(slug) {
 // Upload an image to Storage under blog/ and return its public download URL.
 const ALLOWED_IMAGE_TYPES = ['image/png', 'image/jpeg', 'image/gif', 'image/webp'];
 const MAX_IMAGE_BYTES = 10 * 1024 * 1024;
+const MAX_IMAGE_DIM = 2000;
+
+// Downscale + recompress large photos in the browser before upload so pages stay
+// fast (§6 auto-optimize). Leaves GIFs (animation), small files and already-small
+// dimensions untouched; falls back to the original on any error or if no gain.
+async function downscaleImage(file) {
+  if (!/image\/(jpeg|png|webp)/.test(file.type) || file.size < 400 * 1024) return file;
+  try {
+    const bitmap = await createImageBitmap(file);
+    const big = bitmap.width > MAX_IMAGE_DIM || bitmap.height > MAX_IMAGE_DIM;
+    if (!big && file.size < 1.5 * 1024 * 1024) { bitmap.close?.(); return file; }
+    const scale = Math.min(1, MAX_IMAGE_DIM / Math.max(bitmap.width, bitmap.height));
+    const w = Math.round(bitmap.width * scale), h = Math.round(bitmap.height * scale);
+    const canvas = document.createElement('canvas');
+    canvas.width = w; canvas.height = h;
+    canvas.getContext('2d').drawImage(bitmap, 0, 0, w, h);
+    bitmap.close?.();
+    const type = file.type === 'image/png' ? 'image/png' : 'image/jpeg';
+    const blob = await new Promise((res) => canvas.toBlob(res, type, 0.85));
+    if (!blob || blob.size >= file.size) return file;
+    return new File([blob], (file.name || 'image').replace(/\.\w+$/, type === 'image/png' ? '.png' : '.jpg'), { type });
+  } catch { return file; }
+}
+
 export async function adminUploadImage(file) {
   // Validate up front with a plain-English message (the Storage rules enforce the
   // same limits, but their rejection surfaces as a cryptic "permission" error).
@@ -156,17 +180,30 @@ export async function adminUploadImage(file) {
   if (file.size >= MAX_IMAGE_BYTES) {
     throw new Error('That image is too large — please use one under 10 MB.');
   }
-  const safe = (file.name || 'image').replace(/[^a-zA-Z0-9._-]/g, '_');
-  const path = `blog/${Date.now()}-${safe}`;
-  const r = storageRef(storage, path);
-  await uploadBytes(r, file, { contentType: file.type });
+  const upload = await downscaleImage(file);
+  const safe = (upload.name || 'image').replace(/[^a-zA-Z0-9._-]/g, '_');
+  const r = storageRef(storage, `blog/${Date.now()}-${safe}`);
+  await uploadBytes(r, upload, { contentType: upload.type });
   const url = await getDownloadURL(r);
   // Record it in the media library so it can be browsed + reused. Best-effort:
   // the upload itself already succeeded, so don't fail on a recording error.
   try {
     await addDoc(collection(db, 'media'), {
-      url, filename: file.name || safe, contentType: file.type, size: file.size, alt: '',
+      url, filename: file.name || safe, contentType: upload.type, size: upload.size, alt: '',
       createdAt: serverTimestamp(),
+    });
+  } catch { /* ignore */ }
+  return url;
+}
+
+// Upload a document (PDF etc.) to the media library so it can be browsed + reused
+// (e.g. a "download our brochure" link). Records a media doc marked isFile.
+export async function adminUploadMediaFile(file) {
+  const url = await adminUploadFile(file);
+  try {
+    await addDoc(collection(db, 'media'), {
+      url, filename: file.name || 'file', contentType: file.type || 'application/octet-stream',
+      size: file.size, alt: '', isFile: true, createdAt: serverTimestamp(),
     });
   } catch { /* ignore */ }
   return url;
