@@ -3,6 +3,9 @@
 // We send page_view manually on each route change (this is a client-rendered
 // SPA), so automatic page_view is turned off in the config call below.
 const GA_ID = import.meta.env.VITE_GA4_MEASUREMENT_ID;
+// Optional Google Tag Manager container (set VITE_GTM_ID). Lets marketing add
+// tracking/marketing tags later without a developer. GA4 + GTM can coexist.
+const GTM_ID = import.meta.env.VITE_GTM_ID;
 
 let started = false;
 
@@ -21,6 +24,17 @@ export function initAnalytics() {
   window.gtag('config', GA_ID, { send_page_view: false });
 }
 
+export function initGtm() {
+  if (!GTM_ID || window.__gtmStarted) return;
+  window.__gtmStarted = true;
+  window.dataLayer = window.dataLayer || [];
+  window.dataLayer.push({ 'gtm.start': Date.now(), event: 'gtm.js' });
+  const s = document.createElement('script');
+  s.async = true;
+  s.src = `https://www.googletagmanager.com/gtm.js?id=${GTM_ID}`;
+  document.head.appendChild(s);
+}
+
 export function trackPageView(path, title) {
   if (!GA_ID || !window.gtag) return;
   window.gtag('event', 'page_view', {
@@ -31,8 +45,9 @@ export function trackPageView(path, title) {
 }
 
 export function trackEvent(name, params = {}) {
-  if (!GA_ID || !window.gtag) return;
-  window.gtag('event', name, params);
+  if (GA_ID && window.gtag) window.gtag('event', name, params);
+  // Also surface the event on the dataLayer so a GTM container can act on it.
+  if (GTM_ID && window.dataLayer) window.dataLayer.push({ event: name, ...params });
 }
 
 // Wrappers for the two key actions the CMS spec calls out (form submits + downloads).
