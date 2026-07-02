@@ -1,12 +1,29 @@
 // Plain check builders shared by the editors' SeoChecklist and the SEO-health tab.
 const len = (s) => (s || '').trim().length;
 
+// Word count across every block type, including takeaways/FAQ text.
+export function bodyWords(body) {
+  const text = (body || []).map((b) => {
+    if (b.items) return b.items.map((x) => (typeof x === 'string' ? x : `${x.q || ''} ${x.a || ''}`)).join(' ');
+    return b.html || b.text || '';
+  }).join(' ').replace(/<[^>]+>/g, ' ');
+  return text.split(/\s+/).filter(Boolean).length;
+}
+
+// A takeaways/FAQ block only counts once it has real content.
+const hasRealAeo = (blocks) => (blocks || []).some((b) =>
+  (b.type === 'takeaways' && (b.items || []).some((t) => String(t).trim()))
+  || (b.type === 'faq' && (b.items || []).some((f) => (f.q || '').trim() && (f.a || '').trim())));
+
 export function articleChecks(form) {
-  const words = (form.body || []).map((b) => b.html || b.text || '').join(' ').replace(/<[^>]+>/g, ' ').split(/\s+/).filter(Boolean).length;
+  const words = bodyWords(form.body);
   const hasH2 = (form.body || []).some((b) => b.type === 'h2' && (b.text || '').trim());
-  const hasAeo = (form.body || []).some((b) => (b.type === 'faq' || b.type === 'takeaways') && (b.items || []).length);
+  const hasAeo = hasRealAeo(form.body);
+  // The live page shows metaTitle as-is, or "title · Proxa Labs" — measure what
+  // Google will actually see.
+  const effectiveTitle = (form.metaTitle || '').trim() || (form.title ? `${form.title} · Proxa Labs` : '');
   return [
-    { ok: len(form.title) > 0 && len(form.metaTitle || form.title) <= 70, label: 'Title set and not too long', hint: 'keep the search title under ~60–70 characters' },
+    { ok: len(form.title) > 0 && len(effectiveTitle) <= 70, label: 'Title set and not too long', hint: 'keep the search title under ~60–70 characters' },
     { ok: len(form.description) >= 50 && len(form.description) <= 170, label: 'Search description 50–160 characters', hint: 'this is your pitch on Google — 1–2 full sentences' },
     { ok: len(form.thumb) > 0, label: 'Thumbnail image set', hint: 'posts with images get shared and clicked more' },
     { ok: words >= 300, label: 'At least ~300 words', hint: `currently ~${words} — thin pages rarely rank`, soft: true },

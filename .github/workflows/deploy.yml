@@ -5,6 +5,10 @@ on:
   push:
     branches:
       - main
+  schedule:
+    # weekly re-prerender so published/unpublished content between code deploys
+    # gets its static snapshots refreshed (Mondays 06:00 UTC)
+    - cron: '0 6 * * 1'
 
 jobs:
   deploy:

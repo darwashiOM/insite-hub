@@ -4,22 +4,28 @@ import { useEffect, useRef, useState } from 'react';
 // localStorage; if the editor reopens and finds one (browser crash, dead laptop,
 // expired session), the editor can offer to restore it. Best-effort — storage
 // errors are swallowed so it can never break the editor itself.
-export function useDraftBackup(key, form, dirty) {
+// `initialJson` is what the editor loaded: a stored backup identical to it is a
+// no-op and gets dropped instead of nagging.
+export function useDraftBackup(key, form, dirty, initialJson) {
   const storageKey = `cms-backup:${key}`;
   const [backup, setBackup] = useState(() => {
     try {
       const b = JSON.parse(localStorage.getItem(storageKey) || 'null');
-      return b && b.form ? b : null;
+      if (!b || !b.form) return null;
+      if (initialJson && JSON.stringify(b.form) === initialJson) { localStorage.removeItem(storageKey); return null; }
+      return b;
     } catch { return null; }
   });
 
   useEffect(() => {
-    if (!dirty) return;
+    // Never overwrite an unresolved crash backup — while the restore offer is
+    // pending, new keystrokes must not destroy the very draft being offered.
+    if (!dirty || backup) return;
     const t = setTimeout(() => {
       try { localStorage.setItem(storageKey, JSON.stringify({ form, at: Date.now() })); } catch { /* best effort */ }
     }, 600);
     return () => clearTimeout(t);
-  }, [form, dirty, storageKey]);
+  }, [form, dirty, storageKey, backup]);
 
   const clear = () => { try { localStorage.removeItem(storageKey); } catch { /* best effort */ } setBackup(null); };
   return { backup, clear };

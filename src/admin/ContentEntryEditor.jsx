@@ -51,11 +51,12 @@ export default function ContentEntryEditor({ type, entry, onCancel, onDirty }) {
   const [okMsg, setOkMsg] = useState('');
   const [slugDirty, setSlugDirty] = useState(!isNew);
   const [savedOnce, setSavedOnce] = useState(false);
+  const [savedSlug, setSavedSlug] = useState(null);
   const createMode = isNew && !savedOnce;
   const [previewOpen, setPreviewOpen] = useState(false);
 
   const dirty = JSON.stringify(form) !== savedJson;
-  const { backup, clear: clearBackup } = useDraftBackup(`entry:${entry?.id || `${type.key}-new`}`, form, dirty);
+  const { backup, clear: clearBackup } = useDraftBackup(`entry:${entry?.id || (savedSlug ? `${type.key}__${savedSlug}` : `${type.key}-new`)}`, form, dirty, savedJson);
   useFadingMessage(okMsg, setOkMsg);
   useEffect(() => { onDirty?.(dirty); return () => onDirty?.(false); }, [dirty, onDirty]);
   useEffect(() => {
@@ -75,6 +76,7 @@ export default function ContentEntryEditor({ type, entry, onCancel, onDirty }) {
   const upload = async (file, then) => { if (!file) return; setBusy(true); setError(''); try { then(await adminUploadImage(file)); } catch (e) { setError('Upload failed: ' + (e.message || e)); } finally { setBusy(false); } };
 
   const save = async () => {
+    if (busy) return; // Cmd+S must respect an in-flight save/upload like the button does
     setError(''); setOkMsg('');
     const title = form.title.trim();
     if (!title) { setError('Add a title.'); return; }
@@ -88,9 +90,13 @@ export default function ContentEntryEditor({ type, entry, onCancel, onDirty }) {
         metaTitle: form.metaTitle.trim(), description: form.description.trim(), ogImage: form.ogImage.trim(), noindex: !!form.noindex,
         order: Number(form.order) || 0, published, status: form.status,
       }, createMode);
-      setSavedJson(JSON.stringify(form));
-      setSavedOnce(true);
       clearBackup();
+      // keep later saves pointed at THIS doc — never re-derive the slug from the title
+      const savedForm = { ...form, slug };
+      setSavedJson(JSON.stringify(savedForm));
+      setForm(savedForm);
+      setSavedOnce(true);
+      setSavedSlug(slug);
       setOkMsg(published ? `Saved ✓ — live at /${type.key}/${slug}` : form.status === 'review' ? 'Saved — ready for review ✓' : 'Saved as draft ✓');
       setBusy(false);
     } catch (e) { setBusy(false); setError(/permission/i.test(e.message || '') ? 'Session timed out — log in again, then Save.' : 'Save failed: ' + (e.message || e)); }

@@ -9,7 +9,7 @@ import RestoreBanner from './RestoreBanner';
 import PublishSummary from './PublishSummary';
 import SeoPreview, { CharCount } from './SeoPreview';
 import SeoChecklist from './SeoChecklist';
-import { articleChecks } from './seoChecks';
+import { articleChecks, bodyWords } from './seoChecks';
 import StatusSelect from './StatusSelect';
 import { statusOf } from './status';
 import RichText from './RichText';
@@ -23,10 +23,10 @@ const BLANK = {
   body: [], related: [], thumb: '', published: false, publishAt: '', order: 0,
 };
 
-// ~200 wpm estimate from the body text, used when the read-time field is blank.
+// ~200 wpm estimate from the body text (all block types), used when the
+// read-time field is blank.
 function estimateReadTime(body) {
-  const text = body.map((b) => b.html || b.text || '').join(' ').replace(/<[^>]+>/g, ' ');
-  const words = text.split(/\s+/).filter(Boolean).length;
+  const words = bodyWords(body);
   return words ? `${Math.max(1, Math.round(words / 200))} min read` : '';
 }
 
@@ -39,7 +39,7 @@ function toLocalDatetime(ms) {
 // Build the initial form from an existing article, restoring per-heading nav
 // labels from its toc so they survive editing.
 function fromArticle(a) {
-  if (!a) return JSON.parse(JSON.stringify(BLANK));
+  if (!a) return { ...JSON.parse(JSON.stringify(BLANK)), status: statusOf(null) };
   const tocMap = Object.fromEntries((a.toc || []).map((t) => [t.id, t.label]));
   return {
     ...JSON.parse(JSON.stringify(BLANK)),
@@ -76,11 +76,14 @@ export default function ArticleEditor({ article, authors = [], knownTopics = [],
   const [slugDirty, setSlugDirty] = useState(!isNew);
   // After the first successful save of a new post, further saves update it in place.
   const [savedOnce, setSavedOnce] = useState(false);
+  // The slug the doc was actually created under — keeps the crash-backup key on
+  // the real document once a "new" item exists.
+  const [savedSlug, setSavedSlug] = useState(null);
   const createMode = isNew && !savedOnce;
   const titleRef = useRef(null);
 
   const dirty = JSON.stringify(form) !== initial.current;
-  const { backup, clear: clearBackup } = useDraftBackup(`article:${article?.slug || 'new'}`, form, dirty);
+  const { backup, clear: clearBackup } = useDraftBackup(`article:${article?.slug || savedSlug || 'new'}`, form, dirty, initial.current);
   useFadingMessage(okMsg, setOkMsg);
   useEffect(() => {
     const h = (e) => { if (dirty) { e.preventDefault(); e.returnValue = ''; } };
@@ -117,7 +120,13 @@ export default function ArticleEditor({ article, authors = [], knownTopics = [],
     [body[i], body[j]] = [body[j], body[i]];
     return { ...f, body };
   });
-  const changeType = (i, type) => setBlock(i, { ...newBlock(type) });
+  const changeType = (i, type) => {
+    const b = form.body[i];
+    if (b.type === type) return;
+    const hasContent = ((b.html || b.text || b.src || '').trim() || (b.items || []).length);
+    if (hasContent && !window.confirm('Changing the type clears this block’s content. Continue?')) return;
+    setForm((f) => { const body = f.body.slice(); body[i] = newBlock(type); return { ...f, body }; });
+  };
 
   const upload = async (file, apply) => {
     if (!file) return;
@@ -182,6 +191,7 @@ export default function ArticleEditor({ article, authors = [], knownTopics = [],
   };
 
   const save = async () => {
+    if (busy) return; // Cmd+S must respect an in-flight save/upload like the button does
     setError(''); setOkMsg('');
     const title = form.title.trim();
     if (!title) { setError('Please add a title.'); titleRef.current?.focus(); return; }
@@ -189,13 +199,20 @@ export default function ArticleEditor({ article, authors = [], knownTopics = [],
     const article = buildArticle();
     const hasBody = article.body.some((b) => (b.type === 'p' && b.html) || (b.type === 'h2' && b.text) || (b.type === 'quote' && b.text) || (b.type === 'image' && b.src) || ((b.type === 'takeaways' || b.type === 'faq') && (b.items || []).length));
     if (article.published && !hasBody && !window.confirm('This post has no body text yet. Publish it live anyway?')) return;
+    const halfFaq = form.body.some((b) => b.type === 'faq' && (b.items || []).some((f) => !!(f.q || '').trim() !== !!(f.a || '').trim()));
+    if (halfFaq && !window.confirm('Some FAQ items are missing a question or an answer — those won’t be shown on the site. Save anyway?')) return;
 
     setBusy(true);
     try {
       await adminSaveArticle(article, createMode);
-      initial.current = JSON.stringify(form);
+      clearBackup(); // clears under the pre-save key before it switches to the real slug
+      // Write the actual slug back into the form: later saves must keep updating
+      // THIS document, never derive a new slug from an edited title.
+      const savedForm = { ...form, slug: article.slug };
+      initial.current = JSON.stringify(savedForm);
+      setForm(savedForm);
       setSavedOnce(true);
-      clearBackup();
+      setSavedSlug(article.slug);
       setOkMsg(article.published ? 'Saved ✓ — it’s live now. Keep writing, or hit Back when you’re done.'
         : article.publishAt ? `Saved ✓ — scheduled for ${new Date(article.publishAt).toLocaleString()}`
         : form.status === 'review' ? 'Saved — ready for review ✓'
@@ -354,7 +371,7 @@ export default function ArticleEditor({ article, authors = [], knownTopics = [],
         <div className="cms-section-h">
           Body
           {(() => {
-            const words = form.body.map((b) => b.html || b.text || '').join(' ').replace(/<[^>]+>/g, ' ').split(/\s+/).filter(Boolean).length;
+            const words = bodyWords(form.body);
             return words > 0 && <span className="cms-wordcount">{words.toLocaleString()} words · ~{Math.max(1, Math.round(words / 200))} min read</span>;
           })()}
           <label className="cms-adv-toggle">

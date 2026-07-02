@@ -11,7 +11,9 @@ export function setJsonLd(id, obj) {
     el.id = id;
     document.head.appendChild(el);
   }
-  el.textContent = JSON.stringify(obj);
+  // escape < so content containing </script> can never break out of the tag
+  // (matters most for prerendered HTML, where this is serialized verbatim)
+  el.textContent = JSON.stringify(obj).replace(/</g, '\\u003c');
 }
 
 function upsertMeta(attr, key, content) {

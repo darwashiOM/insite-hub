@@ -43,12 +43,13 @@ export default function CaseStudyEditor({ caseStudy, onCancel }) {
   const [okMsg, setOkMsg] = useState('');
   const [slugDirty, setSlugDirty] = useState(!isNew);
   const [savedOnce, setSavedOnce] = useState(false);
+  const [savedSlug, setSavedSlug] = useState(null);
   const createMode = isNew && !savedOnce;
   const [previewOpen, setPreviewOpen] = useState(false);
   const titleRef = useRef(null);
 
   const dirty = JSON.stringify(form) !== initial.current;
-  const { backup, clear: clearBackup } = useDraftBackup(`caseStudy:${caseStudy?.slug || 'new'}`, form, dirty);
+  const { backup, clear: clearBackup } = useDraftBackup(`caseStudy:${caseStudy?.slug || savedSlug || 'new'}`, form, dirty, initial.current);
   useFadingMessage(okMsg, setOkMsg);
   useEffect(() => {
     const h = (e) => { if (dirty) { e.preventDefault(); e.returnValue = ''; } };
@@ -82,6 +83,7 @@ export default function CaseStudyEditor({ caseStudy, onCancel }) {
   };
 
   const save = async () => {
+    if (busy) return; // Cmd+S must respect an in-flight save/upload like the button does
     setError(''); setOkMsg('');
     const title = form.title.trim();
     if (!title) { setError('Please add a title.'); titleRef.current?.focus(); return; }
@@ -100,9 +102,13 @@ export default function CaseStudyEditor({ caseStudy, onCancel }) {
         metaTitle: form.metaTitle.trim(), canonical: form.canonical.trim(), ogImage: form.ogImage.trim(), noindex: !!form.noindex,
         ...(isScheduled ? { publishAt: scheduledMs } : {}),
       }, createMode);
-      initial.current = JSON.stringify(form);
-      setSavedOnce(true);
       clearBackup();
+      // keep later saves pointed at THIS doc — never re-derive the slug from the title
+      const savedForm = { ...form, slug };
+      initial.current = JSON.stringify(savedForm);
+      setForm(savedForm);
+      setSavedOnce(true);
+      setSavedSlug(slug);
       setOkMsg(published ? 'Saved ✓ — it’s live now.' : form.status === 'review' ? 'Saved — ready for review ✓' : 'Saved as draft ✓');
       setBusy(false);
     } catch (e) {
@@ -232,7 +238,7 @@ export default function CaseStudyEditor({ caseStudy, onCancel }) {
           <CharCount value={form.metaTitle} max={60} />
           <p className="cms-hint">Shown in the browser tab and Google. Defaults to the title.</p>
         </div>
-        <SeoPreview title={form.metaTitle || (form.title ? `${form.title} · Proxa Labs` : '')}
+        <SeoPreview title={form.metaTitle || (form.title ? `${form.title} · Case study · Proxa Labs` : '')}
           description={form.summary} path={`/case-studies/${form.slug || '…'}`} />
         <SeoChecklist checks={caseStudyChecks(form)} />
         <div className="cms-row">

@@ -17,7 +17,7 @@ export default function GenericDetailPage({ setPage }) {
   useEffect(() => {
     if (!entry) return;
     const url = `${SITE_URL}/${typeKey}/${slug}`;
-    document.title = `${entry.metaTitle || entry.title || 'Proxa Labs'} · Proxa Labs`;
+    document.title = (entry.metaTitle && entry.metaTitle.trim()) || `${entry.title || 'Proxa Labs'} · Proxa Labs`;
     const meta = document.querySelector('meta[name="description"]');
     if (meta && (entry.description || entry.summary)) meta.content = entry.description || entry.summary;
     let robots = document.head.querySelector('meta[name="robots"]');

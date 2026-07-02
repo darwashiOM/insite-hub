@@ -168,7 +168,17 @@ async function listVersions(ref, max = 50) {
 async function restoreVersion(ref, versionId) {
   const v = await getDoc(doc(ref, 'versions', versionId));
   if (!v.exists()) throw new Error('That version no longer exists.');
-  const snapshot = v.data().snapshot;
+  // Restore the CONTENT, but keep the doc's current publish state — bringing back
+  // an old version must not (un)publish it, resurrect a trashed doc, or re-arm a
+  // stale schedule (a past publishAt would auto-publish within minutes).
+  const cur = (await getDoc(ref)).data() || {};
+  const snapshot = { ...v.data().snapshot };
+  delete snapshot.publishAt;
+  delete snapshot.deletedAt;
+  snapshot.published = cur.published === true;
+  if (cur.status) snapshot.status = cur.status; else delete snapshot.status;
+  if (cur.publishAt) snapshot.publishAt = cur.publishAt;
+  if (cur.deletedAt) snapshot.deletedAt = cur.deletedAt;
   await saveWithHistory(ref, snapshot);
   return snapshot;
 }
@@ -549,7 +559,16 @@ export async function adminDeleteForm(slug) {
 }
 
 export const adminListFormVersions = (slug) => listVersions(doc(db, 'forms', slug));
-export const adminRestoreFormVersion = (slug, vid) => restoreVersion(doc(db, 'forms', slug), vid);
+export async function adminRestoreFormVersion(slug, vid) {
+  const snap = await restoreVersion(doc(db, 'forms', slug), vid);
+  // forms mirror a stripped copy to formsPublic — a restore must re-sync it or the
+  // live form keeps rendering the old fields
+  if (!snap.deletedAt) {
+    const { notifyEmail: _n, gatedFileUrl: _g, ...publicData } = snap;
+    await setDoc(doc(db, 'formsPublic', slug), publicData);
+  }
+  return snap;
+}
 
 // Submissions (admin read only; written by the submitForm function). Newest
 // first; filter by form client-side to avoid a composite index.

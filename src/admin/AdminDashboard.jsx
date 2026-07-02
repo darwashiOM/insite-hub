@@ -46,6 +46,11 @@ const itemStatus = (x) => (x.deletedAt ? 'trash' : x.published ? 'published' : x
 function ListToolbar({ items, q, setQ, statusFilter, setStatusFilter, kind }) {
   const counts = { all: 0, published: 0, draft: 0, review: 0, trash: 0 };
   (items || []).forEach((x) => { const st = itemStatus(x); counts[st]++; if (st !== 'trash') counts.all++; });
+  // If the active filter's chip vanishes (e.g. the last trashed item was restored),
+  // fall back to All instead of stranding the list on "Nothing matches".
+  useEffect(() => {
+    if ((statusFilter === 'trash' || statusFilter === 'review') && counts[statusFilter] === 0) setStatusFilter('all');
+  });
   const chips = [['all', 'All'], ['published', 'Published'], ['draft', 'Drafts'], ['review', 'In review'], ['trash', 'Trash']];
   return (
     <div className="cms-list-toolbar">

@@ -10,47 +10,86 @@
     "rewrites": [
       {
         "source": "/api/contact",
-        "function": { "functionId": "submitContact", "region": "us-central1" }
+        "function": {
+          "functionId": "submitContact",
+          "region": "us-central1"
+        }
       },
       {
         "source": "/api/newsletter",
-        "function": { "functionId": "submitNewsletter", "region": "us-central1" }
+        "function": {
+          "functionId": "submitNewsletter",
+          "region": "us-central1"
+        }
       },
       {
         "source": "/api/admin-login",
-        "function": { "functionId": "adminLogin", "region": "us-central1" }
+        "function": {
+          "functionId": "adminLogin",
+          "region": "us-central1"
+        }
       },
       {
         "source": "/api/content",
-        "function": { "functionId": "getContent", "region": "us-central1" }
+        "function": {
+          "functionId": "getContent",
+          "region": "us-central1"
+        }
       },
       {
         "source": "/api/submit-form",
-        "function": { "functionId": "submitForm", "region": "us-central1" }
+        "function": {
+          "functionId": "submitForm",
+          "region": "us-central1"
+        }
       },
       {
         "source": "/sitemap.xml",
-        "function": { "functionId": "getSitemap", "region": "us-central1" }
+        "function": {
+          "functionId": "getSitemap",
+          "region": "us-central1"
+        }
       },
       {
         "source": "/llms.txt",
-        "function": { "functionId": "getLlms", "region": "us-central1" }
+        "function": {
+          "functionId": "getLlms",
+          "region": "us-central1"
+        }
       },
       {
         "source": "**",
-        "destination": "/index.html"
+        "destination": "/spa.html"
       }
     ],
     "headers": [
       {
         "source": "**",
         "headers": [
-          { "key": "X-Content-Type-Options", "value": "nosniff" },
-          { "key": "X-Frame-Options", "value": "SAMEORIGIN" },
-          { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
-          { "key": "Permissions-Policy", "value": "geolocation=(), microphone=(), camera=()" },
-          { "key": "Strict-Transport-Security", "value": "max-age=31536000; includeSubDomains" },
-          { "key": "Content-Security-Policy", "value": "default-src 'self'; script-src 'self' 'unsafe-inline' https:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https:; connect-src 'self' https:; frame-src https://www.youtube.com https://www.youtube-nocookie.com; media-src 'self' https: blob:; object-src 'none'; base-uri 'self'; form-action 'self'" }
+          {
+            "key": "X-Content-Type-Options",
+            "value": "nosniff"
+          },
+          {
+            "key": "X-Frame-Options",
+            "value": "SAMEORIGIN"
+          },
+          {
+            "key": "Referrer-Policy",
+            "value": "strict-origin-when-cross-origin"
+          },
+          {
+            "key": "Permissions-Policy",
+            "value": "geolocation=(), microphone=(), camera=()"
+          },
+          {
+            "key": "Strict-Transport-Security",
+            "value": "max-age=31536000; includeSubDomains"
+          },
+          {
+            "key": "Content-Security-Policy",
+            "value": "default-src 'self'; script-src 'self' 'unsafe-inline' https:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https:; connect-src 'self' https:; frame-src https://www.youtube.com https://www.youtube-nocookie.com; media-src 'self' https: blob:; object-src 'none'; base-uri 'self'; form-action 'self'"
+          }
         ]
       }
     ]
@@ -63,14 +102,27 @@
     "indexes": "firestore.indexes.json"
   },
   "storage": [
-    { "target": "blog", "rules": "storage.rules" }
+    {
+      "target": "blog",
+      "rules": "storage.rules"
+    }
   ],
   "emulators": {
-    "auth": { "port": 9099 },
-    "functions": { "port": 5001 },
-    "firestore": { "port": 8080 },
-    "storage": { "port": 9199 },
-    "ui": { "enabled": true },
+    "auth": {
+      "port": 9099
+    },
+    "functions": {
+      "port": 5001
+    },
+    "firestore": {
+      "port": 8080
+    },
+    "storage": {
+      "port": 9199
+    },
+    "ui": {
+      "enabled": true
+    },
     "singleProjectMode": true
   }
 }
