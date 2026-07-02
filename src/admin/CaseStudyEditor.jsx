@@ -8,6 +8,8 @@ import { useDraftBackup, useSaveShortcut, useFadingMessage } from './useEditorSa
 import RestoreBanner from './RestoreBanner';
 import PublishSummary from './PublishSummary';
 import SeoPreview, { CharCount } from './SeoPreview';
+import SeoChecklist from './SeoChecklist';
+import { caseStudyChecks } from './seoChecks';
 import CaseStudyLayout from '../components/CaseStudyLayout';
 import StatusSelect from './StatusSelect';
 import { statusOf } from './status';
@@ -232,6 +234,7 @@ export default function CaseStudyEditor({ caseStudy, onCancel }) {
         </div>
         <SeoPreview title={form.metaTitle || (form.title ? `${form.title} · Proxa Labs` : '')}
           description={form.summary} path={`/case-studies/${form.slug || '…'}`} />
+        <SeoChecklist checks={caseStudyChecks(form)} />
         <div className="cms-row">
           <div className="cms-field">
             <label>Canonical URL</label>

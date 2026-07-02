@@ -350,6 +350,56 @@ exports.getSitemap = onRequest(async (req, res) => {
 });
 
 // ---------------------------------------------------------------------------
+// Dynamic llms.txt (AEO): a live, always-current index of the site for AI
+// crawlers (ChatGPT, Perplexity, Google AI). Fixed pages are hand-described;
+// every published post / case study / video / built page is appended
+// automatically the moment it's published. Served at /llms.txt via rewrite.
+// ---------------------------------------------------------------------------
+const LLMS_HEADER = `# Proxa Labs
+
+> Proxa Labs is the AI implementation partner built for biopharma commercial learning — advisory, an AI platform, and structured experimentation. Methodology-first, compliance by design.
+
+## Pages
+- [Platform](%o/platform): The closed-loop AI platform — Forge builds content, Cue delivers learning, Stage assesses readiness, Trace confirms competency.
+- [Advisory](%o/advisory): AI strategy, readiness assessments, governance, and infrastructure planning for biopharma commercial L&D.
+- [AI Literacy](%o/ai-literacy): Role-targeted AI fluency tracks for the commercial organization.
+- [InsiteX LMS](%o/insitex-lms): Enterprise learning management built for biopharma compliance.
+- [Content Development](%o/content-development): MLR-compliant content development, AI-powered or traditional.
+- [The Lab](%o/the-lab): Structured AI experimentation — define the use case, design the experiment, measure what matters.
+- [About](%o/about): 25 years of biopharma commercial learning expertise applied to AI implementation.
+- [Contact](%o/contact): Start a conversation.`;
+
+exports.getLlms = onRequest(async (req, res) => {
+  try {
+    const db = admin.firestore();
+    const origin = (process.env.SITE_URL || "https://www.proxalabs.com").replace(/\/+$/, "");
+    const line = (title, url, desc) => `- [${title}](${url})${desc ? `: ${String(desc).replace(/\s+/g, " ").trim().slice(0, 220)}` : ""}`;
+    const section = async (heading, col, toUrl, toDesc) => {
+      const snap = await db.collection(col).where("published", "==", true).get();
+      const rows = [];
+      snap.forEach((d) => {
+        const x = d.data();
+        if (x.noindex) return;
+        rows.push({ order: x.order || 0, date: x.date || "", text: line(x.title || d.id, toUrl(x, d.id), toDesc(x)) });
+      });
+      rows.sort((a, b) => (a.order - b.order) || String(b.date).localeCompare(String(a.date)));
+      return rows.length ? `\n\n## ${heading}\n${rows.map((r) => r.text).join("\n")}` : "";
+    };
+    let body = LLMS_HEADER.replace(/%o/g, origin);
+    body += await section("Blog posts", "articles", (x, id) => `${origin}/blog/${x.slug || id}`, (x) => x.description || x.summary);
+    body += await section("Case studies", "caseStudies", (x, id) => `${origin}/case-studies/${x.slug || id}`, (x) => x.summary);
+    body += await section("Videos", "videos", () => `${origin}/videos`, (x) => x.description);
+    body += await section("More pages", "pages", (x, id) => `${origin}/${x.slug || id}`, (x) => x.description);
+    res.set("Content-Type", "text/plain; charset=utf-8");
+    res.set("Cache-Control", "public, max-age=300, s-maxage=300");
+    res.status(200).send(body + "\n");
+  } catch (err) {
+    console.error("getLlms failed:", err);
+    res.status(500).send("");
+  }
+});
+
+// ---------------------------------------------------------------------------
 // CMS forms: accept a submission for a marketer-built form, validate against the
 // form definition, store it (admin SDK — clients can't write submissions directly),
 // email a notification, and return a gated download link if the form gates a file.

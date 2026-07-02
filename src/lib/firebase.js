@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app';
-import { getFirestore, connectFirestoreEmulator } from 'firebase/firestore';
+import { initializeFirestore, connectFirestoreEmulator } from 'firebase/firestore';
 
 // Public web config (safe to ship — access is gated by Firestore/Storage rules,
 // not by these keys). The admin password is NEVER here; it lives as a server secret.
@@ -15,7 +15,11 @@ const firebaseConfig = {
 export const app = initializeApp(firebaseConfig);
 // Firestore only — the public site reads published content. Auth + Storage are
 // initialized separately (firebaseAuth.js) so they load only in the admin chunk.
-export const db = getFirestore(app);
+// In automation-controlled browsers (the prerenderer), Firestore's WebChannel
+// transport stalls intermittently — force long-polling there; real users keep
+// the default transport.
+const automated = typeof navigator !== 'undefined' && navigator.webdriver === true;
+export const db = initializeFirestore(app, automated ? { experimentalForceLongPolling: true } : {});
 
 // Local dev against the Firebase emulators. Guarded by DEV so production builds
 // (where import.meta.env.DEV is statically false) never reach this branch.

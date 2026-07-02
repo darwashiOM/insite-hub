@@ -29,6 +29,7 @@ const groups = (isAdmin) => [
     title: 'Library & extras',
     items: [
       { icon: '🖼️', label: 'Upload images & files', desc: 'Your media library', tab: 'media' },
+      { icon: '🔎', label: 'Check your SEO health', desc: 'What to fix to rank better in Google and AI answers', tab: 'seo' },
       { icon: '✍️', label: 'Manage authors', desc: 'Blog and case-study bylines', tab: 'authors' },
       isAdmin && { icon: '🧩', label: 'Create a new content type', desc: 'e.g. Webinars, Press, Events — with your own fields', tab: 'types' },
       isAdmin && { icon: '🕓', label: 'See who changed what', desc: 'Activity history', tab: 'activity' },

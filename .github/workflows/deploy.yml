@@ -36,8 +36,14 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build with Sentry release artifacts
-        run: npm run build
+      - name: Install prerender browser
+        run: npx playwright-core install chromium
+
+      # Build + snapshot every route to static HTML (baked meta, JSON-LD, content)
+      # so social scrapers and non-JS AI crawlers see complete pages. Needs no
+      # credentials — the prerenderer reads the live site's own public endpoints.
+      - name: Build with prerendered pages
+        run: npm run build:prerender
 
       # Deploy via the Firebase CLI. If the exact same bytes are already live
       # (manual deploys usually beat CI to it), Hosting refuses to re-release the
