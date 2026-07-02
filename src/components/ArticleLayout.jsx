@@ -141,6 +141,28 @@ export default function ArticleLayout({ article, setPage }) {
                   </figure>
                 );
               }
+              if (b.type === 'takeaways') {
+                if (!(b.items || []).length) return null;
+                return (
+                  <aside key={i} className="takeaways">
+                    <p className="takeaways-h">Key takeaways</p>
+                    <ul>{b.items.map((t, j) => <li key={j}>{t}</li>)}</ul>
+                  </aside>
+                );
+              }
+              if (b.type === 'faq') {
+                if (!(b.items || []).length) return null;
+                return (
+                  <section key={i} className="article-faq">
+                    {b.items.map((f, j) => (
+                      <div key={j} className="article-faq-item">
+                        <h3>{f.q}</h3>
+                        <p>{f.a}</p>
+                      </div>
+                    ))}
+                  </section>
+                );
+              }
               return <p key={i} dangerouslySetInnerHTML={clean(b.html)} />;
             })}
           </div>

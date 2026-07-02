@@ -89,3 +89,19 @@ export function buildBreadcrumbLd(items) {
     })),
   };
 }
+
+// FAQPage markup from an array of { q, a } — used by articles with FAQ blocks
+// (and mirrors what the page-builder FAQ section emits).
+export function buildFaqLd(items) {
+  const list = (items || []).filter((f) => f.q && f.a);
+  if (!list.length) return null;
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: list.map((f) => ({
+      '@type': 'Question',
+      name: f.q,
+      acceptedAnswer: { '@type': 'Answer', text: f.a },
+    })),
+  };
+}

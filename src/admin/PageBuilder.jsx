@@ -5,6 +5,8 @@ import SectionFieldEditor from './SectionFieldEditor';
 import SectionRenderer from '../components/SectionRenderer';
 import VersionHistory from './VersionHistory';
 import SeoPreview, { CharCount } from './SeoPreview';
+import SeoChecklist from './SeoChecklist';
+import { pageChecks } from './seoChecks';
 import StatusSelect from './StatusSelect';
 import { statusOf } from './status';
 
@@ -201,6 +203,7 @@ export default function PageBuilder({ page, isAdmin = true, onDone, onCancel }) 
         </div>
         <SeoPreview title={form.metaTitle || (form.title ? `${form.title} · Proxa Labs` : '')}
           description={form.description} path={`/${form.slug || '…'}`} />
+        <SeoChecklist checks={pageChecks(form)} />
         <div className="cms-row">
           <div className="cms-field">
             <label>Social share image (optional)</label>

@@ -182,3 +182,16 @@
 /* media drag-and-drop */
 .cms-dropzone { border-radius: 12px; }
 .cms-dropzone.on { outline: 3px dashed var(--o); outline-offset: -3px; background: rgba(245,130,95,.05); }
+
+/* SEO checklist */
+.cms-checklist { border: 1px solid var(--br); border-radius: 12px; background: var(--wh); padding: 14px 18px; margin: 14px 0 6px; }
+.cms-checklist-h { font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: #9aa2ad; font-weight: 700; margin: 0 0 8px; }
+.cms-checklist ul { list-style: none; margin: 0; padding: 0; }
+.cms-checklist li { font-size: 13.5px; padding: 3px 0; }
+.chk-mark { display: inline-block; width: 20px; font-weight: 700; }
+.chk-ok .chk-mark { color: #5f6e3f; }
+.chk-bad .chk-mark { color: #b42318; }
+.chk-soft .chk-mark { color: #b54708; }
+.chk-hint { color: var(--bd); }
+.cms-health-list { list-style: none; margin: 6px 0 0; padding: 0; font-size: 13px; }
+.cms-health-list li { padding: 2px 0; }

@@ -213,3 +213,14 @@
 .prose .body-img { margin: 34px 0; }
 .prose .body-img img { display: block; width: 100%; border-radius: 14px; }
 .prose .body-img figcaption { margin-top: 10px; font-size: 0.86rem; color: #7b8794; text-align: center; }
+
+/* key-takeaways box */
+.prose .takeaways { background: #f7f8f4; border: 1px solid #e0e4d7; border-left: 4px solid #9ca979; border-radius: 12px; padding: 20px 24px; margin: 34px 0; }
+.prose .takeaways-h { font-weight: 800; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.08em; color: #5f6e3f; margin: 0 0 10px; }
+.prose .takeaways ul { margin: 0; padding-left: 20px; }
+.prose .takeaways li { margin: 6px 0; }
+
+/* in-article FAQ */
+.prose .article-faq { margin: 34px 0; }
+.prose .article-faq-item { border-top: 1px solid #e3e5ea; padding: 18px 0 6px; }
+.prose .article-faq-item h3 { font-size: 1.05rem; margin: 0 0 8px; }

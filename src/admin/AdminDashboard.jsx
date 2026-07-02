@@ -24,6 +24,7 @@ import RedirectsEditor from './RedirectsEditor';
 import ActivityView from './ActivityView';
 import ContentTypesManager from './ContentTypesManager';
 import StartHere from './StartHere';
+import SeoHealth from './SeoHealth';
 
 // One-line orientation shown at the top of each list tab (Start here + the
 // full-screen editor tabs bring their own copy).
@@ -35,6 +36,7 @@ const TAB_INTRO = {
   landing: 'Build a brand-new page from ready-made blocks — hero, features, CTA and more. (To edit an existing page like the Homepage, use “Main pages”.)',
   authors: 'The people whose names appear on blog posts and case studies.',
   media: 'Upload images and files once, then reuse them anywhere on the site.',
+  seo: 'A health check of everything on the live site — exactly what to fix to show up stronger in Google and AI answers.',
   activity: 'A history of what changed, and when.',
 };
 
@@ -224,6 +226,7 @@ export default function AdminDashboard({ role, onLogout }) {
           <button className={'cms-tab' + (tab === 'landing' ? ' on' : '')} onClick={() => switchTab('landing')}>Landing pages</button>
           <button className={'cms-tab' + (tab === 'authors' ? ' on' : '')} onClick={() => switchTab('authors')}>Authors</button>
           <button className={'cms-tab' + (tab === 'media' ? ' on' : '')} onClick={() => switchTab('media')}>Media</button>
+          <button className={'cms-tab' + (tab === 'seo' ? ' on' : '')} onClick={() => switchTab('seo')}>SEO health</button>
           {isAdmin && <>
             <button className={'cms-tab' + (tab === 'types' ? ' on' : '')} onClick={() => switchTab('types')}>Content types</button>
             <button className={'cms-tab' + (tab === 'pages' ? ' on' : '')} onClick={() => switchTab('pages')}>Main pages</button>
@@ -264,6 +267,9 @@ export default function AdminDashboard({ role, onLogout }) {
           <NavEditor onDirtyChange={setNavDirty} />
         ) : tab === 'redirects' ? (
           <RedirectsEditor onDirtyChange={setRedirectsDirty} />
+        ) : tab === 'seo' ? (
+          <SeoHealth articles={articles} caseStudies={caseStudies} videos={videos} pages={pages}
+            onEdit={(t, slug) => { switchTab(t); if (t === 'blog') setView(slug); else if (t === 'cs') setCsView(slug); else if (t === 'videos') setVidView(slug); else if (t === 'landing') setPageView(slug); }} />
         ) : tab === 'media' ? (
           <MediaLibrary />
         ) : tab === 'pages' ? (

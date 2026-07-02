@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import ArticleLayout from '../components/ArticleLayout';
 import { useArticle } from '../lib/blog';
 import { SITE_URL } from '../lib/site';
-import { setJsonLd, buildArticleLd, buildBreadcrumbLd, setSocialCards } from '../lib/jsonLd';
+import { setJsonLd, buildArticleLd, buildBreadcrumbLd, buildFaqLd, setSocialCards } from '../lib/jsonLd';
 
 function slugFromPath() {
   const parts = window.location.pathname.replace(/\/+$/, '').split('/');
@@ -38,6 +38,8 @@ export default function ArticlePage({ setPage }) {
     // Article + breadcrumb structured data (AEO). Removed on unmount so it
     // doesn't linger on the next page.
     setJsonLd('ld-article', buildArticleLd(article, url));
+    // FAQ blocks in the body get FAQPage markup so AI answers can quote them
+    setJsonLd('ld-article-faq', buildFaqLd((article.body || []).filter((b) => b.type === 'faq').flatMap((b) => b.items || [])));
     setJsonLd('ld-breadcrumb', buildBreadcrumbLd([
       { name: 'Home', url: `${SITE_URL}/` },
       { name: 'Blog', url: `${SITE_URL}/blog` },
@@ -48,7 +50,7 @@ export default function ArticlePage({ setPage }) {
     const hash = window.location.hash.replace(/^#/, '');
     if (hash) window.setTimeout(() => document.getElementById(hash)?.scrollIntoView({ block: 'start' }), 60);
 
-    return () => { setJsonLd('ld-article', null); setJsonLd('ld-breadcrumb', null); };
+    return () => { setJsonLd('ld-article', null); setJsonLd('ld-article-faq', null); setJsonLd('ld-breadcrumb', null); };
   }, [article]);
 
   if (loading) {

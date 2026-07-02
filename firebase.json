@@ -32,6 +32,10 @@
         "function": { "functionId": "getSitemap", "region": "us-central1" }
       },
       {
+        "source": "/llms.txt",
+        "function": { "functionId": "getLlms", "region": "us-central1" }
+      },
+      {
         "source": "**",
         "destination": "/index.html"
       }

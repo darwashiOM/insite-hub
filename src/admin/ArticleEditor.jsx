@@ -8,6 +8,8 @@ import { useDraftBackup, useSaveShortcut, useFadingMessage } from './useEditorSa
 import RestoreBanner from './RestoreBanner';
 import PublishSummary from './PublishSummary';
 import SeoPreview, { CharCount } from './SeoPreview';
+import SeoChecklist from './SeoChecklist';
+import { articleChecks } from './seoChecks';
 import StatusSelect from './StatusSelect';
 import { statusOf } from './status';
 import RichText from './RichText';
@@ -56,6 +58,8 @@ function newBlock(type) {
   if (type === 'h2') return { type: 'h2', text: '', id: '', navLabel: '' };
   if (type === 'quote') return { type: 'quote', text: '' };
   if (type === 'image') return { type: 'image', src: '', alt: '', caption: '' };
+  if (type === 'takeaways') return { type: 'takeaways', items: [''] };
+  if (type === 'faq') return { type: 'faq', items: [{ q: '', a: '' }] };
   return { type: 'p', html: '' };
 }
 
@@ -103,7 +107,7 @@ export default function ArticleEditor({ article, authors = [], knownTopics = [],
   const addBlock = (type) => setForm((f) => ({ ...f, body: [...f.body, newBlock(type)] }));
   const removeBlock = (i) => {
     const b = form.body[i];
-    if ((b.html || b.text || b.src || '').trim() && !window.confirm('Delete this block? Its content will be lost.')) return;
+    if (((b.html || b.text || b.src || '').trim() || (b.items || []).length) && !window.confirm('Delete this block? Its content will be lost.')) return;
     setForm((f) => ({ ...f, body: f.body.filter((_, j) => j !== i) }));
   };
   const moveBlock = (i, dir) => setForm((f) => {
@@ -147,6 +151,8 @@ export default function ArticleEditor({ article, authors = [], knownTopics = [],
       }
       if (b.type === 'quote') return { type: 'quote', text: (b.text || '').trim() };
       if (b.type === 'image') return { type: 'image', src: (b.src || '').trim(), alt: (b.alt || '').trim(), caption: (b.caption || '').trim() };
+      if (b.type === 'takeaways') return { type: 'takeaways', items: (b.items || []).map((t) => String(t).trim()).filter(Boolean) };
+      if (b.type === 'faq') return { type: 'faq', items: (b.items || []).map((f) => ({ q: (f.q || '').trim(), a: (f.a || '').trim() })).filter((f) => f.q && f.a) };
       return { type: 'p', html: (b.html || '').trim() };
     });
     const toc = headings.filter((h) => h.text).map((h) => ({ id: h.id, label: h.navLabel || h.text }));
@@ -181,7 +187,7 @@ export default function ArticleEditor({ article, authors = [], knownTopics = [],
     if (!title) { setError('Please add a title.'); titleRef.current?.focus(); return; }
     if (!(form.slug.trim() || slugify(title))) { setError('Please add a web address.'); return; }
     const article = buildArticle();
-    const hasBody = article.body.some((b) => (b.type === 'p' && b.html) || (b.type === 'h2' && b.text) || (b.type === 'quote' && b.text) || (b.type === 'image' && b.src));
+    const hasBody = article.body.some((b) => (b.type === 'p' && b.html) || (b.type === 'h2' && b.text) || (b.type === 'quote' && b.text) || (b.type === 'image' && b.src) || ((b.type === 'takeaways' || b.type === 'faq') && (b.items || []).length));
     if (article.published && !hasBody && !window.confirm('This post has no body text yet. Publish it live anyway?')) return;
 
     setBusy(true);
@@ -308,6 +314,7 @@ export default function ArticleEditor({ article, authors = [], knownTopics = [],
         </div>
         <SeoPreview title={form.metaTitle || (form.title ? `${form.title} · Proxa Labs` : '')}
           description={form.description} path={`/blog/${form.slug || '…'}`} />
+        <SeoChecklist checks={articleChecks(form)} />
         <div className="cms-row">
           <div className="cms-field">
             <label>Canonical URL</label>
@@ -362,6 +369,8 @@ export default function ArticleEditor({ article, authors = [], knownTopics = [],
                 <option value="h2">Heading</option>
                 <option value="quote">Quote</option>
                 <option value="image">Image</option>
+                <option value="takeaways">Key takeaways</option>
+                <option value="faq">FAQ (Q&amp;A)</option>
               </select>
               <div className="cms-block-spacer" />
               <button className="cms-iconbtn" title="Move up" onClick={() => moveBlock(i, -1)} disabled={i === 0}>↑</button>
@@ -398,6 +407,34 @@ export default function ArticleEditor({ article, authors = [], knownTopics = [],
                     onChange={(e) => setBlock(i, { caption: e.target.value })} />
                 </div>
               </>
+            ) : b.type === 'takeaways' ? (
+              <>
+                <p className="cms-hint" style={{ marginBottom: 8 }}>A short bulleted summary — great for readers in a hurry, Google snippets and AI answers.</p>
+                {(b.items || []).map((t, j) => (
+                  <div key={j} style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
+                    <input className="cms-input" placeholder={`Takeaway ${j + 1}`} value={t}
+                      onChange={(e) => setBlock(i, { items: b.items.map((x, k) => (k === j ? e.target.value : x)) })} />
+                    <button className="cms-iconbtn" title="Remove" onClick={() => setBlock(i, { items: b.items.filter((_, k) => k !== j) })}>✕</button>
+                  </div>
+                ))}
+                <button className="cms-btn cms-btn-sm" onClick={() => setBlock(i, { items: [...(b.items || []), ''] })}>+ Add takeaway</button>
+              </>
+            ) : b.type === 'faq' ? (
+              <>
+                <p className="cms-hint" style={{ marginBottom: 8 }}>Questions &amp; answers — shown on the post and marked up so Google and AI tools can quote them directly.</p>
+                {(b.items || []).map((f, j) => (
+                  <div key={j} style={{ border: '1px solid var(--br, #e3e5ea)', borderRadius: 9, padding: 10, marginBottom: 10 }}>
+                    <div style={{ display: 'flex', gap: 8 }}>
+                      <input className="cms-input" placeholder="Question" value={f.q}
+                        onChange={(e) => setBlock(i, { items: b.items.map((x, k) => (k === j ? { ...x, q: e.target.value } : x)) })} />
+                      <button className="cms-iconbtn" title="Remove" onClick={() => setBlock(i, { items: b.items.filter((_, k) => k !== j) })}>✕</button>
+                    </div>
+                    <textarea className="cms-textarea" style={{ minHeight: 56, marginTop: 8 }} placeholder="Answer — a couple of clear sentences that stand on their own"
+                      value={f.a} onChange={(e) => setBlock(i, { items: b.items.map((x, k) => (k === j ? { ...x, a: e.target.value } : x)) })} />
+                  </div>
+                ))}
+                <button className="cms-btn cms-btn-sm" onClick={() => setBlock(i, { items: [...(b.items || []), { q: '', a: '' }] })}>+ Add question</button>
+              </>
             ) : (
               <RichText value={b.html || ''} placeholder="Paragraph text — select to make bold/italic, add a link or a list"
                 onChange={(v) => setBlock(i, { html: v })} />
@@ -409,6 +446,8 @@ export default function ArticleEditor({ article, authors = [], knownTopics = [],
           <button className="cms-btn cms-btn-sm" onClick={() => addBlock('h2')}>+ Heading</button>
           <button className="cms-btn cms-btn-sm" onClick={() => addBlock('quote')}>+ Pull quote</button>
           <button className="cms-btn cms-btn-sm" onClick={() => addBlock('image')}>+ Image</button>
+          <button className="cms-btn cms-btn-sm" onClick={() => addBlock('takeaways')}>+ Key takeaways</button>
+          <button className="cms-btn cms-btn-sm" onClick={() => addBlock('faq')}>+ FAQ</button>
         </div>
 
         {/* Author */}
