@@ -54,18 +54,22 @@ function fromArticle(a) {
     publishAt: a.publishAt ? toLocalDatetime(a.publishAt) : '',
     status: statusOf(a),
     body: (a.body || []).map((b) =>
-      b.type === 'h2' ? { ...b, navLabel: tocMap[b.id] && tocMap[b.id] !== b.text ? tocMap[b.id] : '' } : { ...b }
+      b.type === 'h2' ? { _k: nextKey(), ...b, navLabel: tocMap[b.id] && tocMap[b.id] !== b.text ? tocMap[b.id] : '' } : { _k: nextKey(), ...b }
     ),
   };
 }
 
+let blockKeySeq = 0;
+const nextKey = () => (blockKeySeq += 1);
+
 function newBlock(type) {
-  if (type === 'h2') return { type: 'h2', level: 2, text: '', id: '', navLabel: '' };
-  if (type === 'quote') return { type: 'quote', text: '' };
-  if (type === 'image') return { type: 'image', src: '', alt: '', caption: '' };
-  if (type === 'takeaways') return { type: 'takeaways', items: [''] };
-  if (type === 'faq') return { type: 'faq', items: [{ q: '', a: '' }] };
-  return { type: 'p', html: '' };
+  const _k = nextKey();
+  if (type === 'h2') return { _k, type: 'h2', level: 2, text: '', id: '', navLabel: '' };
+  if (type === 'quote') return { _k, type: 'quote', text: '' };
+  if (type === 'image') return { _k, type: 'image', src: '', alt: '', caption: '' };
+  if (type === 'takeaways') return { _k, type: 'takeaways', items: [''] };
+  if (type === 'faq') return { _k, type: 'faq', items: [{ q: '', a: '' }] };
+  return { _k, type: 'p', html: '' };
 }
 
 export default function ArticleEditor({ article, authors = [], knownTopics = [], onCancel }) {
@@ -139,7 +143,7 @@ export default function ArticleEditor({ article, authors = [], knownTopics = [],
   // blocks (replacing the block if it was empty, inserting after it otherwise).
   const splitParagraphPaste = (i, parts) => setForm((f) => {
     const body = f.body.slice();
-    const blocks = parts.map((html) => ({ type: 'p', html }));
+    const blocks = parts.map((html) => ({ _k: nextKey(), type: 'p', html }));
     const empty = !(body[i].html || '').replace(/<[^>]*>/g, '').trim();
     body.splice(empty ? i : i + 1, empty ? 1 : 0, ...blocks);
     return { ...f, body };
@@ -419,7 +423,7 @@ export default function ArticleEditor({ article, authors = [], knownTopics = [],
           </label>
         </div>
         {form.body.map((b, i) => (
-          <div className="cms-block" key={i}>
+          <div className="cms-block" key={b._k ?? i}>
             <div className="cms-block-head">
               <select className="cms-select" value={b.type} onChange={(e) => changeType(i, e.target.value)}>
                 <option value="p">Paragraph</option>
