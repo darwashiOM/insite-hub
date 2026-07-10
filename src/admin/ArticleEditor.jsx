@@ -407,7 +407,7 @@ export default function ArticleEditor({ article, authors = [], knownTopics = [],
           {form.thumb && <img className="cms-thumb-prev" src={form.thumb} alt="" />}
           <label className="cms-check" style={{ marginTop: 8 }}>
             <input type="checkbox" checked={form.showHero} onChange={(e) => set('showHero', e.target.checked)} />
-            Show this image at the top of the post (it’s always the blog-card image)
+            Use this image as the background behind the title (works best with a wide, dark image)
           </label>
         </div>
 

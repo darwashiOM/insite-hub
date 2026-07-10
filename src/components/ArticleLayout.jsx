@@ -83,7 +83,8 @@ export default function ArticleLayout({ article, setPage }) {
 
       {/* HERO */}
       <section className="shell">
-        <div className="pa-hero">
+        <div className={'pa-hero' + (article.showHero && article.thumb ? ' has-bg' : '')}
+          style={article.showHero && article.thumb ? { backgroundImage: `url("${article.thumb}")` } : undefined}>
           <div className="hero-content">
             <Breadcrumbs go={setPage} items={[
               { name: 'Home', page: 'home' },
@@ -102,12 +103,6 @@ export default function ArticleLayout({ article, setPage }) {
           </div>
         </div>
       </section>
-
-      {article.showHero && article.thumb && (
-        <section className="shell">
-          <figure className="pa-hero-img"><img src={article.thumb} alt={article.title || ''} /></figure>
-        </section>
-      )}
 
       <div className="shell layout">
         <article className="col-main">

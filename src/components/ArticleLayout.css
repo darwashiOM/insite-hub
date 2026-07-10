@@ -55,7 +55,13 @@
   background: var(--hero-grey) url('/assets/blog/hero-dial.png') center/cover no-repeat;
   margin-top: 34px; aspect-ratio: 1700/897; display: flex; align-items: center;
 }
-.proxa-article .hero-content { position: relative; padding: 0 6%; max-width: 58%; }
+.proxa-article .hero-content { position: relative; z-index: 1; padding: 0 6%; max-width: 58%; }
+/* custom hero background: dark left-to-right scrim keeps the white title legible
+   over whatever image the editor uploads, while the right side stays visible */
+.proxa-article .pa-hero.has-bg::before {
+  content: ''; position: absolute; inset: 0; z-index: 0;
+  background: linear-gradient(90deg, rgba(18,22,26,.86) 0%, rgba(18,22,26,.58) 44%, rgba(18,22,26,.14) 74%, rgba(18,22,26,0) 100%);
+}
 .proxa-article .pa-hero .eyebrow { color: #ef8157; margin-bottom: 22px; }
 .proxa-article .pa-hero h1 {
   color: #fff; font-family: var(--display); font-weight: 800;
@@ -69,6 +75,8 @@
 @media (max-width: 900px) { .proxa-article .hero-content { max-width: 72%; } }
 @media (max-width: 640px) {
   .proxa-article .pa-hero { aspect-ratio: auto; min-height: 440px; background-position: 70% 42%; background-size: auto 132%; }
+  .proxa-article .pa-hero.has-bg { background-position: center; background-size: cover; }
+  .proxa-article .pa-hero.has-bg::before { background: rgba(18,22,26,.7); }
   .proxa-article .hero-content { padding: 30px 26px; max-width: 100%; }
   .proxa-article .pa-hero h1 { font-size: clamp(1.85rem, 7vw, 2.3rem); }
   .proxa-article .pa-hero .byline { flex-wrap: wrap; white-space: normal; gap: 4px 14px; }
@@ -224,10 +232,6 @@
 .prose .article-faq { margin: 34px 0; }
 .prose .article-faq-item { border-top: 1px solid #e3e5ea; padding: 18px 0 6px; }
 .prose .article-faq-item h3 { font-size: 1.05rem; margin: 0 0 8px; }
-
-/* hero image shown at the top of a post (optional per-post toggle) */
-.proxa-article .pa-hero-img { margin: 26px 0 0; }
-.proxa-article .pa-hero-img img { display: block; width: 100%; max-height: 460px; object-fit: cover; border-radius: 16px; }
 
 /* deeper heading levels inside the body */
 .proxa-article .prose h3 { font-family: var(--display); font-weight: 700; color: var(--ink); font-size: 1.22rem; line-height: 1.3; margin: 1.8em 0 .6em; scroll-margin-top: 96px; }
