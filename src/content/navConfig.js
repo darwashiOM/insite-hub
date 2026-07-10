@@ -14,6 +14,7 @@ export const DEFAULT_MENUS = {
   resources: [
     { label: 'Resources', page: 'resources' },
     { label: 'Blog', page: 'blog' },
+    { label: 'News', page: 'newsHub' },
   ],
 };
 
