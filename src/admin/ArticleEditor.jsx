@@ -41,7 +41,12 @@ function toLocalDatetime(ms) {
 // Build the initial form from an existing article, restoring per-heading nav
 // labels from its toc so they survive editing.
 function fromArticle(a) {
-  if (!a) return { ...JSON.parse(JSON.stringify(BLANK)), status: statusOf(null) };
+  if (!a) return {
+    ...JSON.parse(JSON.stringify(BLANK)),
+    status: statusOf(null),
+    // prefill today so undated posts don't sort to the bottom of the blog/news lists
+    date: new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }),
+  };
   const tocMap = Object.fromEntries((a.toc || []).map((t) => [t.id, t.label]));
   return {
     ...JSON.parse(JSON.stringify(BLANK)),

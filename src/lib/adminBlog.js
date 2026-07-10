@@ -110,6 +110,8 @@ export async function adminGetContentType(key) {
 export async function adminSaveContentType(type, isNew = false) {
   const { id: _id, ...data } = type;
   if (!data.key) throw new Error('A type key is required.');
+  // a type's key is its public list address (/<key>) — same collision rules as pages
+  if (RESERVED_SLUGS.has(data.key)) throw new Error(`“/${data.key}” is a reserved site address — pick a different key.`);
   const ref = doc(db, 'contentTypes', data.key);
   if (isNew) { const ex = await getDoc(ref); if (ex.exists()) throw new Error(`A content type "${data.key}" already exists.`); }
   await saveWithHistory(ref, data);

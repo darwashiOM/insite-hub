@@ -366,6 +366,7 @@ const LLMS_HEADER = `# Proxa Labs
 - [InsiteX LMS](%o/insitex-lms): Enterprise learning management built for biopharma compliance.
 - [Content Development](%o/content-development): MLR-compliant content development, AI-powered or traditional.
 - [The Lab](%o/the-lab): Structured AI experimentation — define the use case, design the experiment, measure what matters.
+- [News](%o/news): Product releases, company announcements, and research milestones from Proxa Labs.
 - [About](%o/about): 25 years of biopharma commercial learning expertise applied to AI implementation.
 - [Contact](%o/contact): Start a conversation.`;
 

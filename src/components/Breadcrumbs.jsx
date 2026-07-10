@@ -10,8 +10,8 @@ export default function Breadcrumbs({ items, go }) {
         const last = i === items.length - 1;
         return (
           <span className="crumb" key={i}>
-            {it.page
-              ? <button className="crumb-link" onClick={() => go?.(it.page)}>{it.name}</button>
+            {it.page && go
+              ? <button className="crumb-link" onClick={() => go(it.page)}>{it.name}</button>
               : <span className="crumb-current" aria-current="page">{it.name}</span>}
             {!last && <span className="crumb-sep" aria-hidden="true">›</span>}
           </span>

@@ -10,11 +10,14 @@ const SYMBOL = '/assets/blog/proxa-symbol.png';
  * Same card styling as the blog index.
  */
 export default function NewsIndexPage({ setPage }) {
-  const { articles, loading, error } = usePublishedArticles();
+  const { articles, loading, error, fetched } = usePublishedArticles();
   const news = useMemo(
     () => articles.filter((a) => isNewsCategory(a.pillar)).sort((x, y) => dateTs(y.date) - dateTs(x.date)),
     [articles]
   );
+  // A stale cache without News posts shouldn't flash "no news yet" — wait for the
+  // first fetch to settle before declaring the hub empty.
+  const settling = loading || (news.length === 0 && !fetched);
 
   return (
     <div className="proxa-article">
@@ -25,7 +28,7 @@ export default function NewsIndexPage({ setPage }) {
           Product releases, company announcements, and research milestones from Proxa Labs and The Lab.
         </p>
 
-        {loading ? (
+        {settling ? (
           <p className="blog-sub">Loading…</p>
         ) : error ? (
           <p className="blog-sub">
