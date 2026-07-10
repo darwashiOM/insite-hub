@@ -29,7 +29,7 @@ export function articleChecks(form) {
     { ok: words >= 300, label: 'At least ~300 words', hint: `currently ~${words} — thin pages rarely rank`, soft: true },
     { ok: words < 400 || hasH2, label: 'Headings break up long posts', hint: 'add a Heading block every few paragraphs', soft: true },
     { ok: hasAeo, label: 'Key takeaways or FAQ block (AI answers)', hint: 'these are what ChatGPT / Google AI quote', soft: true },
-    { ok: len(form.author?.name) > 0, label: 'Author set', hint: 'bylines build trust signals', soft: true },
+    { ok: form.hideAuthor === true || len(form.author?.name) > 0, label: 'Author set', hint: 'bylines build trust signals (or tick “hide author”)', soft: true },
   ];
 }
 

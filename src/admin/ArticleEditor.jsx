@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import {
   adminSaveArticle, adminUploadImage, slugify,
-  adminListArticleVersions, adminRestoreArticleVersion,
+  adminListArticleVersions, adminRestoreArticleVersion, adminGetPageContent,
 } from '../lib/adminBlog';
 import VersionHistory from './VersionHistory';
 import { useDraftBackup, useSaveShortcut, useFadingMessage } from './useEditorSafety';
@@ -10,17 +10,19 @@ import PublishSummary from './PublishSummary';
 import SeoPreview, { CharCount } from './SeoPreview';
 import SeoChecklist from './SeoChecklist';
 import { articleChecks, bodyWords } from './seoChecks';
+import { DEFAULT_CATEGORIES } from './categories';
 import StatusSelect from './StatusSelect';
 import { statusOf } from './status';
 import RichText from './RichText';
 import ArticleLayout from '../components/ArticleLayout';
 
 const BLANK = {
-  slug: '', pillar: 'Methodology', topic: '', tags: '', featured: false, title: '', description: '',
+  slug: '', pillar: 'News', topic: '', tags: '', featured: false, title: '', description: '',
   metaTitle: '', canonical: '', ogImage: '', noindex: false,
   authorId: '', author: { name: '', role: '', bio: '', headshot: '' },
   date: '', readTime: '', summary: '',
   body: [], related: [], thumb: '', published: false, publishAt: '', order: 0,
+  showHero: true, hideSummary: false, hideAuthor: false,
 };
 
 // ~200 wpm estimate from the body text (all block types), used when the
@@ -44,6 +46,9 @@ function fromArticle(a) {
   return {
     ...JSON.parse(JSON.stringify(BLANK)),
     ...a,
+    showHero: a.showHero === true, // existing posts don't suddenly grow a hero image
+    hideSummary: a.hideSummary === true,
+    hideAuthor: a.hideAuthor === true,
     author: { ...BLANK.author, ...(a.author || {}) },
     tags: Array.isArray(a.tags) ? a.tags.join(', ') : (a.tags || ''),
     publishAt: a.publishAt ? toLocalDatetime(a.publishAt) : '',
@@ -55,7 +60,7 @@ function fromArticle(a) {
 }
 
 function newBlock(type) {
-  if (type === 'h2') return { type: 'h2', text: '', id: '', navLabel: '' };
+  if (type === 'h2') return { type: 'h2', level: 2, text: '', id: '', navLabel: '' };
   if (type === 'quote') return { type: 'quote', text: '' };
   if (type === 'image') return { type: 'image', src: '', alt: '', caption: '' };
   if (type === 'takeaways') return { type: 'takeaways', items: [''] };
@@ -71,6 +76,16 @@ export default function ArticleEditor({ article, authors = [], knownTopics = [],
   const [error, setError] = useState('');
   const [okMsg, setOkMsg] = useState('');
   const [showAdvanced, setShowAdvanced] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState('');
+  const [categories, setCategories] = useState(DEFAULT_CATEGORIES);
+  useEffect(() => {
+    let alive = true;
+    adminGetPageContent('blogSettings')
+      .then((d) => { if (alive && Array.isArray(d.categories) && d.categories.length) setCategories(d.categories); })
+      .catch(() => {});
+    return () => { alive = false; };
+  }, []);
   const [previewOpen, setPreviewOpen] = useState(false);
   // Once the slug is hand-edited, stop auto-deriving it from the title.
   const [slugDirty, setSlugDirty] = useState(!isNew);
@@ -120,6 +135,16 @@ export default function ArticleEditor({ article, authors = [], knownTopics = [],
     [body[i], body[j]] = [body[j], body[i]];
     return { ...f, body };
   });
+  // Pasting several paragraphs into a paragraph block splits them into separate
+  // blocks (replacing the block if it was empty, inserting after it otherwise).
+  const splitParagraphPaste = (i, parts) => setForm((f) => {
+    const body = f.body.slice();
+    const blocks = parts.map((html) => ({ type: 'p', html }));
+    const empty = !(body[i].html || '').replace(/<[^>]*>/g, '').trim();
+    body.splice(empty ? i : i + 1, empty ? 1 : 0, ...blocks);
+    return { ...f, body };
+  });
+
   const changeType = (i, type) => {
     const b = form.body[i];
     if (b.type === type) return;
@@ -130,10 +155,10 @@ export default function ArticleEditor({ article, authors = [], knownTopics = [],
 
   const upload = async (file, apply) => {
     if (!file) return;
-    setBusy(true); setError('');
+    setBusy(true); setError(''); setUploading(true); setUploadError('');
     try { apply(await adminUploadImage(file)); }
-    catch (e) { setError('Image upload failed: ' + (e.message || e)); }
-    finally { setBusy(false); }
+    catch (e) { setUploadError('Upload failed: ' + (e.message || e)); }
+    finally { setBusy(false); setUploading(false); }
   };
 
   // Build the saved-shape article from the current form (body normalized + TOC
@@ -155,8 +180,9 @@ export default function ArticleEditor({ article, authors = [], knownTopics = [],
       if (b.type === 'h2') {
         const text = (b.text || '').trim();
         const id = uniqueId((b.id || '').trim() || slugify(text));
-        headings.push({ id, text, navLabel: (b.navLabel || '').trim() });
-        return { type: 'h2', id, text };
+        const level = b.level === 3 ? 3 : b.level === 4 ? 4 : 2;
+        if (level === 2) headings.push({ id, text, navLabel: (b.navLabel || '').trim() });
+        return { type: 'h2', level, id, text };
       }
       if (b.type === 'quote') return { type: 'quote', text: (b.text || '').trim() };
       if (b.type === 'image') return { type: 'image', src: (b.src || '').trim(), alt: (b.alt || '').trim(), caption: (b.caption || '').trim() };
@@ -183,6 +209,7 @@ export default function ArticleEditor({ article, authors = [], knownTopics = [],
         bio: form.author.bio.trim(), headshot: form.author.headshot.trim(),
       },
       date: form.date.trim(), readTime: form.readTime.trim() || estimateReadTime(body),
+      showHero: !!form.showHero, hideSummary: !!form.hideSummary, hideAuthor: !!form.hideAuthor,
       summary: form.summary.trim(), body, toc,
       related: form.related || [], thumb: form.thumb.trim(),
       published, status: form.status, order: Number(form.order) || 0,
@@ -277,7 +304,10 @@ export default function ArticleEditor({ article, authors = [], knownTopics = [],
           </div>
           <div className="cms-field">
             <label>Category</label>
-            <input className="cms-input" value={form.pillar} onChange={(e) => set('pillar', e.target.value)} />
+            <select className="cms-select" value={form.pillar} onChange={(e) => set('pillar', e.target.value)}>
+              {[...new Set([...categories, form.pillar].filter(Boolean))].map((c) => <option key={c} value={c}>{c}</option>)}
+            </select>
+            <p className="cms-hint">Edit the list of categories from the Blog tab (“Edit categories”).</p>
           </div>
         </div>
 
@@ -357,6 +387,10 @@ export default function ArticleEditor({ article, authors = [], knownTopics = [],
         <div className="cms-field">
           <label>Summary (the highlighted intro box)</label>
           <textarea className="cms-textarea" value={form.summary} onChange={(e) => set('summary', e.target.value)} />
+          <label className="cms-check" style={{ marginTop: 8 }}>
+            <input type="checkbox" checked={form.hideSummary} onChange={(e) => set('hideSummary', e.target.checked)} />
+            Don’t show the summary box on the post (it’s still used for search results and blog cards)
+          </label>
         </div>
 
         <div className="cms-field">
@@ -364,7 +398,13 @@ export default function ArticleEditor({ article, authors = [], knownTopics = [],
           <input className="cms-input" placeholder="Image URL" value={form.thumb} onChange={(e) => set('thumb', e.target.value)} />
           <input type="file" accept="image/png,image/jpeg,image/gif,image/webp" style={{ marginTop: 8 }}
             onChange={(e) => upload(e.target.files[0], (url) => set('thumb', url))} />
+          {uploading && <p className="cms-hint">Uploading…</p>}
+          {uploadError && <p className="cms-hint cms-count-over">{uploadError}</p>}
           {form.thumb && <img className="cms-thumb-prev" src={form.thumb} alt="" />}
+          <label className="cms-check" style={{ marginTop: 8 }}>
+            <input type="checkbox" checked={form.showHero} onChange={(e) => set('showHero', e.target.checked)} />
+            Show this image at the top of the post (it’s always the blog-card image)
+          </label>
         </div>
 
         {/* Body */}
@@ -396,8 +436,16 @@ export default function ArticleEditor({ article, authors = [], knownTopics = [],
             </div>
             {b.type === 'h2' ? (
               <>
-                <input className="cms-input" placeholder="Heading text" value={b.text || ''}
-                  onChange={(e) => setBlock(i, { text: e.target.value })} />
+                <div style={{ display: 'flex', gap: 8 }}>
+                  <select className="cms-select" style={{ maxWidth: 130 }} value={b.level || 2}
+                    onChange={(e) => setBlock(i, { level: Number(e.target.value) })}>
+                    <option value={2}>Heading</option>
+                    <option value={3}>Subheading</option>
+                    <option value={4}>Small heading</option>
+                  </select>
+                  <input className="cms-input" placeholder="Heading text" value={b.text || ''}
+                    onChange={(e) => setBlock(i, { text: e.target.value })} />
+                </div>
                 {showAdvanced && (
                   <div className="cms-row" style={{ marginTop: 10 }}>
                     <input className="cms-input" placeholder="Link anchor (auto from text if blank)" value={b.id || ''}
@@ -453,8 +501,8 @@ export default function ArticleEditor({ article, authors = [], knownTopics = [],
                 <button className="cms-btn cms-btn-sm" onClick={() => setBlock(i, { items: [...(b.items || []), { q: '', a: '' }] })}>+ Add question</button>
               </>
             ) : (
-              <RichText value={b.html || ''} placeholder="Paragraph text — select to make bold/italic, add a link or a list"
-                onChange={(v) => setBlock(i, { html: v })} />
+              <RichText value={b.html || ''} placeholder="Paragraph text — paste a whole document and it splits into paragraphs"
+                onChange={(v) => setBlock(i, { html: v })} onSplitPaste={(parts) => splitParagraphPaste(i, parts)} />
             )}
           </div>
         ))}
@@ -469,6 +517,10 @@ export default function ArticleEditor({ article, authors = [], knownTopics = [],
 
         {/* Author */}
         <div className="cms-section-h">Author</div>
+        <label className="cms-check" style={{ marginBottom: 14 }}>
+          <input type="checkbox" checked={form.hideAuthor} onChange={(e) => set('hideAuthor', e.target.checked)} />
+          Hide the author on this post (no byline or author box)
+        </label>
         {authors.length > 0 && (
           <div className="cms-field">
             <label>Use a saved author</label>

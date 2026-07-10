@@ -73,7 +73,8 @@ export default function ArticleLayout({ article, setPage }) {
   };
 
   const { author } = article;
-  const bylineMeta = [author.role, article.date, article.readTime].filter(Boolean);
+  const hideAuthor = article.hideAuthor === true;
+  const bylineMeta = (hideAuthor ? [article.date, article.readTime] : [author.role, article.date, article.readTime]).filter(Boolean);
   const related = (article.related || []).filter((c) => c.href && c.href !== '#');
 
   return (
@@ -87,12 +88,11 @@ export default function ArticleLayout({ article, setPage }) {
             <Breadcrumbs go={setPage} items={[
               { name: 'Home', page: 'home' },
               { name: 'Blog', page: 'blog' },
-              { name: article.title || 'Article' },
             ]} />
             <p className="eyebrow"><img src={SYMBOL} alt="Proxa Labs" />{article.pillar}</p>
             <h1>{article.title}</h1>
             <div className="byline">
-              <span className="b-name">{author.name}</span>
+              {!hideAuthor && <span className="b-name">{author.name}</span>}
               <span className="b-rest">
                 {bylineMeta.map((part, i) => (
                   <span key={i}>{i > 0 && <span className="sep">&bull;</span>}{part}</span>
@@ -103,12 +103,20 @@ export default function ArticleLayout({ article, setPage }) {
         </div>
       </section>
 
+      {article.showHero && article.thumb && (
+        <section className="shell">
+          <figure className="pa-hero-img"><img src={article.thumb} alt={article.title || ''} /></figure>
+        </section>
+      )}
+
       <div className="shell layout">
         <article className="col-main">
-          <div className="summary">
-            <p className="summary-kicker">Article summary</p>
-            <p dangerouslySetInnerHTML={clean(article.summary)} />
-          </div>
+          {!!(article.summary || '').trim() && article.hideSummary !== true && (
+            <div className="summary">
+              <p className="summary-kicker">Article summary</p>
+              <p dangerouslySetInnerHTML={clean(article.summary)} />
+            </div>
+          )}
 
           <div className="toc-mobile">
             <details>
@@ -123,7 +131,10 @@ export default function ArticleLayout({ article, setPage }) {
 
           <div className="prose">
             {article.body.map((b, i) => {
-              if (b.type === 'h2') return <h2 key={i} id={b.id}>{b.text}</h2>;
+              if (b.type === 'h2') {
+                const Tag = b.level === 3 ? 'h3' : b.level === 4 ? 'h4' : 'h2';
+                return <Tag key={i} id={b.id}>{b.text}</Tag>;
+              }
               if (b.type === 'quote') {
                 return (
                   <blockquote key={i} className="pull">
@@ -169,14 +180,16 @@ export default function ArticleLayout({ article, setPage }) {
 
           <div className="endmark"><img src={SYMBOL} alt="Proxa Labs" /></div>
 
-          <div className="biocard">
-            <img className="headshot" src={author.headshot} alt={author.name} />
-            <div>
-              <p className="bio-name">{author.name}</p>
-              <p className="bio-role">{author.role}</p>
-              <p className="bio-text">{author.bio}</p>
+          {!hideAuthor && !!(author.name || '').trim() && (
+            <div className="biocard">
+              {author.headshot && <img className="headshot" src={author.headshot} alt={author.name} />}
+              <div>
+                <p className="bio-name">{author.name}</p>
+                <p className="bio-role">{author.role}</p>
+                <p className="bio-text">{author.bio}</p>
+              </div>
             </div>
-          </div>
+          )}
         </article>
 
         <aside className="sidebar">

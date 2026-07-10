@@ -23,6 +23,7 @@ import NavEditor from './NavEditor';
 import RedirectsEditor from './RedirectsEditor';
 import ActivityView from './ActivityView';
 import ContentTypesManager from './ContentTypesManager';
+import CategoriesEditor from './CategoriesEditor';
 import StartHere from './StartHere';
 import SeoHealth from './SeoHealth';
 
@@ -88,6 +89,7 @@ export default function AdminDashboard({ role, onLogout }) {
   const [formsSub, setFormsSub] = useState('forms'); // 'forms' | 'submissions'
   const [q, setQ] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
+  const [catsOpen, setCatsOpen] = useState(false);
   const [pagesDirty, setPagesDirty] = useState(false);
   const [navDirty, setNavDirty] = useState(false);
   const [redirectsDirty, setRedirectsDirty] = useState(false);
@@ -241,6 +243,7 @@ export default function AdminDashboard({ role, onLogout }) {
           </>}
         </div>
         <div style={{ display: 'flex', gap: 10 }}>
+          {tab === 'blog' && isAdmin && <button className="cms-btn" onClick={() => setCatsOpen((o) => !o)}>Edit categories</button>}
           {tab === 'blog' && <button className="cms-btn cms-btn-primary" onClick={() => setView('new')}>+ New article</button>}
           {tab === 'cs' && <button className="cms-btn cms-btn-primary" onClick={() => setCsView('new')}>+ New case study</button>}
           {tab === 'videos' && <button className="cms-btn cms-btn-primary" onClick={() => setVidView('new')}>+ New video</button>}
@@ -397,8 +400,11 @@ export default function AdminDashboard({ role, onLogout }) {
             </>
           )
         ) : articles === null ? Loading
-        : articles.length === 0 ? <p style={{ color: '#5c6370' }}>No articles yet. Click “New article” to write the first one.</p>
         : (
+          <>
+          {catsOpen && <CategoriesEditor onClose={() => setCatsOpen(false)} />}
+          {articles.length === 0 ? <p style={{ color: '#5c6370' }}>No articles yet. Click “New article” to write the first one.</p>
+          : (
           <>
           <ListToolbar items={articles} q={q} setQ={setQ} statusFilter={statusFilter} setStatusFilter={setStatusFilter} kind="posts" />
           {filterList(articles).length === 0 ? noMatches : (
@@ -419,6 +425,8 @@ export default function AdminDashboard({ role, onLogout }) {
               </div>
             ))}
           </div>)}
+          </>
+          )}
           </>
         )}
         </>
