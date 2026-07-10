@@ -30,6 +30,7 @@ export const NAV_DESTINATIONS = [
   { page: 'proxalab', label: 'The Lab' },
   { page: 'resources', label: 'Resources' },
   { page: 'blog', label: 'Blog / Articles' },
+  { page: 'newsHub', label: 'News' },
   { page: 'news', label: 'Announcements' },
   { page: 'newsletter', label: 'Newsletter' },
   { page: 'about', label: 'About' },

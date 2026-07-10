@@ -28,3 +28,4 @@ dist-ssr
 functions/.env
 .env.sentry-build-plugin
 .firebase/
+.playwright-mcp/

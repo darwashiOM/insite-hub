@@ -1,7 +1,8 @@
 import './Breadcrumbs.css';
 
 // Visible breadcrumb trail (Home › Section › Page). `items` = [{ name, page? }];
-// the last item is the current page and isn't a link. `go(page)` navigates.
+// items with a `page` are links, ones without (the current page) are plain text.
+// `go(page)` navigates.
 export default function Breadcrumbs({ items, go }) {
   return (
     <nav className="crumbs" aria-label="Breadcrumb">
@@ -9,9 +10,9 @@ export default function Breadcrumbs({ items, go }) {
         const last = i === items.length - 1;
         return (
           <span className="crumb" key={i}>
-            {last || !it.page
-              ? <span className="crumb-current" aria-current="page">{it.name}</span>
-              : <button className="crumb-link" onClick={() => go?.(it.page)}>{it.name}</button>}
+            {it.page
+              ? <button className="crumb-link" onClick={() => go?.(it.page)}>{it.name}</button>
+              : <span className="crumb-current" aria-current="page">{it.name}</span>}
             {!last && <span className="crumb-sep" aria-hidden="true">›</span>}
           </span>
         );

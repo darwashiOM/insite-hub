@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import DOMPurify from 'dompurify';
 import Breadcrumbs from './Breadcrumbs';
+import { isNewsCategory } from '../lib/blog';
 import './ArticleLayout.css';
 
 const SYMBOL = '/assets/blog/proxa-symbol.png';
@@ -88,7 +89,10 @@ export default function ArticleLayout({ article, setPage }) {
           <div className="hero-content">
             <Breadcrumbs go={setPage} items={[
               { name: 'Home', page: 'home' },
-              { name: 'Blog', page: 'blog' },
+              // News posts live under the News hub; everything else under Blog.
+              isNewsCategory(article.pillar)
+                ? { name: 'News', page: 'newsHub' }
+                : { name: 'Blog', page: 'blog' },
             ]} />
             <p className="eyebrow"><img src={SYMBOL} alt="Proxa Labs" />{article.pillar}</p>
             <h1>{article.title}</h1>

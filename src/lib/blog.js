@@ -20,6 +20,10 @@ export function dateTs(d) {
   const n = Date.parse(d || '');
   return Number.isNaN(n) ? 0 : n;
 }
+
+// Posts filed under the "News" category get the /news hub as their home
+// (breadcrumbs point there and the hub lists them).
+export const isNewsCategory = (pillar) => (pillar || '').trim().toLowerCase() === 'news';
 const sortArticles = (list) =>
   [...list].sort((a, b) => (a.order ?? 9999) - (b.order ?? 9999) || dateTs(b.date) - dateTs(a.date));
 

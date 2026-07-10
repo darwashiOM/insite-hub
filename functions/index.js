@@ -326,7 +326,7 @@ exports.getContent = onRequest(async (req, res) => {
 const SITEMAP_STATIC = [
   "/", "/platform", "/advisory", "/ai-literacy", "/insitex-lms", "/content-development",
   "/the-lab", "/about", "/announcements", "/resources", "/newsletter", "/contact",
-  "/blog", "/case-studies", "/videos",
+  "/blog", "/news", "/case-studies", "/videos",
 ];
 exports.getSitemap = onRequest(async (req, res) => {
   try {

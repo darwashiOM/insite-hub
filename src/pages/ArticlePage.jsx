@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import ArticleLayout from '../components/ArticleLayout';
-import { useArticle } from '../lib/blog';
+import { useArticle, isNewsCategory } from '../lib/blog';
 import { SITE_URL } from '../lib/site';
 import { setJsonLd, buildArticleLd, buildBreadcrumbLd, buildFaqLd, setSocialCards } from '../lib/jsonLd';
 
@@ -42,7 +42,9 @@ export default function ArticlePage({ setPage }) {
     setJsonLd('ld-article-faq', buildFaqLd((article.body || []).filter((b) => b.type === 'faq').flatMap((b) => b.items || [])));
     setJsonLd('ld-breadcrumb', buildBreadcrumbLd([
       { name: 'Home', url: `${SITE_URL}/` },
-      { name: 'Blog', url: `${SITE_URL}/blog` },
+      isNewsCategory(article.pillar)
+        ? { name: 'News', url: `${SITE_URL}/news` }
+        : { name: 'Blog', url: `${SITE_URL}/blog` },
       { name: article.title, url },
     ]));
 

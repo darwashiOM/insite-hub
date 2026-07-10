@@ -36,6 +36,7 @@ function lazyWithReload(factory) {
   }));
 }
 const BlogIndexPage = lazyWithReload(() => import('./pages/BlogIndexPage'));
+const NewsIndexPage = lazyWithReload(() => import('./pages/NewsIndexPage'));
 const ArticlePage = lazyWithReload(() => import('./pages/ArticlePage'));
 const CaseStudiesIndexPage = lazyWithReload(() => import('./pages/CaseStudiesIndexPage'));
 const CaseStudyPage = lazyWithReload(() => import('./pages/CaseStudyPage'));
@@ -61,6 +62,7 @@ const PAGE_TITLES = {
   contact: "Contact Proxa Labs · Start a Conversation",
   futureproof: "Future-Proof Your Organization · Proxa Labs",
   blog: "Blog · Proxa Labs",
+  newsHub: "News · Proxa Labs",
   article: "Proxa Labs",
   caseStudies: "Case Studies · Proxa Labs",
   caseStudy: "Case Study · Proxa Labs",
@@ -88,6 +90,7 @@ const DESCS = {
   contact: "Start a conversation with Proxa Labs. Ready to talk, want to learn first, or just exploring — we'll meet you where you are.",
   futureproof: "An executive brief from Proxa Labs on building durable AI capability across biopharma commercial organizations.",
   blog: "Field notes and frameworks from Proxa Labs on commercial readiness, AI evidence, and closing the gap between training and a field that can perform.",
+  newsHub: "Product releases, company announcements, and research milestones from Proxa Labs and The Lab.",
   article: "Field notes and frameworks from Proxa Labs on commercial readiness.",
   caseStudies: "Real biopharma commercial teams, real results — the challenge, what Proxa Labs did, and the outcomes.",
   caseStudy: "A Proxa Labs case study — challenge, approach, and results.",
@@ -119,7 +122,7 @@ const PAGES = {
   literacy: LiteracyPage, insitex: InsiteXPage, content: ContentPage,
   proxalab: ProxaLabsPage, about: AboutPage, news: NewsPage,
   resources: ResourcesPage, newsletter: NewsletterPage, contact: ContactPage,
-  futureproof: FutureProofPage, blog: BlogIndexPage, article: ArticlePage,
+  futureproof: FutureProofPage, blog: BlogIndexPage, newsHub: NewsIndexPage, article: ArticlePage,
   caseStudies: CaseStudiesIndexPage, caseStudy: CaseStudyPage,
   videos: VideoGalleryPage, form: CmsFormPage, dynamicPage: DynamicPage, search: SearchPage,
   contentDetail: GenericDetailPage,
@@ -142,6 +145,7 @@ const PAGE_PATHS = {
   futureproof: "/future-proof-your-organization",
   search: "/search",
   blog: "/blog",
+  newsHub: "/news",
   caseStudies: "/case-studies",
   videos: "/videos",
   admin: "/noonewillfindthis",

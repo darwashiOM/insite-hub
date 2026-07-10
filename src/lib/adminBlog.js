@@ -385,7 +385,7 @@ export async function adminGetPage(slug) {
 const RESERVED_SLUGS = new Set([
   'platform', 'advisory', 'ai-literacy', 'insitex-lms', 'content-development', 'the-lab',
   'about', 'announcements', 'resources', 'newsletter', 'contact', 'future-proof-your-organization',
-  'search', 'blog', 'case-studies', 'videos', 'noonewillfindthis', 'admin', 'api', 'assets',
+  'search', 'blog', 'news', 'case-studies', 'videos', 'noonewillfindthis', 'admin', 'api', 'assets',
 ]);
 
 export async function adminSavePage(page, isNew = false) {
