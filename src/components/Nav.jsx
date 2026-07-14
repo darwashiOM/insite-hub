@@ -139,8 +139,6 @@ const Nav = ({ page, setPage, scrolled }) => {
         </div>
 
         <div className="nav-right">
-          <button onClick={() => go("search")} aria-label="Search" title="Search"
-            style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '1rem', padding: '6px 8px', opacity: .8 }}>🔍</button>
           <button className="no" onClick={() => go("contact", "demo")}>Book a Demo</button>
           <button className="nav-hamburger" onClick={() => setMobileOpen(o => !o)} aria-label="Menu">
             <span style={mobileOpen ? { transform: "rotate(45deg) translate(5px,5px)" } : {}} />
