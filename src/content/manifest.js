@@ -16,6 +16,7 @@ import resources from './pages/resources';
 import newsletter from './pages/newsletter';
 import contact from './pages/contact';
 import futureproof from './pages/futureproof';
+import innovation from './pages/innovation';
 
 export const MANIFEST = {
   home: {
@@ -36,7 +37,7 @@ export const MANIFEST = {
     ],
   },
   platform, advisory, literacy, insitex, content, proxalab,
-  about, news, resources, newsletter, contact, futureproof,
+  about, news, resources, newsletter, contact, futureproof, innovation,
 };
 
 // Special-case constant so the homepage can render its rich (italic) headline as

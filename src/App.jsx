@@ -15,6 +15,7 @@ import ResourcesPage from './pages/ResourcesPage';
 import NewsletterPage from './pages/NewsletterPage';
 import ContactPage from './pages/ContactPage';
 import FutureProofPage from './pages/FutureProofPage';
+import InnovationCollectivePage from './pages/InnovationCollectivePage';
 import NotFoundPage from './pages/NotFoundPage';
 import ErrorBoundary from './components/ErrorBoundary';
 import { prefetchContent, useRedirects, usePageSeo } from './lib/content';
@@ -61,6 +62,7 @@ const PAGE_TITLES = {
   newsletter: "Newsletter · Stay Ahead of AI in Biopharma · Proxa Labs",
   contact: "Contact Proxa Labs · Start a Conversation",
   futureproof: "Future-Proof Your Organization · Proxa Labs",
+  innovation: "Proxa Labs Innovation Collective",
   blog: "Blog · Proxa Labs",
   newsHub: "News · Proxa Labs",
   article: "Proxa Labs",
@@ -89,6 +91,7 @@ const DESCS = {
   newsletter: "Frameworks, research, and field notes from Proxa Labs' practitioners. Sent when there's something worth saying.",
   contact: "Start a conversation with Proxa Labs. Ready to talk, want to learn first, or just exploring — we'll meet you where you are.",
   futureproof: "An executive brief from Proxa Labs on building durable AI capability across biopharma commercial organizations.",
+  innovation: "An invitation-only working session for commercial L&D leaders in life sciences on the state of AI. By invitation only.",
   blog: "Field notes and frameworks from Proxa Labs on commercial readiness, AI evidence, and closing the gap between training and a field that can perform.",
   newsHub: "Product releases, company announcements, and research milestones from Proxa Labs and The Lab.",
   article: "Field notes and frameworks from Proxa Labs on commercial readiness.",
@@ -104,7 +107,7 @@ const DESCS = {
 };
 
 // Campaign / placeholder / private pages that should not be indexed.
-const NOINDEX_PAGES = new Set(["futureproof", "admin", "notfound", "search"]);
+const NOINDEX_PAGES = new Set(["futureproof", "innovation", "admin", "notfound", "search"]);
 
 function upsertMeta(attr, key, content) {
   let el = document.head.querySelector(`meta[${attr}="${key}"]`);
@@ -122,7 +125,8 @@ const PAGES = {
   literacy: LiteracyPage, insitex: InsiteXPage, content: ContentPage,
   proxalab: ProxaLabsPage, about: AboutPage, news: NewsPage,
   resources: ResourcesPage, newsletter: NewsletterPage, contact: ContactPage,
-  futureproof: FutureProofPage, blog: BlogIndexPage, newsHub: NewsIndexPage, article: ArticlePage,
+  futureproof: FutureProofPage, innovation: InnovationCollectivePage,
+  blog: BlogIndexPage, newsHub: NewsIndexPage, article: ArticlePage,
   caseStudies: CaseStudiesIndexPage, caseStudy: CaseStudyPage,
   videos: VideoGalleryPage, form: CmsFormPage, dynamicPage: DynamicPage, search: SearchPage,
   contentDetail: GenericDetailPage,
@@ -143,6 +147,7 @@ const PAGE_PATHS = {
   newsletter: "/newsletter",
   contact: "/contact",
   futureproof: "/future-proof-your-organization",
+  innovation: "/innovation-collective",
   search: "/search",
   blog: "/blog",
   newsHub: "/news",

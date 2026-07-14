@@ -30,6 +30,9 @@ const ALLOWED_ORIGINS = [
 const DEFAULT_NOTIFY_EMAILS = "sales@insitehub.com,john.royer@insitehub.com,mehrler@proxalabs.com";
 const FUTURE_PROOF_REPLY_TO = "mehrler@proxalabs.com";
 const DEFAULT_FROM_NAME = "Proxa Labs Website";
+// Innovation Collective event registrations route to Mercy only (override with
+// EVENT_NOTIFY_EMAIL in functions/.env to add/replace recipients without a code change).
+const EVENT_REGISTER_NOTIFY = "mehrler@proxalabs.com";
 
 function parseEmails(value) {
   return (value || "")
@@ -194,6 +197,97 @@ exports.submitNewsletter = onRequest(async (req, res) => {
     console.error("Email send failed:", err);
     res.status(500).json({ error: "Failed to send email. Please try again." });
   }
+});
+
+// ---------------------------------------------------------------------------
+// Innovation Collective event registration: private, invite-only. Stores each
+// registration (so a seat is never lost if email hiccups), then emails Mercy for
+// manual review — nobody is auto-confirmed. Honeypot + rate limit like the others.
+// ---------------------------------------------------------------------------
+exports.submitEventRegistration = onRequest(async (req, res) => {
+  if (setCors(req, res)) return;
+  if (req.method !== "POST") { res.status(405).json({ error: "Method not allowed" }); return; }
+
+  // Honeypot: a real user never fills this hidden field. Pretend success, store nothing.
+  if (req.body && req.body._hp) { res.status(200).json({ success: true }); return; }
+
+  // Cap every field at read time (like submitForm) so a present-but-huge value
+  // can't bloat the stored doc / notification email.
+  const cap = (s, n) => String(s == null ? "" : s).trim().slice(0, n);
+  const b = req.body || {};
+  const fullName = cap(b.fullName, 200);
+  const title = cap(b.title, 200);
+  const company = cap(b.company, 200);
+  const email = cap(b.email, 320);
+  const inviter = cap(b.inviter, 200);
+  const challenge = cap(b.challenge, 5000);
+  const plusOne = b.plusOne === "yes" ? "yes" : b.plusOne === "no" ? "no" : "";
+  const colleagueName = plusOne === "yes" ? cap(b.colleagueName, 200) : "";
+  const colleagueEmail = plusOne === "yes" ? cap(b.colleagueEmail, 320) : "";
+  const onsite = !!b.onsite;
+
+  const emailOk = (e) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);
+  if (!fullName || !title || !company || !emailOk(email) || !inviter || !challenge || !plusOne) {
+    res.status(400).json({ error: "Please complete all required fields." }); return;
+  }
+  if (plusOne === "yes" && (!colleagueName || !emailOk(colleagueEmail))) {
+    res.status(400).json({ error: "Please complete your colleague's details." }); return;
+  }
+
+  if (await enforceRateLimit(admin.firestore(), req, Date.now())) {
+    res.status(429).json({ error: "Too many submissions. Please try again later." }); return;
+  }
+
+  // Persist first so a registration is never lost if the email fails. If the store
+  // itself fails, surface an error so the user retries (rather than silently drop).
+  try {
+    await admin.firestore().collection("formSubmissions").add({
+      formSlug: "innovation-collective",
+      formName: "Innovation Collective Registration",
+      data: { fullName, title, company, email, inviter, challenge, plusOne, colleagueName, colleagueEmail, onsite },
+      createdAt: FieldValue.serverTimestamp(),
+    });
+  } catch (err) {
+    console.error("Event registration store failed:", err);
+    res.status(500).json({ error: "Submission failed — please try again." });
+    return;
+  }
+
+  const sline = (s) => String(s == null ? "" : s).replace(/[\r\n]+/g, " ").trim();
+  const cell = (k, v) => `<tr><td style="padding:8px 16px 8px 0;font-weight:bold;color:#666;vertical-align:top;">${k}</td><td style="padding:8px 0;">${v}</td></tr>`;
+  const rows = [
+    cell("Name", escapeHtml(fullName)),
+    cell("Title", escapeHtml(title)),
+    cell("Company", escapeHtml(company)),
+    cell("Email", `<a href="mailto:${escapeHtml(email)}">${escapeHtml(email)}</a>`),
+    cell("Invited by", escapeHtml(inviter)),
+    cell("Biggest AI challenge", escapeHtml(challenge)),
+    cell("Bringing a colleague", plusOne === "yes" ? "Yes" : "No"),
+  ];
+  if (plusOne === "yes") {
+    rows.push(cell("Colleague", escapeHtml(colleagueName)));
+    rows.push(cell("Colleague email", `<a href="mailto:${escapeHtml(colleagueEmail)}">${escapeHtml(colleagueEmail)}</a>`));
+  }
+  rows.push(cell("On-site session requested", onsite ? "Yes" : "No"));
+
+  const html = `
+    <h2>New Innovation Collective registration</h2>
+    <p style="font-family:sans-serif;font-size:13px;color:#888;">Review and confirm this seat personally — nobody is auto-confirmed.</p>
+    <table style="border-collapse:collapse;font-family:sans-serif;font-size:14px;">
+      ${rows.join("\n      ")}
+    </table>
+  `;
+
+  // Email best-effort — the registration is already stored, so never fail on send.
+  getTransporter().sendMail({
+    from: getFromAddress(),
+    to: parseEmails(process.env.EVENT_NOTIFY_EMAIL || EVENT_REGISTER_NOTIFY),
+    replyTo: email,
+    subject: `New Innovation Collective registration: ${sline(fullName)} (${sline(company)})`,
+    html,
+  }).catch((err) => console.error("Event registration email failed:", err));
+
+  res.status(200).json({ success: true });
 });
 
 // ---------------------------------------------------------------------------

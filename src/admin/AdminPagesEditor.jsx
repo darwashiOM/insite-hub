@@ -14,6 +14,7 @@ const PAGE_PATHS = {
   insitex: '/insitex-lms', content: '/content-development', proxalab: '/the-lab',
   about: '/about', news: '/announcements', resources: '/resources',
   newsletter: '/newsletter', contact: '/contact', futureproof: '/future-proof-your-organization',
+  innovation: '/innovation-collective',
 };
 
 const sectionTitle = (key) => {
