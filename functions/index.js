@@ -30,9 +30,9 @@ const ALLOWED_ORIGINS = [
 const DEFAULT_NOTIFY_EMAILS = "sales@insitehub.com,john.royer@insitehub.com,mehrler@proxalabs.com";
 const FUTURE_PROOF_REPLY_TO = "mehrler@proxalabs.com";
 const DEFAULT_FROM_NAME = "Proxa Labs Website";
-// Innovation Collective event registrations route to Mercy only (override with
-// EVENT_NOTIFY_EMAIL in functions/.env to add/replace recipients without a code change).
-const EVENT_REGISTER_NOTIFY = "mehrler@proxalabs.com";
+// Innovation Collective event registrations route to Mercy (both addresses).
+// Override with EVENT_NOTIFY_EMAIL in functions/.env to change recipients without a code change.
+const EVENT_REGISTER_NOTIFY = "mehrler@proxalabs.com,mercy@ehrlermarketingadvisory.com";
 
 function parseEmails(value) {
   return (value || "")
