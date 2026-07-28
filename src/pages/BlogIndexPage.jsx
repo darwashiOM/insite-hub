@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { usePublishedArticles, dateTs } from '../lib/blog';
+import { usePublishedArticles, dateTs, cardImg } from '../lib/blog';
 import '../components/ArticleLayout.css';
 
 const SYMBOL = '/assets/blog/proxa-symbol.png';
@@ -101,7 +101,7 @@ export default function BlogIndexPage({ setPage }) {
           <div className="blog-grid">
             {shown.map((a) => (
               <button key={a.id} className="blog-card" onClick={() => setPage('article', { slug: a.slug })}>
-                <div className="blog-card-img" style={a.thumb ? { backgroundImage: `url(${a.thumb})` } : undefined} />
+                <div className="blog-card-img" style={cardImg(a) ? { backgroundImage: `url(${cardImg(a)})` } : undefined} />
                 <p className="card-pillar">{a.pillar}{a.featured ? ' · Featured' : ''}</p>
                 <p className="card-title">{a.title}</p>
                 <p className="card-meta">{a.date}{a.readTime ? ` • ${a.readTime}` : ''}</p>

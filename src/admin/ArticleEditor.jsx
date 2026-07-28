@@ -21,7 +21,7 @@ const BLANK = {
   metaTitle: '', canonical: '', ogImage: '', noindex: false,
   authorId: '', author: { name: '', role: '', bio: '', headshot: '' },
   date: '', readTime: '', summary: '',
-  body: [], related: [], thumb: '', published: false, publishAt: '', order: 0,
+  body: [], related: [], thumb: '', cardImage: '', published: false, publishAt: '', order: 0,
   showHero: true, hideSummary: false, hideAuthor: false,
 };
 
@@ -220,7 +220,7 @@ export default function ArticleEditor({ article, authors = [], knownTopics = [],
       date: form.date.trim(), readTime: form.readTime.trim() || estimateReadTime(body),
       showHero: !!form.showHero, hideSummary: !!form.hideSummary, hideAuthor: !!form.hideAuthor,
       summary: form.summary.trim(), body, toc,
-      related: form.related || [], thumb: form.thumb.trim(),
+      related: form.related || [], thumb: form.thumb.trim(), cardImage: form.cardImage.trim(),
       published, status: form.status, order: Number(form.order) || 0,
       ...(isScheduled ? { publishAt: scheduledMs } : {}),
     };
@@ -403,7 +403,7 @@ export default function ArticleEditor({ article, authors = [], knownTopics = [],
         </div>
 
         <div className="cms-field">
-          <label>Hero / card thumbnail</label>
+          <label>Main image</label>
           <input className="cms-input" placeholder="Image URL" value={form.thumb} onChange={(e) => set('thumb', e.target.value)} />
           <input type="file" accept="image/png,image/jpeg,image/gif,image/webp" style={{ marginTop: 8 }}
             onChange={(e) => upload(e.target.files[0], (url) => set('thumb', url))} />
@@ -414,6 +414,18 @@ export default function ArticleEditor({ article, authors = [], knownTopics = [],
             <input type="checkbox" checked={form.showHero} onChange={(e) => set('showHero', e.target.checked)} />
             Use this image as the background behind the title (works best with a wide, dark image)
           </label>
+        </div>
+
+        <div className="cms-field">
+          <label>Card image (optional)</label>
+          <input className="cms-input" placeholder={form.thumb ? 'Uses the main image' : 'Image URL'} value={form.cardImage} onChange={(e) => set('cardImage', e.target.value)} />
+          <input type="file" accept="image/png,image/jpeg,image/gif,image/webp" style={{ marginTop: 8 }}
+            onChange={(e) => upload(e.target.files[0], (url) => set('cardImage', url))} />
+          {form.cardImage && <img className="cms-thumb-prev" src={form.cardImage} alt="" />}
+          <p className="cms-hint">
+            Shown on the blog and news cards, which crop to a wide box — the preview above is that exact shape.
+            Upload a full-bleed version of the graphic with no empty space for a title. Leave blank to use the main image.
+          </p>
         </div>
 
         {/* Body */}

@@ -25,7 +25,7 @@ export function articleChecks(form) {
   return [
     { ok: len(form.title) > 0 && len(effectiveTitle) <= 70, label: 'Title set and not too long', hint: 'keep the search title under ~60–70 characters' },
     { ok: len(form.description) >= 50 && len(form.description) <= 170, label: 'Search description 50–160 characters', hint: 'this is your pitch on Google — 1–2 full sentences' },
-    { ok: len(form.thumb) > 0, label: 'Thumbnail image set', hint: 'posts with images get shared and clicked more' },
+    { ok: len(form.thumb) > 0, label: 'Main image set', hint: 'posts with images get shared and clicked more' },
     { ok: words >= 300, label: 'At least ~300 words', hint: `currently ~${words} — thin pages rarely rank`, soft: true },
     { ok: words < 400 || hasH2, label: 'Headings break up long posts', hint: 'add a Heading block every few paragraphs', soft: true },
     { ok: hasAeo, label: 'Key takeaways or FAQ block (AI answers)', hint: 'these are what ChatGPT / Google AI quote', soft: true },

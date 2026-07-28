@@ -24,6 +24,11 @@ export function dateTs(d) {
 // Posts filed under the "News" category get the /news hub as their home
 // (breadcrumbs point there and the hub lists them).
 export const isNewsCategory = (pillar) => (pillar || '').trim().toLowerCase() === 'news';
+
+// Blog/news cards crop to a wide box, which chops up hero art that leaves room for
+// the title. A post can carry a separate full-bleed image for the cards; the main
+// image is the fallback, so posts without one look exactly as they always have.
+export const cardImg = (a) => a.cardImage || a.thumb || '';
 const sortArticles = (list) =>
   [...list].sort((a, b) => (a.order ?? 9999) - (b.order ?? 9999) || dateTs(b.date) - dateTs(a.date));
 
