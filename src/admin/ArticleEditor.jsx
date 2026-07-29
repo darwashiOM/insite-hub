@@ -417,14 +417,16 @@ export default function ArticleEditor({ article, authors = [], knownTopics = [],
         </div>
 
         <div className="cms-field">
-          <label>Card image (optional)</label>
+          <label>Thumbnail image (optional)</label>
           <input className="cms-input" placeholder={form.thumb ? 'Uses the main image' : 'Image URL'} value={form.cardImage} onChange={(e) => set('cardImage', e.target.value)} />
           <input type="file" accept="image/png,image/jpeg,image/gif,image/webp" style={{ marginTop: 8 }}
             onChange={(e) => upload(e.target.files[0], (url) => set('cardImage', url))} />
           {form.cardImage && <img className="cms-thumb-prev" src={form.cardImage} alt="" />}
           <p className="cms-hint">
-            Shown on the blog and news cards, which crop to a wide box — the preview above is that exact shape.
-            Upload a full-bleed version of the graphic with no empty space for a title. Leave blank to use the main image.
+            Used only for the cards on the blog and news pages. Leave it blank and the card uses the main image,
+            exactly as it does today. Cards crop to a short, wide box, so if part of the main image gets cut off —
+            or it has empty space where the title sits — upload a version made to fit here instead. The preview
+            above is the exact shape and crop the real card uses.
           </p>
         </div>
 
