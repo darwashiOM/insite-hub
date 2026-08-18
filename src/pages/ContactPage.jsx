@@ -1,71 +1,23 @@
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 import EditorialHero from '../components/sections/EditorialHero';
 import Icon from '../components/Icon';
 import { usePageContent } from '../lib/content';
 
-const TRACK_OPTIONS = [
-  {
-    id: "talk",
-    icon: <Icon name="chat" size={22} />,
-    t: "Ready to talk",
-    d: "Let's have a real conversation about your situation.",
-    interest: "General inquiry",
-  },
-  {
-    id: "learn",
-    icon: <Icon name="framework" size={22} />,
-    t: "Want to learn first",
-    d: "Send me frameworks I can use before committing to anything.",
-    interest: "AI Readiness Framework",
-  },
-  {
-    id: "demo",
-    icon: <Icon name="platform" size={22} />,
-    t: "Ready for a demo",
-    d: "Show me Forge, Cue, and Stage in the context of my organization.",
-    interest: "AI Platform demo",
-  },
-];
+// Plain-text version of the hero headline so the page can render its rich
+// (orange) default but a plain string when overridden in the CMS.
+const CONTACT_HERO_HEADLINE_DEFAULT = 'Speak to a Proxa Labs Expert';
 
 export default function ContactPage() {
   const c = usePageContent('contact');
-  const initialTrack = () => {
-    const hashTrack = window.location.hash.replace("#", "");
-    return TRACK_OPTIONS.some(opt => opt.id === hashTrack) ? hashTrack : "";
-  };
+  const hd = c('hero.headline');
+  const heroHeadline = hd === CONTACT_HERO_HEADLINE_DEFAULT
+    ? <>Speak to a <em>Proxa Labs Expert</em></>
+    : <>{hd}</>;
   const [form, setForm] = useState({ name: "", company: "", email: "", role: "", interest: "", message: "" });
-  const [sentTracks, setSentTracks] = useState([]);
-  const [track, setTrack] = useState(initialTrack);
-  const formRef = useRef(null);
+  const [sent, setSent] = useState(false);
   const [sending, setSending] = useState(false);
   const [error, setError] = useState('');
   const u = k => e => setForm(f => ({ ...f, [k]: e.target.value }));
-  const selectedTrack = TRACK_OPTIONS.find(opt => opt.id === track);
-  const activeTrackId = track || "general";
-  const justSent = sentTracks.length > 0 && sentTracks[sentTracks.length - 1] === activeTrackId;
-  const alreadySent = sentTracks.includes(activeTrackId);
-  const previousTrack = sentTracks.length > 0 ? sentTracks[sentTracks.length - 1] : null;
-  const isConversationTrack = track !== "learn";
-
-  const selectTrack = (id, shouldScroll = true) => {
-    const option = TRACK_OPTIONS.find(opt => opt.id === id);
-    if (!option) return;
-    setTrack(id);
-    setForm(f => ({ ...f, interest: option.interest }));
-    if (shouldScroll) {
-      setTimeout(() => formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 50);
-    }
-  };
-
-  useEffect(() => {
-    const syncTrackFromHash = () => {
-      const hashTrack = window.location.hash.replace("#", "");
-      if (TRACK_OPTIONS.some(opt => opt.id === hashTrack)) selectTrack(hashTrack, false);
-    };
-    syncTrackFromHash();
-    window.addEventListener("hashchange", syncTrackFromHash);
-    return () => window.removeEventListener("hashchange", syncTrackFromHash);
-  }, []);
 
   const handleSubmit = async () => {
     if (!form.name || !form.email) return;
@@ -74,10 +26,10 @@ export default function ContactPage() {
       const res = await fetch(import.meta.env.VITE_CONTACT_FUNCTION_URL || '/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...form, track: activeTrackId }),
+        body: JSON.stringify(form),
       });
       const data = await res.json();
-      if (data.success) setSentTracks(prev => [...prev, activeTrackId]);
+      if (data.success) setSent(true);
       else setError(data.error || 'Something went wrong. Please try again.');
     } catch (e) {
       setError('Something went wrong. Please try again.');
@@ -88,41 +40,15 @@ export default function ContactPage() {
 
   const FormBlock = (
     <div style={{ background: "#fff", border: "1.5px solid #E3E5EA", borderRadius: 16, padding: 32 }}>
-      {selectedTrack && (
-        <div className="contact-form-heading">
-          <div className="contact-step-label">Step 2 — Tell Us About You</div>
-          <h3>You picked: {selectedTrack.t}</h3>
-          <p>We've pre-filled your track below. Fill out the rest and we'll be in touch within one business day.</p>
-        </div>
-      )}
-      {justSent && (
-        <div style={{ background: "rgba(156,169,121,.07)", border: "1px solid rgba(156,169,121,.2)", borderRadius: 14, padding: "20px 24px", marginBottom: 24 }}>
+      {sent ? (
+        <div style={{ background: "rgba(156,169,121,.07)", border: "1px solid rgba(156,169,121,.2)", borderRadius: 14, padding: "20px 24px" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6 }}>
             <Icon name="compliance" size={20} color="#9ca979" />
-            <span style={{ fontSize: 16, fontWeight: 700, color: "#12141A", fontFamily: "Manrope,sans-serif" }}>
-              {isConversationTrack ? "Message received." : "Frameworks on the way."}
-            </span>
+            <span style={{ fontSize: 16, fontWeight: 700, color: "#12141A", fontFamily: "Manrope,sans-serif" }}>Message received.</span>
           </div>
-          <div style={{ fontSize: 13, color: "#5C6370", lineHeight: 1.6 }}>
-            {isConversationTrack ? "We'll be in touch within one business day." : "Check your inbox within 24 hours."}
-          </div>
-          <div style={{ fontSize: 13, color: "#5C6370", marginTop: 10 }}>Changed your mind? Pick a different option above and send again.</div>
+          <div style={{ fontSize: 13, color: "#5C6370", lineHeight: 1.6 }}>We'll be in touch within one business day.</div>
         </div>
-      )}
-      {!justSent && previousTrack && !alreadySent && (
-        <div style={{ background: "rgba(245,130,95,.06)", border: "1px solid rgba(245,130,95,.18)", borderRadius: 14, padding: "16px 20px", marginBottom: 20 }}>
-          <div style={{ fontSize: 13, fontWeight: 600, color: "#f5825f", marginBottom: 4 }}>
-            {track === "demo" ? "Great — we'll route this as a demo request." : track === "talk" ? "Great — we're glad you're ready to talk." : track === "learn" ? "No rush. We'll send you frameworks first." : "Great — we'll route this to the right person."}
-          </div>
-          <div style={{ fontSize: 13, color: "#5C6370", lineHeight: 1.5 }}>We already have your info from before. Just hit send and we'll adjust.</div>
-        </div>
-      )}
-      {!justSent && alreadySent && (
-        <div style={{ background: "rgba(156,169,121,.05)", border: "1px solid rgba(156,169,121,.15)", borderRadius: 14, padding: "16px 20px", marginBottom: 20 }}>
-          <div style={{ fontSize: 13, fontWeight: 600, color: "#9ca979" }}>You've already submitted this one. Pick a different option above, or we'll be in touch soon.</div>
-        </div>
-      )}
-      {!justSent && (
+      ) : (
         <>
           <label className="fl">Full Name *</label><input className="fi" placeholder="Your name" value={form.name} onChange={u("name")} />
           <label className="fl">Work Email *</label><input className="fi" type="email" placeholder="you@company.com" value={form.email} onChange={u("email")} />
@@ -132,7 +58,7 @@ export default function ContactPage() {
             <option value="">Select your role…</option>
             {["VP / Head of Commercial L&D","CLO","Director of Learning Technology","Head of Sales Force Effectiveness","Commercial IT / Digital","Other"].map(r => <option key={r}>{r}</option>)}
           </select>
-          <label className="fl">I'm interested in… {selectedTrack && <span className="contact-prefill-note">Pre-filled from your track selection</span>}</label>
+          <label className="fl">I'm interested in…</label>
           <select className="fi" aria-label="I'm interested in" value={form.interest} onChange={u("interest")} style={{ appearance: "none" }}>
             <option value="">Select…</option>
             {["AI Platform demo","InsiteX LMS demo","Advisory consult","Content Development consult","Lab consult","AI Literacy consult","AI Readiness Framework","General inquiry"].map(i => <option key={i}>{i}</option>)}
@@ -144,11 +70,9 @@ export default function ContactPage() {
               {error}
             </div>
           )}
-          {!alreadySent && (
-            <button className="fsub" onClick={handleSubmit} disabled={sending} style={{ opacity: sending ? .6 : 1 }}>
-              {sending ? "Sending…" : track === "learn" ? "Send Me the Frameworks →" : "Send Message →"}
-            </button>
-          )}
+          <button className="fsub" onClick={handleSubmit} disabled={sending} style={{ opacity: sending ? .6 : 1 }}>
+            {sending ? "Sending…" : "Send Message →"}
+          </button>
         </>
       )}
     </div>
@@ -158,36 +82,11 @@ export default function ContactPage() {
     <>
       <EditorialHero
         eyebrow={c('hero.eyebrow')}
-        headline={c('hero.headline')}
+        headline={heroHeadline}
         subhead={c('hero.subhead')}
       />
 
-      <section className="section section-light contact-track-section">
-        <div className="mw">
-          <div className="contact-section-header">
-            <div className="t-eyebrow">{c('track.eyebrow')}</div>
-            <h2 className="t-h2">{c('track.heading')}</h2>
-            <p className="t-lead">{c('track.lead')}</p>
-          </div>
-          <div className="contact-track-grid">
-            {TRACK_OPTIONS.map(opt => (
-              <button
-                key={opt.id}
-                type="button"
-                className={`contact-track-card ${track === opt.id ? "contact-track-card-active" : ""}`}
-                onClick={() => selectTrack(opt.id)}
-              >
-                <span className="contact-track-card-icon">{opt.icon}</span>
-                <span className="contact-track-card-title">{opt.t}</span>
-                <span className="contact-track-card-body">{opt.d}</span>
-                {track === opt.id && <span className="contact-track-selected">Selected ↓</span>}
-              </button>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section ref={formRef} className="section section-tinted contact-form-section">
+      <section className="section section-tinted contact-form-section">
         <div className="contact-form-layout">
           {FormBlock}
           <aside className="contact-expect-panel">
@@ -199,7 +98,6 @@ export default function ContactPage() {
           </aside>
         </div>
       </section>
-
     </>
   );
 }
