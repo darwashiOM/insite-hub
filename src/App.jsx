@@ -160,7 +160,7 @@ const PATH_PAGES = Object.fromEntries(Object.entries(PAGE_PATHS).map(([page, pat
 // Short links rewritten to their real URL before the first render, so the target
 // page (and any hash on it) resolves as if the real URL had been typed.
 // "/proxa-labs" is the old lab URL; "/letsmeet" is the short link we hand out at events.
-const SHORT_PATHS = { "/proxa-labs": "/the-lab", "/letsmeet": "/contact#talk" };
+const SHORT_PATHS = { "/proxa-labs": "/the-lab", "/letsmeet": "/contact" };
 PATH_PAGES["/proxa-labs"] = "proxalab";
 
 const here = window.location.pathname.replace(/\/+$/, "");

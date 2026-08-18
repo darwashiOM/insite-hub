@@ -40,7 +40,7 @@ const Footer = ({ setPage }) => {
             </div>
             <p className="footer-tagline">The AI-native platform and implementation partner built for the organizational complexity of biopharma commercial learning — not adapted for it.</p>
             <div className="footer-cta-row">
-              <button className="footer-cta-primary" onClick={() => go("contact", "talk")}>Book a Consult</button>
+              <button className="footer-cta-primary" onClick={() => go("contact")}>Book a Consult</button>
             </div>
           </div>
           {FOOTER_COLUMNS.map(([h, links]) => (

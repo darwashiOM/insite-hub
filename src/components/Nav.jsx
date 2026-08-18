@@ -9,7 +9,7 @@ const WHERE_ITEMS = [
   {icon:<Icon name="platform" size={20} />,title:"I'm ready for a platform",desc:"See Forge, Cue, Stage, and Trace — the only closed-loop AI platform.",tag:"AI Platform",p:"platform"},
   {icon:<Icon name="content" size={20} />,title:"I need content for a launch",desc:"AI-generated or human-led, MLR-compliant content on your timeline.",tag:"Content",p:"content"},
   {icon:<Icon name="lms" size={20} />,title:"I need an LMS first",desc:"Enterprise learning infrastructure built for biopharma compliance.",tag:"InsiteX LMS",p:"insitex"},
-  {icon:<Icon name="chat" size={20} />,title:"I'm not sure yet",desc:"30 minutes. No pitch. Tell us where you're stuck.",tag:"Book a Consult",p:"contact",track:"talk"},
+  {icon:<Icon name="chat" size={20} />,title:"I'm not sure yet",desc:"30 minutes. No pitch. Tell us where you're stuck.",tag:"Book a Consult",p:"contact"},
 ];
 
 const Chevron = ({ open }) => (
@@ -139,7 +139,7 @@ const Nav = ({ page, setPage, scrolled }) => {
         </div>
 
         <div className="nav-right">
-          <button className="no" onClick={() => go("contact", "talk")}>Book a Consult</button>
+          <button className="no" onClick={() => go("contact")}>Book a Consult</button>
           <button className="nav-hamburger" onClick={() => setMobileOpen(o => !o)} aria-label="Menu">
             <span style={mobileOpen ? { transform: "rotate(45deg) translate(5px,5px)" } : {}} />
             <span style={mobileOpen ? { opacity: 0 } : {}} />
@@ -202,7 +202,7 @@ const Nav = ({ page, setPage, scrolled }) => {
         )}
 
         <button className={page === "about" ? "on" : ""} onClick={() => go("about")}>About</button>
-        <button className="mobile-cta" onClick={() => go("contact", "talk")}>Book a Consult</button>
+        <button className="mobile-cta" onClick={() => go("contact")}>Book a Consult</button>
       </div>
     </>
   );
