@@ -20,7 +20,7 @@ export default {
     { key: 'hero.subhead', label: 'Hero subhead', type: 'textarea',
       default: "InsiteX is the enterprise learning platform underneath Proxa Labs' AI. Purpose-built for biopharma — SCORM, AICC, and PMRC compliance, Veeva integration, credentialing workflows, and 10-year audit trails. When your organization is ready for AI, Forge, Cue, and Stage layer on top. No migration. No rip-and-replace." },
     { key: 'hero.ctaLabel', label: 'Hero button label', type: 'text',
-      default: 'Book a Demo' },
+      default: 'Book a Consult' },
 
     // "When InsiteX Is the Right Choice" long-form section
     { key: 'whenRight.eyebrow', label: 'Right-choice eyebrow', type: 'text',
@@ -74,6 +74,6 @@ export default {
     { key: 'cta.body', label: 'Closing CTA paragraph', type: 'textarea',
       default: "Bring your launch calendar to the demo. We'll show you your existing content library inside InsiteX, and map what the upgrade path to AI looks like over the next 18 months." },
     { key: 'cta.ctaLabel', label: 'Closing CTA button label', type: 'text',
-      default: 'Book a Demo' },
+      default: 'Book a Consult' },
   ],
 };

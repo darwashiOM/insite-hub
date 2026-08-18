@@ -15,7 +15,7 @@ export default {
     { key: 'hero.subhead', label: 'Hero subhead', type: 'textarea',
       default: 'Forge builds MLR-compliant content. Cue delivers adaptive learning. Stage assesses readiness in live HCP roleplay. Trace confirms behavioral competency. When a rep falls short, the system rebuilds the content automatically — no human handoffs, no stalled remediation cycles.' },
     { key: 'hero.ctaLabel', label: 'Hero button label', type: 'text',
-      default: 'Book a Demo' },
+      default: 'Book a Consult' },
 
     { key: 'loop.eyebrow', label: 'Closed Loop eyebrow', type: 'text',
       default: 'The Closed Loop' },
@@ -70,6 +70,6 @@ export default {
     { key: 'cta.body', label: 'Closing CTA paragraph', type: 'textarea',
       default: "We'll walk you through Forge, Cue, and Stage in the context of your commercial organization — not a generic product tour." },
     { key: 'cta.ctaLabel', label: 'Closing CTA button label', type: 'text',
-      default: 'Book a Demo' },
+      default: 'Book a Consult' },
   ],
 };
