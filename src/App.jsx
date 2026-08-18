@@ -310,7 +310,7 @@ export default function App() {
     }
     setCurrentPage(PAGES[nextPage] ? nextPage : "dynamicPage");
     setNavTick((t) => t + 1);
-    window.setTimeout(() => scrollToHash(hash), 0);
+    window.setTimeout(() => { if (!scrollToHash(hash)) window.scrollTo(0, 0); }, 0);
   };
 
   const Page = PAGES[page] || HomePage;

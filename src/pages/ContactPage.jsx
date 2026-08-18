@@ -187,7 +187,7 @@ export default function ContactPage() {
         </div>
       </section>
 
-      <section id={track || undefined} ref={formRef} className="section section-tinted contact-form-section">
+      <section ref={formRef} className="section section-tinted contact-form-section">
         <div className="contact-form-layout">
           {FormBlock}
           <aside className="contact-expect-panel">
