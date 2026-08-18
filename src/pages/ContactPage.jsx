@@ -3,10 +3,6 @@ import EditorialHero from '../components/sections/EditorialHero';
 import Icon from '../components/Icon';
 import { usePageContent } from '../lib/content';
 
-// Plain-text version of the hero headline so the page can render its rich
-// (italic) default but a plain string when overridden in the CMS.
-const CONTACT_HERO_HEADLINE_DEFAULT = "Tell us where you are. We'll meet you there.";
-
 const TRACK_OPTIONS = [
   {
     id: "talk",
@@ -14,8 +10,6 @@ const TRACK_OPTIONS = [
     t: "Ready to talk",
     d: "Let's have a real conversation about your situation.",
     interest: "General inquiry",
-    expectationTitle: "Discovery Call",
-    expectationBody: "Your environment, what you've tried, and where you're stuck. No sales pitch. No deck. Just whether Proxa Labs is the right fit for where you are.",
   },
   {
     id: "learn",
@@ -23,8 +17,6 @@ const TRACK_OPTIONS = [
     t: "Want to learn first",
     d: "Send me frameworks I can use before committing to anything.",
     interest: "AI Readiness Framework",
-    expectationTitle: "Frameworks First",
-    expectationBody: "We'll send practical frameworks you can use before committing to a conversation, then follow up if there is a useful next step.",
   },
   {
     id: "demo",
@@ -32,18 +24,11 @@ const TRACK_OPTIONS = [
     t: "Ready for a demo",
     d: "Show me Forge, Cue, and Stage in the context of my organization.",
     interest: "AI Platform demo",
-    expectationTitle: "Platform Demo",
-    expectationBody: "Forge, Cue, and Stage in the context of your commercial organization. We tailor the demo to your launch, therapeutic area, and governance environment.",
   },
 ];
 
 export default function ContactPage() {
   const c = usePageContent('contact');
-  // Headline keeps its rich (italic) default, but renders a plain string if overridden.
-  const hd = c('hero.headline');
-  const heroHeadline = hd === CONTACT_HERO_HEADLINE_DEFAULT
-    ? <>Tell us where you are. <em>We'll meet you there.</em></>
-    : <>{hd}</>;
   const initialTrack = () => {
     const hashTrack = window.location.hash.replace("#", "");
     return TRACK_OPTIONS.some(opt => opt.id === hashTrack) ? hashTrack : "";
@@ -173,7 +158,7 @@ export default function ContactPage() {
     <>
       <EditorialHero
         eyebrow={c('hero.eyebrow')}
-        headline={heroHeadline}
+        headline={c('hero.headline')}
         subhead={c('hero.subhead')}
       />
 
@@ -207,21 +192,8 @@ export default function ContactPage() {
           {FormBlock}
           <aside className="contact-expect-panel">
             <div className="t-eyebrow">{c('expect.eyebrow')}</div>
-            <h3>{c('expect.heading')}</h3>
-            {selectedTrack ? (
-              <div className="contact-expect-card">
-                <div className="contact-expect-icon">{selectedTrack.icon}</div>
-                <h4>{selectedTrack.expectationTitle}</h4>
-                <p>{selectedTrack.expectationBody}</p>
-              </div>
-            ) : (
-              <div className="contact-expect-card contact-expect-card-muted">
-                <h4>{c('expect.mutedTitle')}</h4>
-                <p>{c('expect.mutedBody')}</p>
-              </div>
-            )}
+            <h3>{c('diagnostic.title')}</h3>
             <div className="contact-diagnostic-note">
-              <strong>{c('diagnostic.title')}</strong>
               <p>{c('diagnostic.body')}</p>
             </div>
           </aside>

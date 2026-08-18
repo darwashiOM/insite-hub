@@ -282,8 +282,7 @@ h1,h2,h3,h4 { font-family:'Manrope',sans-serif; }
   border-color: var(--o);
   background: rgba(245,130,95,.055);
 }
-.contact-track-card-icon,
-.contact-expect-icon {
+.contact-track-card-icon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -370,35 +369,8 @@ h1,h2,h3,h4 { font-family:'Manrope',sans-serif; }
   color: var(--dk);
   margin: 12px 0 var(--space-4);
 }
-.contact-expect-card {
-  border: 1.5px solid var(--o);
-  border-radius: 16px;
-  background: var(--wh);
-  padding: var(--space-5);
-  margin-bottom: var(--space-4);
-}
-.contact-expect-card-muted {
-  border-color: var(--br);
-}
-.contact-expect-card h4 {
-  font-family: 'Manrope', sans-serif;
-  font-size: 18px;
-  color: var(--dk);
-  margin-bottom: 8px;
-}
-.contact-expect-card p {
-  font-size: 14px;
-  line-height: 1.58;
-  color: var(--bd);
-}
 .contact-diagnostic-note {
   padding-top: var(--space-2);
-}
-.contact-diagnostic-note strong {
-  display: block;
-  font-size: 14px;
-  color: var(--dk);
-  margin-bottom: 8px;
 }
 
 /* ── INSITEX ─────────────────────────────────────── */
@@ -703,9 +675,8 @@ h1,h2,h3,h4 { font-family:'Manrope',sans-serif; }
   gap: 10px;
   flex-wrap: wrap;
 }
-.footer-cta-primary,
-.footer-cta-secondary {
-  flex: 1 1 0;
+.footer-cta-primary {
+  flex: 0 0 auto;
   min-width: 130px;
   font-family: 'DM Sans', sans-serif;
   font-size: 13.5px;
@@ -730,17 +701,6 @@ h1,h2,h3,h4 { font-family:'Manrope',sans-serif; }
   border-color: #d06e51;
   box-shadow: 0 8px 22px rgba(245,130,95,.28);
   transform: translateY(-1px);
-}
-.footer-cta-secondary {
-  font-weight: 600;
-  color: rgba(255,255,255,.85);
-  background: transparent;
-  border-color: rgba(255,255,255,.18);
-}
-.footer-cta-secondary:hover {
-  border-color: rgba(255,255,255,.45);
-  color: #fff;
-  background: rgba(255,255,255,.04);
 }
 .footer-col { display: flex; flex-direction: column; }
 .footer-col-head {
