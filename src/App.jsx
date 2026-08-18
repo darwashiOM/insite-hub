@@ -157,9 +157,17 @@ const PAGE_PATHS = {
 };
 
 const PATH_PAGES = Object.fromEntries(Object.entries(PAGE_PATHS).map(([page, path]) => [path, page]));
-// Legacy redirect: the old "/proxa-labs" lab URL now lives at "/the-lab".
-const LEGACY_PATHS = { "/proxa-labs": "/the-lab" };
+// Short links rewritten to their real URL before the first render, so the target
+// page (and any hash on it) resolves as if the real URL had been typed.
+// "/proxa-labs" is the old lab URL; "/letsmeet" is the short link we hand out at events.
+const SHORT_PATHS = { "/proxa-labs": "/the-lab", "/letsmeet": "/contact#talk" };
 PATH_PAGES["/proxa-labs"] = "proxalab";
+
+const here = window.location.pathname.replace(/\/+$/, "");
+if (SHORT_PATHS[here]) {
+  const to = SHORT_PATHS[here];
+  window.history.replaceState({}, "", to.includes("#") ? to : to + window.location.hash);
+}
 
 const pageFromLocation = () => {
   const normalized = window.location.pathname.replace(/\/+$/, "") || "/";
@@ -270,13 +278,6 @@ export default function App() {
     };
     window.addEventListener("popstate", handlePopState);
     return () => window.removeEventListener("popstate", handlePopState);
-  }, []);
-
-  useEffect(() => {
-    const normalized = window.location.pathname.replace(/\/+$/, "");
-    if (LEGACY_PATHS[normalized]) {
-      window.history.replaceState({}, "", LEGACY_PATHS[normalized] + window.location.hash);
-    }
   }, []);
 
   // Marketer-managed redirects (from the CMS). Applied once when they load: if the
